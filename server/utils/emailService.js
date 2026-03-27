@@ -1,24 +1,16 @@
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
+
+// Initialize SendGrid
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const sendVerificationEmail = async (toEmail, name, code) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    throw new Error('Email configuration missing in .env. Please check EMAIL_USER and EMAIL_PASS.');
+  if (!process.env.SENDGRID_API_KEY) {
+    throw new Error('SendGrid API key not configured. Please check SENDGRID_API_KEY in .env');
   }
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    connectionTimeout: 5000,
-    socketTimeout: 5000,
-  });
-
-  // Add 10 second timeout to email sending
-  const emailPromise = transporter.sendMail({
-    from: `"Pooja Telecom" <${process.env.EMAIL_USER}>`,
+  const msg = {
     to: toEmail,
+    from: process.env.EMAIL_USER || 'noreply@poojatelecom.com',
     subject: `Your Verification Code: ${code}`,
     html: `
     <div style="font-family: Arial, sans-serif; max-width: 520px; margin: auto; background: #f9fafb; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
@@ -41,12 +33,13 @@ export const sendVerificationEmail = async (toEmail, name, code) => {
       </div>
     </div>
     `,
-  });
+  };
 
-  // Add timeout wrapper
-  const timeoutPromise = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error('Email sending timeout - server took too long')), 10000)
-  );
-
-  await Promise.race([emailPromise, timeoutPromise]);
+  try {
+    await sgMail.send(msg);
+  } catch (error) {
+    console.error('SendGrid error:', error);
+    throw new Error(`Failed to send email: ${error.message}`);
+  }
+};
 };
