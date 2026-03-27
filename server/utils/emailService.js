@@ -42,4 +42,3 @@ export const sendVerificationEmail = async (toEmail, name, code) => {
     throw new Error(`Failed to send email: ${error.message}`);
   }
 };
-};
