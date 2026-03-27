@@ -38,7 +38,8 @@ const RegisterPage = () => {
     setMessage('');
     try {
       const res = await register({ name, email, password }).unwrap();
-      navigate('/verify-email', { state: { email, redirect } });
+      // Auto-verified - redirect directly to login
+      navigate('/login');
     } catch (err) {}
   };
 
