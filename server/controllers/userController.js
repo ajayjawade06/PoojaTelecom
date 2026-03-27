@@ -78,32 +78,39 @@ const registerUser = asyncHandler(async (req, res) => {
   const otp = generateOTP();
   const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
 
-  const user = await User.create({
-    name,
-    email,
-    password,
-    isVerified: false,
-    verificationCode: otp,
-    verificationCodeExpiry: expiry,
-  });
+  try {
+    const user = await User.create({
+      name,
+      email,
+      password,
+      isVerified: false,
+      verificationCode: otp,
+      verificationCodeExpiry: expiry,
+    });
 
-  if (user) {
-    try {
-      await sendVerificationEmail(email, name, otp);
-      res.status(201).json({
-        message: 'Registration successful! Please check your email for the verification code.',
-        email,
-      });
-    } catch (emailError) {
-      console.error('Email sending failed:', emailError.message);
-      res.status(500).json({
-        message: `Account created but verification email failed to send: ${emailError.message}. Please contact support or check your email settings.`,
-        email,
-      });
+    if (user) {
+      try {
+        await sendVerificationEmail(email, name, otp);
+        res.status(201).json({
+          message: 'Registration successful! Please check your email for the verification code.',
+          email,
+        });
+      } catch (emailError) {
+        console.error('Email sending failed:', emailError.message);
+        res.status(500).json({
+          message: `Account created but verification email failed to send: ${emailError.message}. Please contact support or check your email settings.`,
+          email,
+        });
+      }
+    } else {
+      res.status(400);
+      throw new Error('Invalid user data');
     }
-  } else {
-    res.status(400);
-    throw new Error('Invalid user data');
+  } catch (dbError) {
+    console.error('User creation failed:', dbError.message);
+    res.status(500).json({
+      message: `Registration failed: ${dbError.message}`
+    });
   }
 });
 
