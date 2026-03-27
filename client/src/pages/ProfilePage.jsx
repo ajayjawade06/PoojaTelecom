@@ -80,10 +80,10 @@ const ProfilePage = () => {
   };
 
   const tabs = [
-    { id: 'profile', name: 'Account Details', icon: <FaUser /> },
-    { id: 'orders', name: 'Purchase History', icon: <FaShoppingBag /> },
-    { id: 'addresses', name: 'Logistics Profiles', icon: <FaMapMarkerAlt /> },
-    { id: 'payments', name: 'Financial Setup', icon: <FaShieldAlt /> },
+    { id: 'profile', name: 'Profile', icon: <FaUser /> },
+    { id: 'orders', name: 'Orders', icon: <FaShoppingBag /> },
+    { id: 'addresses', name: 'Addresses', icon: <FaMapMarkerAlt /> },
+    { id: 'payments', name: 'Payments', icon: <FaShieldAlt /> },
   ];
 
   return (
@@ -140,17 +140,17 @@ const ProfilePage = () => {
 
                 <div className="flex items-center gap-4 mb-10 relative z-10">
                   <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center border border-emerald-500/30"><FaShieldAlt /></div>
-                  <h2 className="text-3xl font-black text-white tracking-tighter">Security & Profile</h2>
+                  <h2 className="text-3xl font-black text-white tracking-tighter">Update Profile</h2>
                 </div>
 
                 {message && <Message variant="red">{message}</Message>}
                 {errorUpdate && <Message variant="red">{errorUpdate?.data?.message || errorUpdate.error}</Message>}
-                {isSuccess && <Message variant="green">Profile matrix updated successfully.</Message>}
+                {isSuccess && <Message variant="green">Profile updated successfully.</Message>}
 
                 <form onSubmit={submitHandler} className="space-y-8 relative z-10">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3 group">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 group-focus-within:text-emerald-400 transition-colors">Operative Designation</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 group-focus-within:text-emerald-400 transition-colors">Full Name</label>
                       <input
                         type="text"
                         className="w-full px-6 py-5 bg-slate-950 border border-white/10 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all outline-none font-bold text-white placeholder-slate-600 shadow-inner"
@@ -160,7 +160,7 @@ const ProfilePage = () => {
                       />
                     </div>
                     <div className="space-y-3 group">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 group-focus-within:text-emerald-400 transition-colors">Communication Link (Email)</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 group-focus-within:text-emerald-400 transition-colors">Email Address</label>
                       <input
                         type="email"
                         className="w-full px-6 py-5 bg-slate-950 border border-white/10 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all outline-none font-bold text-white placeholder-slate-600 shadow-inner"
@@ -173,10 +173,10 @@ const ProfilePage = () => {
 
                   <div className="p-8 bg-white/5 rounded-[2rem] border border-white/5 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-                    <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-6 bg-emerald-500/10 px-4 py-2 rounded-xl inline-block border border-emerald-500/20">Authentication Override</p>
+                    <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-6 bg-emerald-500/10 px-4 py-2 rounded-xl inline-block border border-emerald-500/20">Change Password</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-3 group">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 group-focus-within:text-white transition-colors">New Password Hash</label>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 group-focus-within:text-white transition-colors">New Password</label>
                         <input
                           type="password"
                           className="w-full px-6 py-5 bg-slate-950 border border-white/10 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all outline-none font-bold text-white tracking-widest"
@@ -186,7 +186,7 @@ const ProfilePage = () => {
                         />
                       </div>
                       <div className="space-y-3 group">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 group-focus-within:text-white transition-colors">Verify Password Hash</label>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 group-focus-within:text-white transition-colors">Confirm Password</label>
                         <input
                           type="password"
                           className="w-full px-6 py-5 bg-slate-950 border border-white/10 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all outline-none font-bold text-white tracking-widest"
@@ -196,7 +196,7 @@ const ProfilePage = () => {
                         />
                       </div>
                     </div>
-                    <p className="text-xs font-medium text-slate-500 mt-4 italic">Leave blank to retain current access codes.</p>
+                    <p className="text-xs font-medium text-slate-500 mt-4 italic">Leave blank to keep your current password.</p>
                   </div>
 
                   <button
@@ -205,7 +205,7 @@ const ProfilePage = () => {
                     className="relative overflow-hidden group bg-emerald-500 text-white font-black py-5 px-10 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest text-[10px]"
                   >
                     <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                    {loadingUpdate ? 'Committing Changes...' : 'Initiate Update Protocol'}
+                    {loadingUpdate ? 'Updating...' : 'Update Profile'}
                   </button>
                 </form>
               </div>
@@ -215,7 +215,7 @@ const ProfilePage = () => {
               <div className="bg-slate-900/80 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-white/5 p-8 md:p-12 animate-fade-in">
                 <div className="flex items-center gap-4 mb-10">
                   <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center border border-emerald-500/30"><FaShoppingBag /></div>
-                  <h2 className="text-3xl font-black text-white tracking-tighter">Acquisition Ledger</h2>
+                  <h2 className="text-3xl font-black text-white tracking-tighter">Order History</h2>
                 </div>
 
                 {loadingOrders ? (
@@ -227,11 +227,11 @@ const ProfilePage = () => {
                     <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center text-slate-700 mx-auto mb-6">
                        <FaShoppingBag size={32} />
                     </div>
-                    <h3 className="text-xl font-black text-white mb-2 tracking-tighter">Database Empty</h3>
-                    <p className="text-slate-500 mb-8 font-medium">No prior transactions recorded under this designation.</p>
+                    <h3 className="text-xl font-black text-white mb-2 tracking-tighter">No Orders Found</h3>
+                    <p className="text-slate-500 mb-8 font-medium">You haven't placed any orders yet.</p>
                     <Link to="/" className="inline-flex relative overflow-hidden group bg-emerald-500 text-white font-black py-4 px-8 rounded-2xl transition-all shadow-lg active:scale-95 uppercase tracking-widest text-[10px]">
                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                       Access Hardware Database
+                       Start Shopping
                     </Link>
                   </div>
                 ) : (
@@ -239,11 +239,11 @@ const ProfilePage = () => {
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-white/5 border-b border-white/5">
-                          <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Transaction ID</th>
-                          <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Timestamp</th>
-                          <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Authorization</th>
-                          <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Logistics</th>
-                          <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Value (₹)</th>
+                          <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Order ID</th>
+                          <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
+                          <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Paid Status</th>
+                          <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Delivered</th>
+                          <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Total</th>
                           <th className="px-6 py-5"></th>
                         </tr>
                       </thead>
@@ -271,7 +271,7 @@ const ProfilePage = () => {
                             <td className="px-6 py-6 font-black text-white text-right">₹{order.totalPrice.toLocaleString('en-IN')}</td>
                             <td className="px-6 py-6 text-right">
                               <Link to={`/order/${order._id}`}>
-                                <button className="bg-white/5 border border-white/10 text-white hover:bg-emerald-500 hover:border-emerald-400 px-5 py-3 rounded-xl text-[10px] uppercase tracking-widest font-black transition-all shadow-[0_0_15px_rgba(255,255,255,0.02)] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]">Inspect</button>
+                                <button className="bg-white/5 border border-white/10 text-white hover:bg-emerald-500 hover:border-emerald-400 px-5 py-3 rounded-xl text-[10px] uppercase tracking-widest font-black transition-all shadow-[0_0_15px_rgba(255,255,255,0.02)] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]">Details</button>
                               </Link>
                             </td>
                           </tr>
@@ -290,14 +290,14 @@ const ProfilePage = () => {
                 <div className="flex items-center justify-between mb-10 relative z-10">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center border border-emerald-500/30"><FaMapMarkerAlt /></div>
-                    <h2 className="text-3xl font-black text-white tracking-tighter">Logistics Routing</h2>
+                    <h2 className="text-3xl font-black text-white tracking-tighter">Saved Addresses</h2>
                   </div>
                   {!isAddingAddress && (
                     <button 
                       onClick={() => setIsAddingAddress(true)}
                       className="px-6 py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-xl text-[10px] uppercase tracking-widest font-black hover:bg-emerald-500 hover:text-white hover:border-emerald-400 transition-all shadow-[0_0_15px_rgba(16,185,129,0.1)]"
                     >
-                      Establish New Route
+                      Add New Address
                     </button>
                   )}
                 </div>
@@ -306,12 +306,12 @@ const ProfilePage = () => {
                   <div className="mb-10 p-8 bg-slate-950 rounded-[2.5rem] border border-white/5 shadow-inner relative z-10 animate-fade-in">
                      <h3 className="text-sm font-black text-white mb-6 uppercase tracking-widest flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        New Route Coordinates
+                        New Address
                      </h3>
                      <form onSubmit={addAddressHandler} className="space-y-6">
                         <input
                           type="text"
-                          placeholder="Street Address / Building Vector"
+                          placeholder="Street Address"
                           className="w-full px-6 py-5 bg-white/5 border border-white/5 rounded-2xl focus:border-emerald-500/50 outline-none font-medium text-white placeholder-slate-600 transition-all focus:bg-white/10"
                           value={newAddress.address}
                           onChange={(e) => setNewAddress({ ...newAddress, address: e.target.value })}
@@ -320,7 +320,7 @@ const ProfilePage = () => {
                         <div className="grid grid-cols-2 gap-6">
                           <input
                             type="text"
-                            placeholder="City Node"
+                            placeholder="City"
                             className="w-full px-6 py-5 bg-white/5 border border-white/5 rounded-2xl focus:border-emerald-500/50 outline-none font-medium text-white placeholder-slate-600 transition-all focus:bg-white/10"
                             value={newAddress.city}
                             onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
@@ -328,7 +328,7 @@ const ProfilePage = () => {
                           />
                           <input
                             type="text"
-                            placeholder="Postal Hash"
+                            placeholder="Postal Code"
                             className="w-full px-6 py-5 bg-white/5 border border-white/5 rounded-2xl focus:border-emerald-500/50 outline-none font-medium text-white placeholder-slate-600 transition-all focus:bg-white/10"
                             value={newAddress.postalCode}
                             onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })}
@@ -337,15 +337,15 @@ const ProfilePage = () => {
                         </div>
                         <input
                           type="text"
-                          placeholder="Region / Country Hub"
+                          placeholder="Country"
                           className="w-full px-6 py-5 bg-white/5 border border-white/5 rounded-2xl focus:border-emerald-500/50 outline-none font-medium text-white placeholder-slate-600 transition-all focus:bg-white/10"
                           value={newAddress.country}
                           onChange={(e) => setNewAddress({ ...newAddress, country: e.target.value })}
                           required
                         />
                         <div className="flex gap-4 pt-4">
-                          <button type="submit" className="flex-grow bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.2)] uppercase tracking-widest text-[10px] transition-all">Compile Route</button>
-                          <button type="button" onClick={() => setIsAddingAddress(false)} className="px-8 bg-white/5 border border-white/10 hover:bg-white/10 text-white uppercase tracking-widest text-[10px] font-black py-4 rounded-2xl transition-all">Abort</button>
+                          <button type="submit" className="flex-grow bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.2)] uppercase tracking-widest text-[10px] transition-all">Save Address</button>
+                          <button type="button" onClick={() => setIsAddingAddress(false)} className="px-8 bg-white/5 border border-white/10 hover:bg-white/10 text-white uppercase tracking-widest text-[10px] font-black py-4 rounded-2xl transition-all">Cancel</button>
                         </div>
                      </form>
                   </div>
@@ -359,7 +359,7 @@ const ProfilePage = () => {
                           <div className="absolute top-6 right-6 text-emerald-500/20 group-hover:text-emerald-400 transition-colors text-2xl">
                              <FaCheckCircle />
                           </div>
-                          <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-4 inline-block bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">Route Alpha-{idx + 1}</p>
+                          <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-4 inline-block bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">Address {idx + 1}</p>
                           <p className="text-white font-bold leading-relaxed">{addr.address}</p>
                           <p className="text-slate-400 text-sm font-medium mt-1">{addr.city}, {addr.postalCode}</p>
                           <p className="text-slate-500 text-sm font-medium">{addr.country}</p>
@@ -368,8 +368,8 @@ const ProfilePage = () => {
                   ) : (
                     <div className="col-span-2 text-center py-20 bg-slate-950 rounded-[2rem] border border-white/5 border-dashed shadow-inner">
                       <div className="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center text-slate-700 mx-auto mb-4"><FaMapMarkerAlt size={24} /></div>
-                      <p className="text-white font-black tracking-tight text-lg mb-2">No Active Routes</p>
-                      <p className="text-slate-500 text-sm font-medium">Establish a logistics route to expedite future acquisitions.</p>
+                      <p className="text-white font-black tracking-tight text-lg mb-2">No Saved Addresses</p>
+                      <p className="text-slate-500 text-sm font-medium">Add an address for faster checkout.</p>
                     </div>
                   )}
                 </div>

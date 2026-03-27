@@ -188,16 +188,16 @@ const OrderPage = () => {
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
                   <FaMapMarkerAlt />
                 </div>
-                Logistics Target
+                Shipping Address
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
-                    <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mb-2">Entity</p>
+                    <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mb-2">Customer</p>
                     <p className="text-white font-black tracking-tight">{order.user.name}</p>
                     <p className="text-slate-400 text-xs font-medium mt-1">{order.user.email}</p>
                  </div>
                  <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
-                    <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mb-2">Coordinates</p>
+                    <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mb-2">Address</p>
                     <p className="text-slate-300 font-medium leading-relaxed text-sm">
                       {order.shippingAddress.address}<br/>
                       {order.shippingAddress.city}, {order.shippingAddress.postalCode}<br/>
@@ -213,7 +213,7 @@ const OrderPage = () => {
                 <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400">
                   <FaBoxOpen />
                 </div>
-                Cargo Manifest
+                Order Items
               </h2>
               <div className="space-y-4 relative z-10">
                 {order.orderItems.map((item, index) => (
@@ -238,19 +238,19 @@ const OrderPage = () => {
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-[2.5rem] shadow-2xl border border-white/10 sticky top-28 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none -z-0"></div>
 
-              <h2 className="text-xl font-black text-white mb-8 pb-4 border-b border-white/10 tracking-tighter relative z-10">Financial Ledger</h2>
+              <h2 className="text-xl font-black text-white mb-8 pb-4 border-b border-white/10 tracking-tighter relative z-10">Order Summary</h2>
               <div className="space-y-6 text-sm mb-8 relative z-10">
                  <div className="flex justify-between text-slate-300 font-medium items-center">
-                    <span className="font-black uppercase tracking-widest text-[10px]">Hardware</span>
+                    <span className="font-black uppercase tracking-widest text-[10px]">Items</span>
                     <span className="font-black text-white text-lg">₹{order.itemsPrice}</span>
                  </div>
                  <div className="flex justify-between text-slate-300 font-medium items-center">
-                    <span className="font-black uppercase tracking-widest text-[10px]">Transport</span>
+                    <span className="font-black uppercase tracking-widest text-[10px]">Shipping</span>
                     <span className="font-black text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-lg">₹{order.shippingPrice}</span>
                  </div>
               </div>
               <div className="flex justify-between items-center py-6 border-t border-white/10 mb-8 relative z-10">
-                 <span className="font-black text-slate-300 uppercase tracking-widest text-xs">Total Authorization</span>
+                 <span className="font-black text-slate-300 uppercase tracking-widest text-xs">Total</span>
                  <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200">₹{order.totalPrice}</span>
               </div>
 
@@ -266,7 +266,7 @@ const OrderPage = () => {
                   {razorpayLoading ? (
                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   ) : (
-                     <><FaShieldAlt size={16} /> Execute '{order.paymentMethod}'</>
+                     <><FaShieldAlt size={16} /> Pay with {order.paymentMethod}</>
                   )}
                 </button>
               )}
@@ -275,8 +275,8 @@ const OrderPage = () => {
               {!order.isPaid && userInfo._id === order.user._id && showCardForm && (
                 <div className="animate-fade-in border-t border-white/10 pt-6 mt-2 relative z-10">
                   <div className="flex justify-between items-center mb-6">
-                     <h3 className="text-xs font-black uppercase tracking-widest text-emerald-400">Card Parameters</h3>
-                     <button onClick={() => setShowCardForm(false)} className="text-[10px] text-slate-500 hover:text-rose-500 font-black uppercase tracking-widest transition-colors py-1 px-2 rounded-lg hover:bg-rose-500/10">Abort</button>
+                     <h3 className="text-xs font-black uppercase tracking-widest text-emerald-400">Payment Details</h3>
+                     <button onClick={() => setShowCardForm(false)} className="text-[10px] text-slate-500 hover:text-rose-500 font-black uppercase tracking-widest transition-colors py-1 px-2 rounded-lg hover:bg-rose-500/10">Cancel</button>
                   </div>
                   <form onSubmit={dummyPaymentHandler} className="space-y-5">
                     <div className="group">
@@ -318,7 +318,7 @@ const OrderPage = () => {
                       {paymentLoading ? (
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       ) : (
-                        `Confirm & Process ₹${order.totalPrice}`
+                        `Pay ₹${order.totalPrice}`
                       )}
                     </button>
                   </form>
@@ -328,7 +328,7 @@ const OrderPage = () => {
               {/* Admin Controls */}
               {userInfo && userInfo.isAdmin && order.isPaid && (
                 <div className="space-y-4 pt-6 border-t border-white/10 mt-6 relative z-10">
-                  <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-4">Admin Override</p>
+                  <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-4">Admin Actions</p>
                   
                   {/* Ship Button */}
                   {!order.isShipped && (
@@ -341,7 +341,7 @@ const OrderPage = () => {
                       {loadingShip ? (
                          <div className="w-4 h-4 border-2 border-slate-500 border-t-white rounded-full animate-spin"></div>
                       ) : (
-                         <><FaTruck size={14} className="text-slate-400" /> Mark Dispatched</>
+                         <><FaTruck size={14} className="text-slate-400" /> Mark as Shipped</>
                       )}
                     </button>
                   )}
@@ -357,14 +357,14 @@ const OrderPage = () => {
                       {loadingDeliver ? (
                          <div className="w-4 h-4 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin"></div>
                       ) : (
-                         <><FaCheckCircle size={14} /> Mark Received</>
+                         <><FaCheckCircle size={14} /> Mark as Delivered</>
                       )}
                     </button>
                   )}
 
                   {order.isDelivered && (
                     <div className="bg-emerald-500/10 text-emerald-400 text-center py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-                      Protocol Completed ✅
+                      Order Completed ✅
                     </div>
                   )}
                 </div>

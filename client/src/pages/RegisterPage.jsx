@@ -30,7 +30,7 @@ const RegisterPage = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setMessage('Passphrases do not match');
+      setMessage('Passwords do not match');
       return;
     }
     setMessage('');
@@ -43,9 +43,9 @@ const RegisterPage = () => {
   const passwordStrength = password.length > 8 ? 'strong' : password.length > 5 ? 'medium' : password.length > 0 ? 'weak' : '';
 
   return (
-    <div className="min-h-screen flex animate-fade-in bg-slate-950">
+    <div className="min-h-screen flex animate-fade-in bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       {/* Left panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-slate-900 items-center justify-center p-16 relative overflow-hidden border-r border-white/5">
+      <div className="hidden lg:flex lg:w-1/2 bg-white dark:bg-slate-900 items-center justify-center p-16 relative overflow-hidden border-r border-slate-100 dark:border-white/5 transition-colors duration-300">
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-pulse delay-700" />
@@ -55,9 +55,9 @@ const RegisterPage = () => {
             <div className="absolute inset-0 bg-emerald-400 rounded-[2rem] blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
             <FaBoxOpen size={40} className="text-white relative z-10 drop-shadow-lg" />
           </div>
-          <h1 className="text-5xl font-black text-white mb-6 tracking-tighter">Become an Agent</h1>
+          <h1 className="text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter">Create an Account</h1>
           <ul className="space-y-4 mt-8 text-left max-w-sm mx-auto">
-            {['Global Priority Shipping Priority', 'Classified Deals & Offers', 'Zero-Questions Return Policy', 'Encrypted Payment Gateway'].map((item) => (
+            {['Fast & Reliable Shipping', 'Exclusive Deals & Offers', 'Hassle-Free Returns', 'Secure Payments'].map((item) => (
               <li key={item} className="flex items-center gap-4 text-slate-300 font-medium">
                 <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
                    <FaCheck size={10} />
@@ -84,24 +84,24 @@ const RegisterPage = () => {
               </div>
               <span className="font-black text-3xl tracking-tighter text-white">Pooja</span>
             </div>
-            <h2 className="text-4xl font-black text-white mb-3 tracking-tight">System Init</h2>
-            <p className="text-slate-400 font-medium">Create your profile to access the network.</p>
+            <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">Welcome</h2>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">Create your profile to get started.</p>
           </div>
 
           {(message || error) && (
             <div className="mb-8 p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-400 text-sm font-bold flex items-center gap-3 animate-slide-up">
               <span className="text-xl">⚠️</span>
-              <span>{message || error?.data?.message || 'Registration anomaly detected. Retry.'}</span>
+              <span>{message || error?.data?.message || 'Registration failed. Please try again.'}</span>
             </div>
           )}
 
           <form onSubmit={submitHandler} className="space-y-5">
             <div className="group">
-              <label className="block text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-400">Designation (Full Name)</label>
+              <label className="block text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-400">Full Name</label>
               <input
                 type="text"
-                placeholder="Agent Smith"
-                className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-emerald-500/50 text-white font-medium transition-all outline-none placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
+                placeholder="John Doe"
+                className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -109,11 +109,11 @@ const RegisterPage = () => {
             </div>
 
             <div className="group">
-              <label className="block text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-400">Communication ID (Email)</label>
+              <label className="block text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-400">Email Address</label>
               <input
                 type="email"
-                placeholder="smith@network.com"
-                className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-emerald-500/50 text-white font-medium transition-all outline-none placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
+                placeholder="john@example.com"
+                className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -121,12 +121,12 @@ const RegisterPage = () => {
             </div>
 
             <div className="group">
-              <label className="block text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-400">Security Key</label>
+              <label className="block text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-400">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Min 6 characters"
-                  className="w-full px-5 py-4 pr-12 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-emerald-500/50 text-white font-medium transition-all outline-none placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10 tracking-widest"
+                  className="w-full px-5 py-4 pr-12 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10 tracking-widest"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -149,11 +149,11 @@ const RegisterPage = () => {
             </div>
 
             <div className="group">
-              <label className="block text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-400">Verify Security Key</label>
+              <label className="block text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-400">Confirm Password</label>
               <input
                 type="password"
-                placeholder="Repeat passkey"
-                className={`w-full px-5 py-4 rounded-2xl border bg-white/5 focus:bg-white/10 text-white font-medium transition-all outline-none placeholder-slate-600 ring-4 tracking-widest ${
+                placeholder="Confirm password"
+                className={`w-full px-5 py-4 rounded-2xl border bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 tracking-widest ${
                   confirmPassword && password !== confirmPassword ? 'border-rose-500/50 ring-rose-500/10' : 'border-white/10 focus:border-emerald-500/50 ring-transparent focus:ring-emerald-500/10'
                 }`}
                 value={confirmPassword}
@@ -161,7 +161,7 @@ const RegisterPage = () => {
                 required
               />
               {confirmPassword && password !== confirmPassword && (
-                <p className="text-[10px] uppercase font-black tracking-widest text-rose-500 mt-2">Signature Mismatch</p>
+                <p className="text-[10px] uppercase font-black tracking-widest text-rose-500 mt-2">Passwords do not match</p>
               )}
             </div>
 
@@ -174,15 +174,15 @@ const RegisterPage = () => {
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
-                <>Initialize Profile <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></>
+                <>Register <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></>
               )}
             </button>
           </form>
 
           <p className="mt-10 text-center text-slate-500 font-medium text-sm">
-            Already verified?{' '}
-            <Link to={redirect ? `/login?redirect=${redirect}` : '/login'} className="text-emerald-400 font-black hover:text-emerald-300 transition-colors">
-              Access Dashboard
+            Already have an account?{' '}
+            <Link to={redirect ? `/login?redirect=${redirect}` : '/login'} className="text-emerald-500 dark:text-emerald-400 font-black hover:text-emerald-400 dark:hover:text-emerald-300 transition-colors">
+              Sign In
             </Link>
           </p>
         </div>

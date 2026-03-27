@@ -4,25 +4,16 @@
 /* Enable class-based dark mode in Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Light mode (default) */
 :root {
   --background: #f8fafc;
   --foreground: #020617;
 }
 
-/* Force dark theme when .dark class is on html/root */
+/* Dark mode overrides */
 .dark {
-  --background: #020617 !important;
-  --foreground: #f8fafc !important;
-}
-
-body {
-  margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background);
-  color: var(--foreground);
-  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+  --background: #020617;
+  --foreground: #f8fafc;
 }
 
 @theme {
@@ -31,16 +22,6 @@ body {
   --animate-scale-up: scale-up 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-:root {
-  --background: #0f172a;
-  --foreground: #f8fafc;
-}
-
-.dark {
-  --background: #020617 !important;
-  --foreground: #f8fafc !important;
-}
-
 body {
   margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
@@ -48,10 +29,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background);
   color: var(--foreground);
-  background-image: radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.05), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.05), transparent 25%);
+  /* Light mode: subtle warm gradient */
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.04), transparent 30%),
+    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.04), transparent 30%);
   background-attachment: fixed;
   transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+}
+
+/* Dark mode body gradient */
+.dark body {
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.05), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.05), transparent 25%);
 }
 
 /* Branded selection colour */
@@ -66,10 +56,12 @@ body {
 ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
+.dark ::-webkit-scrollbar-track { background: #0f172a; }
+.dark ::-webkit-scrollbar-thumb { background: #334155; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
 /* Smooth transitions globally */
 * { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-
-/* Existing animations moved to @theme block above */
 
 @keyframes fade-in {
   from { opacity: 0; }

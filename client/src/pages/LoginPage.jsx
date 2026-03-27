@@ -34,9 +34,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex animate-fade-in bg-slate-950">
+    <div className="min-h-screen flex animate-fade-in bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       {/* Left decorative panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-slate-900 items-center justify-center p-16 relative overflow-hidden border-r border-white/5">
+      <div className="hidden lg:flex lg:w-1/2 bg-white dark:bg-slate-900 items-center justify-center p-16 relative overflow-hidden border-r border-slate-100 dark:border-white/5 transition-colors duration-300">
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-pulse delay-1000" />
@@ -46,11 +46,11 @@ const LoginPage = () => {
             <div className="absolute inset-0 bg-emerald-400 rounded-[2rem] blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
             <FaBoxOpen size={40} className="text-white relative z-10 drop-shadow-lg" />
           </div>
-          <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-6 tracking-tighter">
+          <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400 mb-6 tracking-tighter">
             Pooja <br/> Telecom
           </h1>
           <p className="text-slate-400 text-xl max-w-sm mx-auto font-medium leading-relaxed">
-            The nexus of premium electronics and next-generation gadgets.
+            Your reliable source for premium electronics and mobile devices.
           </p>
         </div>
       </div>
@@ -68,10 +68,10 @@ const LoginPage = () => {
               <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 p-3 rounded-2xl shadow-lg shadow-emerald-500/20">
                 <FaBoxOpen size={24} className="text-white" />
               </div>
-              <span className="font-black text-3xl tracking-tighter text-white">Pooja</span>
+              <span className="font-black text-3xl tracking-tighter text-slate-900 dark:text-white">Pooja</span>
             </div>
-            <h2 className="text-4xl font-black text-white mb-3 tracking-tight">Welcome Back</h2>
-            <p className="text-slate-400 font-medium">Authenticate to access your dashboard.</p>
+          <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">Welcome Back</h2>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">Sign in to access your account.</p>
           </div>
 
           {error && (
@@ -83,11 +83,11 @@ const LoginPage = () => {
 
           <form onSubmit={submitHandler} className="space-y-6">
             <div className="group">
-              <label className="block text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-400">Identity</label>
+              <label className="block text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400">Email Address</label>
               <input
                 type="email"
                 placeholder="email@example.com"
-                className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-emerald-500/50 text-white font-medium transition-all outline-none placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
+                className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -96,13 +96,13 @@ const LoginPage = () => {
 
             <div className="group">
               <div className="flex justify-between mb-2">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-widest transition-colors group-focus-within:text-emerald-400">Passphrase</label>
+                <label className="text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest transition-colors group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400">Password</label>
               </div>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
-                  className="w-full px-5 py-4 pr-12 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-emerald-500/50 text-white font-medium transition-all outline-none placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10 tracking-widest"
+                  className="w-full px-5 py-4 pr-12 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10 tracking-widest"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -126,18 +126,18 @@ const LoginPage = () => {
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
-                <>Authorize Access <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></>
+                <>Sign In <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></>
               )}
             </button>
           </form>
 
           <p className="mt-10 text-center text-slate-500 font-medium text-sm">
-            Unregistered Agent?{' '}
+            New Customer?{' '}
             <Link
               to={redirect ? `/register?redirect=${redirect}` : '/register'}
-              className="text-emerald-400 font-black hover:text-emerald-300 transition-colors"
+              className="text-emerald-500 dark:text-emerald-400 font-black hover:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
             >
-              Request Access
+              Register Here
             </Link>
           </p>
         </div>
