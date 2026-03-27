@@ -32,11 +32,10 @@ body {
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #020617;
+  --background: #0f172a;
+  --foreground: #f8fafc;
 }
 
-/* Force dark theme when .dark class is on html/root */
 .dark {
   --background: #020617 !important;
   --foreground: #f8fafc !important;
@@ -47,8 +46,11 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* background-color: var(--background); */
-  /* color: var(--foreground); */
+  background-color: var(--background);
+  color: var(--foreground);
+  background-image: radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.05), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.05), transparent 25%);
+  background-attachment: fixed;
   transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
 }
 

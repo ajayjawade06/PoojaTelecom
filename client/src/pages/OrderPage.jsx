@@ -12,7 +12,7 @@ import {
   useDeliverOrderMutation,
   useShipOrderMutation,
 } from '../redux/slices/ordersApiSlice';
-import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt } from 'react-icons/fa';
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
@@ -132,202 +132,244 @@ const OrderPage = () => {
   ) : error ? (
     <div className="container mx-auto px-4 mt-8"><Message variant="red">{error?.data?.message || error.error}</Message></div>
   ) : (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-             Order <span className="text-emerald-600">#{order._id.slice(-8).toUpperCase()}</span>
-          </h1>
-          <p className="text-slate-500 font-medium text-sm mt-1">Placed on {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString()}</p>
-        </div>
-        <div className="flex items-center gap-2">
-           <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${order.isDelivered ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-              {order.isDelivered ? 'Status: Completed' : order.isShipped ? 'Status: Out for Delivery' : order.isPaid ? 'Status: Processing' : 'Status: Pending Payment'}
-           </span>
-        </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8 overflow-x-auto">
-        <div className="flex justify-between items-start min-w-[600px] relative">
-          {/* Connector Line */}
-          <div className="absolute top-6 left-[10%] right-[10%] h-1 bg-slate-100 -z-0" />
-          <div 
-            className="absolute top-6 left-[10%] h-1 bg-emerald-500 transition-all duration-1000 -z-0" 
-            style={{ width: `${order.isDelivered ? '80%' : order.isShipped ? '53%' : order.isPaid ? '26%' : '0%'}` }} 
-          />
-
-          {steps.map((step, idx) => (
-            <div key={idx} className="flex flex-col items-center gap-3 z-10 w-1/4">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all duration-500 shadow-md ${step.done ? 'bg-emerald-500 text-white' : 'bg-white text-slate-300 border-2 border-slate-100'}`}>
-                {step.icon}
-              </div>
-              <div className="text-center">
-                <p className={`text-sm font-bold ${step.done ? 'text-slate-900' : 'text-slate-300'}`}>{step.name}</p>
-                {step.done && step.time && (
-                  <p className="text-[10px] text-slate-400 font-medium mt-0.5">{new Date(step.time).toLocaleDateString()}</p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 space-y-6">
-          {/* Shipping */}
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h2 className="text-lg font-extrabold text-slate-900 mb-5 flex items-center gap-2">
-              <FaMapMarkerAlt className="text-emerald-500" /> Delivery Details
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div>
-                  <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Customer</p>
-                  <p className="text-slate-700 font-bold">{order.user.name}</p>
-                  <p className="text-slate-500 text-sm">{order.user.email}</p>
-               </div>
-               <div>
-                  <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Address</p>
-                  <p className="text-slate-700 font-medium leading-relaxed">
-                    {order.shippingAddress.address}<br/>
-                    {order.shippingAddress.city}, {order.shippingAddress.postalCode}<br/>
-                    {order.shippingAddress.country}
-                  </p>
-               </div>
-            </div>
+    <div className="container mx-auto px-4 py-12 lg:py-20 animate-fade-in relative z-10 w-full flex flex-col items-center">
+      <div className="w-full max-w-6xl relative z-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 bg-slate-900 rounded-[2rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-500/10 transition-colors"></div>
+          
+          <div className="relative z-10">
+            <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter flex items-center gap-3">
+               Order <span className="text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-xl uppercase">#{order._id.slice(-8)}</span>
+            </h1>
+            <p className="text-slate-400 font-medium text-xs uppercase tracking-widest mt-4">
+              Placed {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString()}
+            </p>
           </div>
-
-          {/* Items */}
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h2 className="text-lg font-extrabold text-slate-900 mb-5">Order Items</h2>
-            <div className="divide-y divide-gray-100">
-              {order.orderItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
-                  <div className="w-16 h-16 bg-slate-50 rounded-xl border border-gray-100 p-2 flex-shrink-0">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
-                  </div>
-                  <div className="flex-grow min-w-0">
-                    <Link to={`/product/${item.product}`} className="text-sm font-bold text-slate-800 hover:text-emerald-600 transition-colors line-clamp-1">
-                      {item.name}
-                    </Link>
-                    <p className="text-xs text-slate-400 font-medium mt-0.5">{item.qty} × ₹{item.price.toLocaleString('en-IN')}</p>
-                  </div>
-                  <div className="font-extrabold text-slate-900">₹{(item.qty * item.price).toLocaleString('en-IN')}</div>
-                </div>
-              ))}
-            </div>
+          <div className="flex items-center gap-2 relative z-10">
+             <span className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl border ${order.isDelivered ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border-amber-500/30 shadow-amber-500/10'}`}>
+                {order.isDelivered ? 'Status: Completed' : order.isShipped ? 'Status: In Transit' : order.isPaid ? 'Status: Secured' : 'Status: Awaiting Funds'}
+             </span>
           </div>
         </div>
 
-        <div className="lg:col-span-4">
-          <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 sticky top-28">
-            <h2 className="text-xl font-extrabold text-slate-900 mb-6 pb-4 border-b border-gray-100">Payment Summary</h2>
-            <div className="space-y-3 text-sm mb-5">
-               <div className="flex justify-between text-slate-600"><span>Subtotal</span><span className="font-semibold text-slate-900">₹{order.itemsPrice}</span></div>
-               <div className="flex justify-between text-slate-600"><span>Shipping</span><span className="font-semibold text-slate-900">₹{order.shippingPrice}</span></div>
-            </div>
-            <div className="flex justify-between items-center py-4 border-t border-dashed border-gray-200 mb-6">
-               <span className="font-extrabold text-slate-900 text-lg">Total Amount</span>
-               <span className="text-2xl font-extrabold text-slate-900 text-emerald-600">₹{order.totalPrice}</span>
-            </div>
+        {/* Progress Bar */}
+        <div className="bg-slate-900 p-8 rounded-[2rem] shadow-2xl border border-white/5 mb-10 overflow-x-auto relative">
+          <div className="flex justify-between items-start min-w-[600px] relative mt-4">
+            {/* Connector Line */}
+            <div className="absolute top-6 left-[12%] right-[12%] h-1 bg-white/5 border-y border-white/5 rounded-full" />
+            <div 
+              className="absolute top-6 left-[12%] h-1 bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)] rounded-full transition-all duration-1000" 
+              style={{ width: `${order.isDelivered ? '76%' : order.isShipped ? '50%' : order.isPaid ? '25%' : '0%'}` }} 
+            />
 
-            {/* User Payment Action */}
-            {!order.isPaid && userInfo._id === order.user._id && !showCardForm && (
-              <button
-                type="button"
-                onClick={paymentHandler}
-                disabled={razorpayLoading || (order.paymentMethod === 'Razorpay' && !razorpayConfig)}
-                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-50 mb-4"
-              >
-                {razorpayLoading ? 'Initiating...' : `Pay with ${order.paymentMethod}`}
-              </button>
-            )}
-
-            {/* Dummy Credit Card Form */}
-            {!order.isPaid && userInfo._id === order.user._id && showCardForm && (
-              <div className="animate-fade-in border-t border-gray-100 pt-6 mt-2">
-                <div className="flex justify-between items-center mb-4">
-                   <h3 className="text-sm font-bold text-slate-900">Card Details</h3>
-                   <button onClick={() => setShowCardForm(false)} className="text-[10px] text-slate-400 hover:text-rose-500 font-bold uppercase tracking-wider">Cancel</button>
+            {steps.map((step, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-4 z-10 w-1/4">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl transition-all duration-500 border ${step.done ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.2)]' : 'bg-slate-950 text-slate-600 border-white/5'}`}>
+                  {step.icon}
                 </div>
-                <form onSubmit={dummyPaymentHandler} className="space-y-4">
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Card Number"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50 focus:bg-white focus:border-emerald-500 outline-none text-sm transition-all"
-                      value={cardDetails.number}
-                      onChange={(e) => setCardDetails({...cardDetails, number: e.target.value.replace(/\D/g, '').slice(0, 16)})}
-                      maxLength="16"
-                      required
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder="MM/YY"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50 focus:bg-white focus:border-emerald-500 outline-none text-sm transition-all"
-                      value={cardDetails.expiry}
-                      onChange={(e) => setCardDetails({...cardDetails, expiry: e.target.value})}
-                      required
-                    />
-                    <input
-                      type="password"
-                      placeholder="CVV"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50 focus:bg-white focus:border-emerald-500 outline-none text-sm transition-all"
-                      value={cardDetails.cvv}
-                      onChange={(e) => setCardDetails({...cardDetails, cvv: e.target.value.replace(/\D/g, '').slice(0, 3)})}
-                      maxLength="3"
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={paymentLoading}
-                    className="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-xl transition-all shadow-xl active:scale-[0.98] disabled:opacity-50"
-                  >
-                    {paymentLoading ? <Loader /> : `Confirm & Pay ₹${order.totalPrice}`}
-                  </button>
-                </form>
+                <div className="text-center">
+                  <p className={`text-xs uppercase tracking-widest font-black ${step.done ? 'text-white' : 'text-slate-500'}`}>{step.name}</p>
+                  {step.done && step.time && (
+                    <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest mt-1">{new Date(step.time).toLocaleDateString()}</p>
+                  )}
+                </div>
               </div>
-            )}
+            ))}
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-8 space-y-8">
+            {/* Shipping */}
+            <div className="bg-slate-900 p-8 rounded-[2rem] shadow-2xl border border-white/5 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-500/10 transition-colors"></div>
 
-            {/* Admin Controls */}
-            {userInfo && userInfo.isAdmin && order.isPaid && (
-              <div className="space-y-3 pt-4 border-t border-gray-100">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Admin Settings</p>
-                
-                {/* Ship Button */}
-                {!order.isShipped && (
-                  <button
-                    type="button"
-                    className="w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-900/10 active:scale-[0.98]"
-                    onClick={shipOrderHandler}
-                    disabled={loadingShip}
-                  >
-                    {loadingShip ? <Loader /> : <><FaTruck /> Mark as Shipped</>}
-                  </button>
-                )}
-
-                {/* Deliver Button */}
-                {order.isShipped && !order.isDelivered && (
-                  <button
-                    type="button"
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/10 active:scale-[0.98]"
-                    onClick={deliverOrderHandler}
-                    disabled={loadingDeliver}
-                  >
-                    {loadingDeliver ? <Loader /> : <><FaCheckCircle /> Mark as Delivered</>}
-                  </button>
-                )}
-
-                {order.isDelivered && (
-                  <div className="bg-emerald-50 text-emerald-700 text-center py-3 rounded-xl font-bold text-sm border border-emerald-100">
-                    Order Fulfilled ✅
-                  </div>
-                )}
+              <h2 className="text-xl font-black text-white mb-8 flex items-center gap-3 tracking-tighter relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <FaMapMarkerAlt />
+                </div>
+                Logistics Target
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                 <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
+                    <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mb-2">Entity</p>
+                    <p className="text-white font-black tracking-tight">{order.user.name}</p>
+                    <p className="text-slate-400 text-xs font-medium mt-1">{order.user.email}</p>
+                 </div>
+                 <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
+                    <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mb-2">Coordinates</p>
+                    <p className="text-slate-300 font-medium leading-relaxed text-sm">
+                      {order.shippingAddress.address}<br/>
+                      {order.shippingAddress.city}, {order.shippingAddress.postalCode}<br/>
+                      <span className="uppercase tracking-widest text-[10px] text-emerald-500 font-black mt-2 block">{order.shippingAddress.country}</span>
+                    </p>
+                 </div>
               </div>
-            )}
+            </div>
+
+            {/* Items */}
+            <div className="bg-slate-900 p-8 rounded-[2rem] shadow-2xl border border-white/5 relative overflow-hidden group">
+              <h2 className="text-xl font-black text-white mb-8 flex items-center gap-3 tracking-tighter relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400">
+                  <FaBoxOpen />
+                </div>
+                Cargo Manifest
+              </h2>
+              <div className="space-y-4 relative z-10">
+                {order.orderItems.map((item, index) => (
+                  <div key={index} className="flex items-center gap-5 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-colors">
+                    <div className="w-16 h-16 bg-slate-950 rounded-xl border border-white/10 p-2 flex-shrink-0 flex items-center justify-center">
+                      <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain filter drop-shadow-lg" />
+                    </div>
+                    <div className="flex-grow min-w-0">
+                      <Link to={`/product/${item.product}`} className="text-sm font-black text-white hover:text-emerald-400 transition-colors line-clamp-1 tracking-tight">
+                        {item.name}
+                      </Link>
+                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">{item.qty} Units × ₹{item.price.toLocaleString('en-IN')}</p>
+                    </div>
+                    <div className="font-black text-emerald-400 text-lg tracking-tighter">₹{(item.qty * item.price).toLocaleString('en-IN')}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-4">
+            <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-[2.5rem] shadow-2xl border border-white/10 sticky top-28 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none -z-0"></div>
+
+              <h2 className="text-xl font-black text-white mb-8 pb-4 border-b border-white/10 tracking-tighter relative z-10">Financial Ledger</h2>
+              <div className="space-y-6 text-sm mb-8 relative z-10">
+                 <div className="flex justify-between text-slate-300 font-medium items-center">
+                    <span className="font-black uppercase tracking-widest text-[10px]">Hardware</span>
+                    <span className="font-black text-white text-lg">₹{order.itemsPrice}</span>
+                 </div>
+                 <div className="flex justify-between text-slate-300 font-medium items-center">
+                    <span className="font-black uppercase tracking-widest text-[10px]">Transport</span>
+                    <span className="font-black text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-lg">₹{order.shippingPrice}</span>
+                 </div>
+              </div>
+              <div className="flex justify-between items-center py-6 border-t border-white/10 mb-8 relative z-10">
+                 <span className="font-black text-slate-300 uppercase tracking-widest text-xs">Total Authorization</span>
+                 <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200">₹{order.totalPrice}</span>
+              </div>
+
+              {/* User Payment Action */}
+              {!order.isPaid && userInfo._id === order.user._id && !showCardForm && (
+                <button
+                  type="button"
+                  onClick={paymentHandler}
+                  disabled={razorpayLoading || (order.paymentMethod === 'Razorpay' && !razorpayConfig)}
+                  className="w-full relative overflow-hidden group bg-emerald-500 hover:bg-emerald-400 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 active:scale-[0.98] disabled:opacity-50 mb-6 flex items-center justify-center gap-3 uppercase tracking-widest text-sm z-10"
+                >
+                  <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                  {razorpayLoading ? (
+                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  ) : (
+                     <><FaShieldAlt size={16} /> Execute '{order.paymentMethod}'</>
+                  )}
+                </button>
+              )}
+
+              {/* Dummy Credit Card Form */}
+              {!order.isPaid && userInfo._id === order.user._id && showCardForm && (
+                <div className="animate-fade-in border-t border-white/10 pt-6 mt-2 relative z-10">
+                  <div className="flex justify-between items-center mb-6">
+                     <h3 className="text-xs font-black uppercase tracking-widest text-emerald-400">Card Parameters</h3>
+                     <button onClick={() => setShowCardForm(false)} className="text-[10px] text-slate-500 hover:text-rose-500 font-black uppercase tracking-widest transition-colors py-1 px-2 rounded-lg hover:bg-rose-500/10">Abort</button>
+                  </div>
+                  <form onSubmit={dummyPaymentHandler} className="space-y-5">
+                    <div className="group">
+                      <input
+                        type="text"
+                        placeholder="Card Number"
+                        className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-emerald-500/50 text-white font-medium transition-all outline-none placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10 tracking-widest text-center"
+                        value={cardDetails.number}
+                        onChange={(e) => setCardDetails({...cardDetails, number: e.target.value.replace(/\D/g, '').slice(0, 16)})}
+                        maxLength="16"
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        placeholder="MM/YY"
+                        className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-emerald-500/50 text-white font-medium transition-all outline-none placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10 text-center tracking-widest"
+                        value={cardDetails.expiry}
+                        onChange={(e) => setCardDetails({...cardDetails, expiry: e.target.value})}
+                        required
+                      />
+                      <input
+                        type="password"
+                        placeholder="CVV"
+                        className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-emerald-500/50 text-white font-medium transition-all outline-none placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10 text-center tracking-widest"
+                        value={cardDetails.cvv}
+                        onChange={(e) => setCardDetails({...cardDetails, cvv: e.target.value.replace(/\D/g, '').slice(0, 3)})}
+                        maxLength="3"
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={paymentLoading}
+                      className="w-full relative overflow-hidden group bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 active:scale-[0.98] disabled:opacity-50 mt-6 flex items-center justify-center uppercase tracking-widest text-xs"
+                    >
+                      <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                      {paymentLoading ? (
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      ) : (
+                        `Confirm & Process ₹${order.totalPrice}`
+                      )}
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {/* Admin Controls */}
+              {userInfo && userInfo.isAdmin && order.isPaid && (
+                <div className="space-y-4 pt-6 border-t border-white/10 mt-6 relative z-10">
+                  <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-4">Admin Override</p>
+                  
+                  {/* Ship Button */}
+                  {!order.isShipped && (
+                    <button
+                      type="button"
+                      className="w-full bg-slate-950 hover:bg-black text-white font-black py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg border border-white/10 hover:border-white/20 active:scale-[0.98] uppercase tracking-widest text-xs"
+                      onClick={shipOrderHandler}
+                      disabled={loadingShip}
+                    >
+                      {loadingShip ? (
+                         <div className="w-4 h-4 border-2 border-slate-500 border-t-white rounded-full animate-spin"></div>
+                      ) : (
+                         <><FaTruck size={14} className="text-slate-400" /> Mark Dispatched</>
+                      )}
+                    </button>
+                  )}
+
+                  {/* Deliver Button */}
+                  {order.isShipped && !order.isDelivered && (
+                    <button
+                      type="button"
+                      className="w-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 font-black py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg border border-emerald-500/30 hover:border-emerald-500/50 active:scale-[0.98] uppercase tracking-widest text-xs"
+                      onClick={deliverOrderHandler}
+                      disabled={loadingDeliver}
+                    >
+                      {loadingDeliver ? (
+                         <div className="w-4 h-4 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin"></div>
+                      ) : (
+                         <><FaCheckCircle size={14} /> Mark Received</>
+                      )}
+                    </button>
+                  )}
+
+                  {order.isDelivered && (
+                    <div className="bg-emerald-500/10 text-emerald-400 text-center py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                      Protocol Completed ✅
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
