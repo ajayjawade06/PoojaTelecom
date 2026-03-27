@@ -1,4 +1,171 @@
 const products = [
+  // Flagship Premium Additions
+  {
+    "name": "iPhone 16 Pro Desert Titanium",
+    "image": "https://images.unsplash.com/photo-1727281048805-46f04c7c8c6a?q=80&w=1000",
+    "description": "The latest Apple flagship with A18 Pro chip, Grade 5 Titanium design, and the new Camera Control button. Stunning 120Hz ProMotion display.",
+    "brand": "Apple",
+    "category": "Mobiles",
+    "price": 119900,
+    "countInStock": 15,
+    "rating": 4.9,
+    "numReviews": 342
+  },
+  {
+    "name": "MacBook Pro M4 Pro (2024)",
+    "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1000",
+    "description": "Unprecedented performance with the M4 Pro chip, 14-inch Liquid Retina XDR display, up to 24 hours of battery life, and Thunderbolt 5 support.",
+    "brand": "Apple",
+    "category": "Laptops",
+    "price": 199900,
+    "countInStock": 8,
+    "rating": 4.9,
+    "numReviews": 56
+  },
+  {
+    "name": "Sony Alpha 7R V",
+    "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1000",
+    "description": "High-resolution mirrorless camera with 61MP sensor, AI-based autofocus, and 8K recording. The ultimate tool for professional photography.",
+    "brand": "Sony",
+    "category": "Accessories",
+    "price": 319990,
+    "countInStock": 4,
+    "rating": 4.9,
+    "numReviews": 213
+  },
+  {
+    "name": "iPad Pro M4 (13-inch)",
+    "image": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=1000",
+    "description": "Thinnest Apple product ever. Ultra Retina XDR display, M4 chip, and support for the new Apple Pencil Pro. Redefining what a tablet can do.",
+    "brand": "Apple",
+    "category": "Tablets",
+    "price": 129900,
+    "countInStock": 10,
+    "rating": 4.8,
+    "numReviews": 189
+  },
+  {
+    "name": "Apple Watch Ultra 2 Black",
+    "image": "https://images.unsplash.com/photo-1434493907317-a46b53b81882?q=80&w=1000",
+    "description": "The most rugged and capable Apple Watch. Now in stunning Satin Black Titanium with 3000 nits display and 36-hour battery life.",
+    "brand": "Apple",
+    "category": "Wearables",
+    "price": 89900,
+    "countInStock": 12,
+    "rating": 4.9,
+    "numReviews": 124
+  },
+  {
+    "name": "Sonos Era 300",
+    "image": "https://images.unsplash.com/photo-1545454675-3531b543be5d?q=80&w=1000",
+    "description": "Revolutionary spatial audio speaker with Dolby Atmos support, six drivers for immersive sound, and seamless Wi-Fi/Bluetooth streaming.",
+    "brand": "Sonos",
+    "category": "Audio",
+    "price": 54900,
+    "countInStock": 7,
+    "rating": 4.7,
+    "numReviews": 88
+  },
+  {
+    "name": "DJI Mini 4 Pro",
+    "image": "https://images.unsplash.com/photo-1473968512647-3e44a224fe8f?q=80&w=1000",
+    "description": "Mini drone with 4K/60fps HDR True Vertical Shooting, omnidirectional obstacle sensing, and 34-min flight time. Fly safe and creative.",
+    "brand": "DJI",
+    "category": "Accessories",
+    "price": 85000,
+    "countInStock": 6,
+    "rating": 4.8,
+    "numReviews": 156
+  },
+  {
+    "name": "Samsung Galaxy Fold 6",
+    "image": "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=1000",
+    "description": "The king of foldables. Symmetrical design, Galaxy AI integration, and a massive 7.6\" main display for ultimate productivity.",
+    "brand": "Samsung",
+    "category": "Mobiles",
+    "price": 164999,
+    "countInStock": 9,
+    "rating": 4.7,
+    "numReviews": 92
+  },
+  {
+    "name": "SteelSeries Arctis Nova Pro",
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000",
+    "description": "Top-tier gaming headset with Hi-Res Audio, Multi-System Connect, and Active Noise Cancellation. The choice of pro gamers.",
+    "brand": "SteelSeries",
+    "category": "Audio",
+    "price": 34999,
+    "countInStock": 11,
+    "rating": 4.8,
+    "numReviews": 345
+  },
+  {
+    "name": "ASUS ROG Zephyrus G16",
+    "image": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=1000",
+    "description": "OLED gaming laptop with Intel Core Ultra 9, RTX 4080, and a stunning 240Hz refresh rate. Sleek CNC-machined build.",
+    "brand": "ASUS",
+    "category": "Laptops",
+    "price": 289990,
+    "countInStock": 5,
+    "rating": 4.9,
+    "numReviews": 42
+  },
+  {
+    "name": "Google Pixel 9 Pro XL",
+    "image": "https://images.unsplash.com/photo-1610633030088-2ad3d8b3815c?q=80&w=1000",
+    "description": "Google's most powerful phone with Tensor G4, pro-level triple camera system, and seven years of OS updates.",
+    "brand": "Google",
+    "category": "Mobiles",
+    "price": 109900,
+    "countInStock": 14,
+    "rating": 4.6,
+    "numReviews": 112
+  },
+  {
+    "name": "Razer Basilisk V3 Pro",
+    "image": "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=1000",
+    "description": "The most advanced wireless gaming mouse with 13-zone Chroma lighting, Hyperscroll tilt wheel, and 30K DPI sensor.",
+    "brand": "Razer",
+    "category": "Accessories",
+    "price": 14999,
+    "countInStock": 22,
+    "rating": 4.7,
+    "numReviews": 456
+  },
+  {
+    "name": "Samsung Odyssey G9 OLED",
+    "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=1000",
+    "description": "Ultrawide 49-inch curved gaming monitor with 240Hz, 0.03ms response time, and stunning OLED colors. Immersive beyond limits.",
+    "brand": "Samsung",
+    "category": "Accessories",
+    "price": 129990,
+    "countInStock": 3,
+    "rating": 4.9,
+    "numReviews": 28
+  },
+  {
+    "name": "Marshall Emberton II",
+    "image": "https://images.unsplash.com/photo-1545454675-3531b543be5d?q=80&w=1000",
+    "description": "Iconic portable speaker with 30+ hours of playtime, IP67 dust/water resistance, and the signature Marshall rock'n'roll sound.",
+    "brand": "Marshall",
+    "category": "Audio",
+    "price": 14999,
+    "countInStock": 18,
+    "rating": 4.8,
+    "numReviews": 567
+  },
+  {
+    "name": "Apple AirTag (4 Pack)",
+    "image": "https://images.unsplash.com/photo-1619946765391-7f97576572e4?q=80&w=1000",
+    "description": "Keep track of your keys, wallet, luggage, and backpack in the Find My app. Simple one-tap setup with iPhone or iPad.",
+    "brand": "Apple",
+    "category": "Accessories",
+    "price": 9900,
+    "countInStock": 45,
+    "rating": 4.8,
+    "numReviews": 1200
+  },
+
   // Mobiles
   {
     "name": "Samsung Galaxy S24 Ultra",

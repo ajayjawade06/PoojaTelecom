@@ -13,7 +13,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden flex flex-col h-full group relative hover:-translate-y-3 ring-1 ring-slate-900/5">
+    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-white/5 shadow-sm hover:shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden flex flex-col h-full group relative hover:-translate-y-3 ring-1 ring-slate-900/5">
       
       {/* Dynamic Status Badges */}
       <div className="absolute top-6 left-6 z-20 flex flex-col gap-2 pointer-events-none">
@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* Image Container with Hover Actions */}
-      <div className="relative h-72 overflow-hidden bg-slate-50 flex items-center justify-center p-12 group-hover:bg-white transition-colors duration-700">
+      <div className="relative h-72 overflow-hidden bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center p-12 group-hover:bg-white dark:group-hover:bg-slate-800 transition-colors duration-700">
         <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
         <Link to={`/product/${product._id}`} className="block w-full h-full z-10">
           <img 
@@ -51,7 +51,7 @@ const ProductCard = ({ product }) => {
            <button 
              onClick={addToCartHandler}
              disabled={product.countInStock === 0}
-             className="w-12 h-12 bg-white text-slate-900 rounded-2xl flex items-center justify-center shadow-2xl hover:bg-emerald-500 hover:text-white transition-all active:scale-90 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+             className="w-12 h-12 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl flex items-center justify-center shadow-2xl hover:bg-emerald-500 hover:text-white transition-all active:scale-90 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
              title="Add to Cart"
            >
               <FaShoppingCart size={18} className="group-hover/btn:animate-bounce" />
@@ -67,33 +67,33 @@ const ProductCard = ({ product }) => {
       </div>
       
       {/* Content Area */}
-      <div className="p-8 flex-grow flex flex-col bg-white border-t border-slate-50 relative z-10">
+      <div className="p-8 flex-grow flex flex-col bg-white dark:bg-slate-900 border-t border-slate-50 dark:border-white/5 relative z-10">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] bg-slate-50 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-100 dark:border-white/5">
             {product.brand}
           </span>
-          <div className="flex items-center gap-1.5 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100/50">
-             <span className="text-emerald-700 font-extrabold text-xs">{product.rating}</span>
+          <div className="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-100/50 dark:border-emerald-500/20">
+             <span className="text-emerald-700 dark:text-emerald-400 font-extrabold text-xs">{product.rating}</span>
              <FaStar className="text-emerald-500 text-[10px]" />
           </div>
         </div>
         
         <Link to={`/product/${product._id}`}>
-          <h3 className="text-lg font-black text-slate-800 mb-4 line-clamp-2 leading-tight group-hover:text-emerald-600 transition-colors tracking-tight">
+          <h3 className="text-lg font-black text-slate-800 dark:text-gray-100 mb-4 line-clamp-2 leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors tracking-tight">
             {product.name}
           </h3>
         </Link>
         
         <div className="mt-auto">
           <div className="flex items-baseline gap-3 mb-4">
-            <span className="text-3xl font-black text-slate-900 tracking-tighter">
+            <span className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">
               ₹{product.price.toLocaleString('en-IN')}
             </span>
             <span className="text-xs text-slate-400 line-through font-bold">₹{(product.price * 1.2).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-            <span className="text-[10px] bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-lg font-black uppercase">20% Off</span>
+            <span className="text-[10px] bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-lg font-black uppercase">20% Off</span>
           </div>
 
-          <div className="flex items-center gap-3 pt-6 border-t border-slate-50 mt-4">
+          <div className="flex items-center gap-3 pt-6 border-t border-slate-50 dark:border-white/5 mt-4">
              <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                 <FaCheckCircle className="text-emerald-500" />
                 <span>Free Express Delivery</span>

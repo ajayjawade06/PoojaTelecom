@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
@@ -21,9 +22,10 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 
 const App = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 text-gray-900 font-sans">
-      <Header />
-      <main className="flex-grow pt-24">
+    <ThemeProvider>
+      <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-500">
+        <Header />
+        <main className="flex-grow pt-24">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/search/:keyword" element={<HomePage />} />
@@ -55,6 +57,7 @@ const App = () => {
       </main>
       <Footer />
     </div>
+    </ThemeProvider>
   );
 };
 
