@@ -49,21 +49,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (userExists) {
     if (!userExists.isVerified) {
-      // Resend OTP if they registered but never verified
-      const otp = generateOTP();
-      userExists.verificationCode = otp;
-      userExists.verificationCodeExpiry = new Date(Date.now() + 10 * 60 * 1000);
-      await userExists.save(); // CRITICAL: Save new OTP to DB
-      try {
-        await sendVerificationEmail(email, userExists.name, otp);
-        return res.status(200).json({ message: 'Verification code resent. Please check your email.', email });
-      } catch (emailError) {
-        console.error('Email resend failed:', emailError.message);
-        res.status(500).json({ 
-          message: `Verification code failed to send: ${emailError.message}. Please check your email settings.`,
-          email 
-        });
-      }
+      // Auto-verify existing unverified account (temporary - email disabled)
+      userExists.isVerified = true;
+      await userExists.save();
+      return res.status(200).json({ 
+        message: 'Account verified! You can now log in.', 
+        email 
+      });
     }
     res.status(400);
     throw new Error('An account with this email already exists');
