@@ -11,9 +11,12 @@ export const sendVerificationEmail = async (toEmail, name, code) => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    connectionTimeout: 5000,
+    socketTimeout: 5000,
   });
 
-  await transporter.sendMail({
+  // Add 10 second timeout to email sending
+  const emailPromise = transporter.sendMail({
     from: `"Pooja Telecom" <${process.env.EMAIL_USER}>`,
     to: toEmail,
     subject: `Your Verification Code: ${code}`,
@@ -39,4 +42,11 @@ export const sendVerificationEmail = async (toEmail, name, code) => {
     </div>
     `,
   });
+
+  // Add timeout wrapper
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Email sending timeout - server took too long')), 10000)
+  );
+
+  await Promise.race([emailPromise, timeoutPromise]);
 };
