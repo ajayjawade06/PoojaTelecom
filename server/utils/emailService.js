@@ -11,6 +11,7 @@ export const sendVerificationEmail = async (toEmail, name, code) => {
   const msg = {
     to: toEmail,
     from: process.env.EMAIL_USER || 'noreply@poojatelecom.com',
+    replyTo: toEmail, // User's email for replies
     subject: `Your Verification Code: ${code}`,
     html: `
     <div style="font-family: Arial, sans-serif; max-width: 520px; margin: auto; background: #f9fafb; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">

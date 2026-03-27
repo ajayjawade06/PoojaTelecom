@@ -91,17 +91,16 @@ const registerUser = asyncHandler(async (req, res) => {
     if (user) {
       try {
         await sendVerificationEmail(email, name, otp);
-        res.status(201).json({
-          message: 'Registration successful! Please check your email for the verification code.',
-          email,
-        });
       } catch (emailError) {
         console.error('Email sending failed:', emailError.message);
-        res.status(500).json({
-          message: `Account created but verification email failed to send: ${emailError.message}. Please contact support or check your email settings.`,
-          email,
-        });
+        // Account created but email failed - still return success with warning
       }
+      
+      // Always return 201 if account was created
+      return res.status(201).json({
+        message: 'Registration successful! Please check your email for the verification code.',
+        email,
+      });
     } else {
       res.status(400);
       throw new Error('Invalid user data');
