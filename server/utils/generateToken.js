@@ -1,6 +1,3 @@
-git rm --cached -r node_modules/
-git rm --cached .env
-git commit -m "Remove node_modules and .env from git tracking"
 import jwt from 'jsonwebtoken';
 
 const generateToken = (res, userId) => {
