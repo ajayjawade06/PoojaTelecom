@@ -14,7 +14,11 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:5173', credentials: true })); // Vite default port
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://pooja-telecom.vercel.app'
+];
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
