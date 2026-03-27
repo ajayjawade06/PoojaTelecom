@@ -5,8 +5,8 @@ import CheckoutSteps from '../components/CheckoutSteps';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { useCreateOrderMutation } from '../redux/slices/ordersApiSlice';
-import { clearCartItems } from '../redux/slices/cartSlice';
-import { FaMapMarkerAlt, FaShieldAlt, FaLock } from 'react-icons/fa';
+import { clearCartItems, savePaymentMethod } from '../redux/slices/cartSlice';
+import { FaMapMarkerAlt, FaShieldAlt, FaLock, FaCreditCard, FaWallet } from 'react-icons/fa';
 
 const PlaceOrderPage = () => {
   const navigate = useNavigate();
@@ -61,6 +61,44 @@ const PlaceOrderPage = () => {
               {cart.shippingAddress.address},<br />
               {cart.shippingAddress.city}, {cart.shippingAddress.postalCode},<br />
               {cart.shippingAddress.country}
+            </div>
+          </div>
+
+          {/* Payment Method Selection */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+              <FaCreditCard className="text-emerald-500" /> Payment Method
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <label className={`cursor-pointer rounded-xl border-2 p-4 flex items-center gap-3 transition-all ${cart.paymentMethod === 'Credit Card' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-100 hover:border-emerald-200'}`}>
+                <input 
+                  type="radio" 
+                  name="paymentMethod" 
+                  value="Credit Card" 
+                  checked={cart.paymentMethod === 'Credit Card'} 
+                  onChange={(e) => dispatch(savePaymentMethod(e.target.value))}
+                  className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                />
+                <div>
+                   <div className="font-bold text-slate-800">Credit Card</div>
+                   <div className="text-xs text-slate-500 mt-0.5">Demo predefined card</div>
+                </div>
+              </label>
+
+              <label className={`cursor-pointer rounded-xl border-2 p-4 flex items-center gap-3 transition-all ${cart.paymentMethod === 'Razorpay' || !cart.paymentMethod ? 'border-emerald-500 bg-emerald-50' : 'border-slate-100 hover:border-emerald-200'}`}>
+                <input 
+                  type="radio" 
+                  name="paymentMethod" 
+                  value="Razorpay" 
+                  checked={cart.paymentMethod === 'Razorpay' || !cart.paymentMethod} 
+                  onChange={(e) => dispatch(savePaymentMethod(e.target.value))}
+                  className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                />
+                <div>
+                   <div className="font-bold text-slate-800">Razorpay</div>
+                   <div className="text-xs text-slate-500 mt-0.5">UPI, Cards, NetBanking</div>
+                </div>
+              </label>
             </div>
           </div>
 

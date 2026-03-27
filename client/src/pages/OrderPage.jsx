@@ -17,6 +17,13 @@ import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt } from 
 const OrderPage = () => {
   const { id: orderId } = useParams();
   const [razorpayLoading, setRazorpayLoading] = useState(false);
+  const [showCardForm, setShowCardForm] = useState(false);
+  const [cardDetails, setCardDetails] = useState({
+    number: '4242424242424242',
+    expiry: '12/28',
+    cvv: '123',
+  });
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   const {
     data: order,
@@ -60,7 +67,11 @@ const OrderPage = () => {
   ];
 
   const paymentHandler = async () => {
-    // ... same payment handler
+    if (order.paymentMethod === 'Credit Card') {
+      setShowCardForm(true);
+      return;
+    }
+
     const res = await loadRazorpayScript();
     if (!res) { alert('Razorpay SDK failed to load.'); return; }
     setRazorpayLoading(true);
@@ -89,6 +100,31 @@ const OrderPage = () => {
     } finally {
       setRazorpayLoading(false);
     }
+  };
+
+  const dummyPaymentHandler = async (e) => {
+    e.preventDefault();
+    setPaymentLoading(true);
+    
+    // Simulate network delay
+    setTimeout(async () => {
+      try {
+        await payOrder({ 
+          orderId, 
+          details: { 
+            id: 'dummy_card_' + Math.random().toString(36).substr(2, 9),
+            status: 'COMPLETED'
+          } 
+        }).unwrap();
+        setShowCardForm(false);
+        refetch();
+      } catch (err) {
+        console.error(err);
+        alert('Payment processing failed');
+      } finally {
+        setPaymentLoading(false);
+      }
+    }, 1500);
   };
 
   return isLoading ? (
@@ -196,15 +232,64 @@ const OrderPage = () => {
             </div>
 
             {/* User Payment Action */}
-            {!order.isPaid && userInfo._id === order.user._id && (
+            {!order.isPaid && userInfo._id === order.user._id && !showCardForm && (
               <button
                 type="button"
                 onClick={paymentHandler}
-                disabled={razorpayLoading || !razorpayConfig}
+                disabled={razorpayLoading || (order.paymentMethod === 'Razorpay' && !razorpayConfig)}
                 className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-50 mb-4"
               >
-                {razorpayLoading ? 'Initiating...' : 'Pay with Razorpay'}
+                {razorpayLoading ? 'Initiating...' : `Pay with ${order.paymentMethod}`}
               </button>
+            )}
+
+            {/* Dummy Credit Card Form */}
+            {!order.isPaid && userInfo._id === order.user._id && showCardForm && (
+              <div className="animate-fade-in border-t border-gray-100 pt-6 mt-2">
+                <div className="flex justify-between items-center mb-4">
+                   <h3 className="text-sm font-bold text-slate-900">Card Details</h3>
+                   <button onClick={() => setShowCardForm(false)} className="text-[10px] text-slate-400 hover:text-rose-500 font-bold uppercase tracking-wider">Cancel</button>
+                </div>
+                <form onSubmit={dummyPaymentHandler} className="space-y-4">
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Card Number"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50 focus:bg-white focus:border-emerald-500 outline-none text-sm transition-all"
+                      value={cardDetails.number}
+                      onChange={(e) => setCardDetails({...cardDetails, number: e.target.value.replace(/\D/g, '').slice(0, 16)})}
+                      maxLength="16"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="MM/YY"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50 focus:bg-white focus:border-emerald-500 outline-none text-sm transition-all"
+                      value={cardDetails.expiry}
+                      onChange={(e) => setCardDetails({...cardDetails, expiry: e.target.value})}
+                      required
+                    />
+                    <input
+                      type="password"
+                      placeholder="CVV"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50 focus:bg-white focus:border-emerald-500 outline-none text-sm transition-all"
+                      value={cardDetails.cvv}
+                      onChange={(e) => setCardDetails({...cardDetails, cvv: e.target.value.replace(/\D/g, '').slice(0, 3)})}
+                      maxLength="3"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={paymentLoading}
+                    className="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-xl transition-all shadow-xl active:scale-[0.98] disabled:opacity-50"
+                  >
+                    {paymentLoading ? <Loader /> : `Confirm & Pay ₹${order.totalPrice}`}
+                  </button>
+                </form>
+              </div>
             )}
 
             {/* Admin Controls */}

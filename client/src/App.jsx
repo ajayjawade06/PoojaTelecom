@@ -23,7 +23,7 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 const App = () => {
   return (
     <ThemeProvider>
-      <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-500">
+      <div className="flex flex-col min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans transition-colors duration-500">
         <Header />
         <main className="flex-grow pt-24">
         <Routes>
