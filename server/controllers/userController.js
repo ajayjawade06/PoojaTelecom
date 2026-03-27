@@ -18,12 +18,6 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
-    // Block login if email not verified
-    if (!user.isVerified) {
-      res.status(401);
-      throw new Error('Please verify your email address before logging in.');
-    }
-
     generateToken(res, user._id);
 
     res.json({
@@ -83,22 +77,22 @@ const registerUser = asyncHandler(async (req, res) => {
       name,
       email,
       password,
-      isVerified: false,
+      isVerified: true, // TEMPORARY: Auto-verify until SendGrid is fixed
       verificationCode: otp,
       verificationCodeExpiry: expiry,
     });
 
     if (user) {
+      // Try to send email but don't fail if it errors (for now)
       try {
         await sendVerificationEmail(email, name, otp);
       } catch (emailError) {
-        console.error('Email sending failed:', emailError.message);
-        // Account created but email failed - still return success with warning
+        console.error('Email sending skipped (temporarily):', emailError.message);
       }
       
-      // Always return 201 if account was created
+      // Always return success - user is auto-verified
       return res.status(201).json({
-        message: 'Registration successful! Please check your email for the verification code.',
+        message: 'Registration successful! You can now log in.',
         email,
       });
     } else {
