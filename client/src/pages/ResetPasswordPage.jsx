@@ -120,6 +120,29 @@ const ResetPasswordPage = () => {
                 />
                 <FaKey className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-hover:text-emerald-500 transition-colors" size={14} />
               </div>
+              {/* Timer & Resend — right below OTP input */}
+              <div className="flex flex-col items-center gap-2 pt-2">
+                <div className="text-[12px] font-bold text-slate-500 flex items-center gap-1.5 bg-slate-100 dark:bg-white/5 py-1.5 px-4 rounded-full">
+                   <FaClock className="text-emerald-500" size={10} />
+                   <span>Expires in:</span> 
+                   <span className={`font-black font-mono tracking-wider ${timeLeft <= 60 ? 'text-rose-500' : 'text-emerald-500'}`}>{formatTime(timeLeft)}</span>
+                </div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                  Didn't receive it?{' '}
+                  {timeLeft > 0 ? (
+                    <span className="text-slate-300 dark:text-slate-600 ml-1 cursor-not-allowed">Resend OTP</span>
+                  ) : (
+                    <button 
+                      type="button" 
+                      onClick={resendHandler}
+                      disabled={isResendLoading}
+                      className="text-emerald-500 font-black hover:underline cursor-pointer ml-1 disabled:opacity-50"
+                    >
+                      {isResendLoading ? 'Sending...' : 'Resend OTP'}
+                    </button>
+                  )}
+                </p>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -171,30 +194,8 @@ const ResetPasswordPage = () => {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-slate-100 dark:border-white/5 flex flex-col items-center justify-center gap-2 text-center">
-            <div className="text-[12px] font-bold text-slate-500 flex items-center gap-1.5 mb-1 bg-slate-100 dark:bg-white/5 py-1 px-3 rounded-full">
-               <FaClock className="text-emerald-500" size={10} />
-               <span>Code expires in:</span> 
-               <span className="text-emerald-500 font-black font-mono tracking-wider">{formatTime(timeLeft)}</span>
-            </div>
-            
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-2">
-              Didn't receive it?{' '}
-              {timeLeft > 0 ? (
-                <span className="text-slate-300 dark:text-slate-600 ml-1 cursor-not-allowed">Resend OTP</span>
-              ) : (
-                <button 
-                  type="button" 
-                  onClick={resendHandler}
-                  disabled={isResendLoading}
-                  className="text-emerald-500 font-black hover:underline cursor-pointer ml-1 disabled:opacity-50"
-                >
-                  {isResendLoading ? 'Sending...' : 'Resend OTP'}
-                </button>
-              )}
-            </p>
-
-            <Link to="/login" className="text-[10px] uppercase tracking-widest font-black text-slate-400 hover:text-emerald-500 transition-colors mt-2">
+          <div className="mt-8 pt-6 border-t border-slate-100 dark:border-white/5 text-center">
+            <Link to="/login" className="text-[10px] uppercase tracking-widest font-black text-slate-400 hover:text-emerald-500 transition-colors">
               Cancel & Return
             </Link>
           </div>

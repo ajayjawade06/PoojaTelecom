@@ -141,10 +141,34 @@ const VerifyEmailPage = () => {
               ))}
             </div>
 
+            {/* Timer & Resend — right below OTP inputs */}
+            <div className="flex flex-col items-center gap-2">
+              <div className="text-[12px] font-bold text-slate-500 flex items-center gap-1.5 bg-slate-100 dark:bg-white/5 py-1.5 px-4 rounded-full">
+                 <FaClock className="text-emerald-500" size={10} />
+                 <span>Expires in:</span> 
+                 <span className={`font-black font-mono tracking-wider ${timeLeft <= 60 ? 'text-rose-500' : 'text-emerald-500'}`}>{formatTime(timeLeft)}</span>
+              </div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                Didn't receive it?{' '}
+                {timeLeft > 0 ? (
+                  <span className="text-slate-300 dark:text-slate-600 ml-1 cursor-not-allowed">Resend OTP</span>
+                ) : (
+                  <button 
+                    type="button" 
+                    onClick={resendHandler}
+                    disabled={isResendLoading}
+                    className="text-emerald-500 font-black hover:underline cursor-pointer ml-1 disabled:opacity-50"
+                  >
+                    {isResendLoading ? 'Sending...' : 'Resend OTP'}
+                  </button>
+                )}
+              </p>
+            </div>
+
             <button
               type="submit"
               disabled={isLoading || code.join('').length < 6}
-              className="w-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 h-14 rounded-2xl font-black text-[12px] uppercase tracking-widest shadow-xl hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 mt-8 relative overflow-hidden group/btn disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 h-14 rounded-2xl font-black text-[12px] uppercase tracking-widest shadow-xl hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 relative overflow-hidden group/btn disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-500"></div>
               {isLoading ? (
@@ -154,30 +178,6 @@ const VerifyEmailPage = () => {
               )}
             </button>
           </form>
-
-          <div className="mt-8 pt-6 border-t border-slate-100 dark:border-white/5 flex flex-col items-center justify-center gap-2 text-center">
-            <div className="text-[12px] font-bold text-slate-500 flex items-center gap-1.5 mb-1 bg-slate-100 dark:bg-white/5 py-1 px-3 rounded-full">
-               <FaClock className="text-emerald-500" size={10} />
-               <span>Code expires in:</span> 
-               <span className="text-emerald-500 font-black font-mono tracking-wider">{formatTime(timeLeft)}</span>
-            </div>
-            
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-2">
-              Didn't receive it?{' '}
-              {timeLeft > 0 ? (
-                <span className="text-slate-300 dark:text-slate-600 ml-1 cursor-not-allowed">Resend OTP</span>
-              ) : (
-                <button 
-                  type="button" 
-                  onClick={resendHandler}
-                  disabled={isResendLoading}
-                  className="text-emerald-500 font-black hover:underline cursor-pointer ml-1 disabled:opacity-50"
-                >
-                  {isResendLoading ? 'Sending...' : 'Resend OTP'}
-                </button>
-              )}
-            </p>
-          </div>
         </div>
       </div>
     </div>
