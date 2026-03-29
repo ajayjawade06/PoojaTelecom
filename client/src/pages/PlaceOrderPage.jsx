@@ -41,15 +41,15 @@ const PlaceOrderPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 lg:py-20 animate-fade-in relative z-10 w-full flex flex-col items-center">
-      <div className="w-full max-w-6xl relative z-10">
+    <div className="container mx-auto px-4 py-8 lg:py-12 animate-fade-in relative z-10 w-full flex flex-col items-center">
+      <div className="w-full max-w-5xl relative z-10">
         <CheckoutSteps step1 step2 step3 />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Left: details */}
           <div className="lg:col-span-8 space-y-8">
             {/* Shipping Address */}
-            <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 p-8 relative overflow-hidden group transition-colors duration-300">
+            <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 p-6 relative overflow-hidden group transition-colors duration-300">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-500/10 transition-colors"></div>
               
               <div className="flex items-center justify-between mb-6 relative z-10">
@@ -72,10 +72,10 @@ const PlaceOrderPage = () => {
             </div>
 
             {/* Payment Method Selection */}
-            <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 p-8 relative overflow-hidden group transition-colors duration-300">
+            <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 p-6 relative overflow-hidden group transition-colors duration-300">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-blue-500/10 transition-colors"></div>
 
-              <h2 className="text-xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3 tracking-tighter relative z-10">
+              <h2 className="text-lg font-black text-slate-900 dark:text-white mb-4 flex items-center gap-3 tracking-tighter relative z-10">
                 <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-500 dark:text-blue-400">
                   <FaCreditCard />
                 </div>
@@ -115,8 +115,8 @@ const PlaceOrderPage = () => {
             </div>
 
             {/* Order Items */}
-            <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 p-8 relative overflow-hidden group transition-colors duration-300">
-              <h2 className="text-xl font-black text-slate-900 dark:text-white mb-8 flex items-center gap-3 tracking-tighter relative z-10">
+            <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 p-6 relative overflow-hidden group transition-colors duration-300">
+              <h2 className="text-lg font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3 tracking-tighter relative z-10">
                 <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-500 dark:text-purple-400">
                   <FaBox />
                 </div>
@@ -149,10 +149,10 @@ const PlaceOrderPage = () => {
 
           {/* Right: Summary */}
           <div className="lg:col-span-4">
-            <div className="bg-gradient-to-br from-slate-100 to-white dark:from-slate-800 dark:to-slate-900 rounded-[2.5rem] shadow-xl dark:shadow-2xl p-8 sticky top-28 border border-slate-200 dark:border-white/10 relative overflow-hidden transition-colors duration-300">
+            <div className="bg-gradient-to-br from-slate-100 to-white dark:from-slate-800 dark:to-slate-900 rounded-[1.5rem] shadow-xl dark:shadow-2xl p-6 sticky top-28 border border-slate-200 dark:border-white/10 relative overflow-hidden transition-colors duration-300">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none -z-0"></div>
               
-              <h2 className="text-xl font-black text-slate-900 dark:text-white mb-8 pb-4 border-b border-slate-200 dark:border-white/10 relative z-10 tracking-tighter">Order Summary</h2>
+              <h2 className="text-lg font-black text-slate-900 dark:text-white mb-6 pb-4 border-b border-slate-200 dark:border-white/10 relative z-10 tracking-tighter">Order Summary</h2>
 
               <div className="space-y-6 text-sm mb-8 relative z-10">
                 <div className="flex justify-between items-center text-slate-600 dark:text-slate-300 font-medium">
@@ -183,7 +183,7 @@ const PlaceOrderPage = () => {
               )}
 
               <button
-                className="w-full relative overflow-hidden group bg-emerald-500 hover:bg-emerald-400 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] mb-6 flex items-center justify-center gap-3 uppercase tracking-widest text-sm z-10"
+                className="w-full relative overflow-hidden group bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-xl transition-all shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] mb-6 flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] z-10"
                 disabled={cart.cartItems.length === 0 || isLoading}
                 onClick={placeOrderHandler}
               >

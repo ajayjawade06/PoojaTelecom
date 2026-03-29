@@ -13,7 +13,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-white/5 shadow-lg dark:shadow-2xl hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden flex flex-col h-full group relative hover:-translate-y-3 hover:border-emerald-500/20 dark:hover:border-white/10">
+    <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] border border-slate-100 dark:border-white/5 shadow-lg dark:shadow-2xl hover:shadow-[0_0_25px_rgba(16,185,129,0.12)] transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden flex flex-col h-full group relative hover:-translate-y-2 hover:border-emerald-500/20 dark:hover:border-white/10">
       
       {/* Dynamic Status Badges */}
       <div className="absolute top-6 left-6 z-20 flex flex-col gap-2 pointer-events-none">
@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* Image Container with Hover Actions */}
-      <div className="relative h-72 overflow-hidden bg-slate-100 dark:bg-slate-950 flex items-center justify-center p-12 group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors duration-700">
+      <div className="relative h-60 overflow-hidden bg-slate-100 dark:bg-slate-950 flex items-center justify-center p-8 group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors duration-700">
         <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
         <Link to={`/product/${product._id}`} className="block w-full h-full z-10">
           <img 
@@ -67,7 +67,7 @@ const ProductCard = ({ product }) => {
       </div>
       
       {/* Content Area */}
-      <div className="p-8 flex-grow flex flex-col bg-white dark:bg-slate-900 relative z-10 transition-colors duration-300">
+      <div className="p-6 flex-grow flex flex-col bg-white dark:bg-slate-900 relative z-10 transition-colors duration-300">
         <div className="flex items-center justify-between mb-4">
           <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-3 py-1 rounded-full border border-slate-200 dark:border-white/5">
             {product.brand}
@@ -79,22 +79,22 @@ const ProductCard = ({ product }) => {
         </div>
         
         <Link to={`/product/${product._id}`}>
-          <h3 className="text-lg font-black text-slate-900 dark:text-white mb-4 line-clamp-2 leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors tracking-tight">
+          <h3 className="text-sm font-black text-slate-900 dark:text-white mb-2 line-clamp-2 leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors tracking-tight">
             {product.name}
           </h3>
         </Link>
         
         <div className="mt-auto">
-          <div className="flex items-baseline gap-3 mb-4">
-            <span className="text-3xl font-black text-emerald-400 tracking-tighter drop-shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+          <div className="flex items-baseline gap-2 mb-3">
+            <span className="text-2xl font-black text-emerald-400 tracking-tighter drop-shadow-[0_0_10px_rgba(16,185,129,0.2)]">
               ₹{product.price.toLocaleString('en-IN')}
             </span>
-            <span className="text-xs text-slate-500 line-through font-bold">₹{(product.price * 1.2).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-            <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-lg border border-emerald-500/30 font-black uppercase tracking-widest">20% Off</span>
+            <span className="text-[10px] text-slate-500 line-through font-bold">₹{(product.price * 1.2).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+            <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-lg border border-emerald-500/30 font-black uppercase tracking-widest">20% Off</span>
           </div>
 
-          <div className="flex items-center gap-3 pt-6 border-t border-slate-100 dark:border-white/5 mt-4">
-             <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+          <div className="flex items-center gap-2 pt-4 border-t border-slate-100 dark:border-white/5 mt-3">
+             <div className="flex items-center gap-2 text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                 <FaCheckCircle className="text-emerald-500" />
                 <span>Fast Shipping Available</span>
              </div>

@@ -57,21 +57,21 @@ const Header = () => {
         <div className="flex items-center justify-between gap-4 md:gap-8 h-16">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 shrink-0 group">
-            <div className="bg-emerald-500 text-white p-2.5 rounded-2xl group-hover:rotate-12 transition-all shadow-xl shadow-emerald-500/20 active:scale-90">
-              <FaStore size={24} />
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+            <div className="bg-emerald-500 text-white p-2 rounded-xl group-hover:rotate-12 transition-all shadow-xl shadow-emerald-500/20 active:scale-90">
+              <FaStore size={20} />
             </div>
-            <span className={`font-black text-2xl tracking-tighter transition-colors ${isScrolled ? 'text-slate-900 dark:text-white' : 'text-white'}`}>
+            <span className={`font-black text-xl tracking-tighter transition-colors ${isScrolled ? 'text-slate-900 dark:text-white' : 'text-white'}`}>
               POOJA<span className="text-emerald-500">TELECOM</span>
             </span>
           </Link>
 
           {/* Centered Search Bar */}
-          <form onSubmit={submitHandler} className="hidden md:flex flex-grow max-w-xl relative group">
+          <form onSubmit={submitHandler} className="hidden md:flex flex-grow max-w-lg relative group">
             <input
               type="text"
               placeholder="Search latest gadgets..."
-              className={`w-full py-3.5 pl-6 pr-14 rounded-2xl text-sm font-bold border-2 transition-all outline-none ${
+              className={`w-full py-2.5 pl-6 pr-14 rounded-xl text-xs font-bold border-2 transition-all outline-none ${
                 isScrolled 
                 ? 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-white/5 focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 focus:shadow-xl focus:shadow-emerald-500/5 text-slate-900 dark:text-white' 
                 : 'bg-white/10 border-transparent focus:bg-white focus:text-slate-900 focus:border-emerald-400 text-white placeholder-slate-400 backdrop-blur-md'
@@ -79,8 +79,8 @@ const Header = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-emerald-500 hover:scale-110 active:scale-95 transition-all">
-              <FaSearch size={18} />
+            <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-emerald-500 hover:scale-110 active:scale-95 transition-all">
+              <FaSearch size={14} />
             </button>
           </form>
 
@@ -90,9 +90,9 @@ const Header = () => {
             {/* Theme Toggle */}
             <button 
               onClick={toggleTheme}
-              className={`p-3 rounded-xl transition-all ${isScrolled ? 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white/80 hover:bg-white/10'}`}
+              className={`p-2.5 rounded-xl transition-all ${isScrolled ? 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800' : 'text-white/80 hover:bg-white/10'}`}
             >
-               {theme === 'dark' ? <FaSun size={18} className="text-amber-400" /> : <FaMoon size={18} />}
+               {theme === 'dark' ? <FaSun size={16} className="text-amber-400" /> : <FaMoon size={16} />}
             </button>
 
             {/* Login/Profile */}
@@ -145,10 +145,10 @@ const Header = () => {
 
             {/* Cart */}
             <Link to="/cart" className="relative group active:scale-95 transition-transform">
-              <div className={`p-3.5 rounded-2xl transition-all shadow-xl hover:-translate-y-1 ${
-                isScrolled ? 'bg-slate-900 dark:bg-emerald-500 text-white shadow-slate-900/20' : 'bg-emerald-500 text-white shadow-emerald-500/30'
+              <div className={`p-3 rounded-xl transition-all shadow-xl hover:-translate-y-1 ${
+                isScrolled ? 'bg-slate-900 dark:bg-emerald-50 text-white shadow-slate-900/20' : 'bg-emerald-500 text-white shadow-emerald-500/30'
               }`}>
-                <FaShoppingCart size={22} />
+                <FaShoppingCart size={20} />
               </div>
               {cartItems.length > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-lg border-2 border-white dark:border-slate-900 shadow-2xl animate-bounce">

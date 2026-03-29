@@ -52,7 +52,7 @@ const HeroCarousel = () => {
   const prevSlide = () => setCurrent(current === 0 ? slides.length - 1 : current - 1);
 
   return (
-    <div className="relative h-[600px] md:h-[650px] w-full overflow-hidden rounded-[2.5rem] shadow-2xl shadow-slate-900/40 border border-white/10 group">
+    <div className="relative h-[450px] md:h-[500px] w-full overflow-hidden rounded-[1.5rem] shadow-2xl shadow-slate-900/40 border border-white/10 group">
       {/* Slides */}
       {slides.map((slide, index) => (
         <div
@@ -65,37 +65,37 @@ const HeroCarousel = () => {
           <div className={`absolute inset-0 bg-gradient-to-br ${slide.color}`}></div>
           
           {/* Content Container */}
-          <div className="container mx-auto h-full px-8 md:px-20 flex flex-col md:flex-row items-center justify-between relative z-10">
-            <div className={`max-w-2xl text-center md:text-left transition-all duration-700 delay-300 ${index === current ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              <span className={`inline-flex items-center gap-2 py-2 px-5 rounded-full bg-${slide.accent}-500/10 text-${slide.accent}-400 font-black text-xs tracking-[0.2em] uppercase mb-8 border border-${slide.accent}-500/20 backdrop-blur-md`}>
+          <div className="container mx-auto h-full px-8 md:px-16 flex flex-col md:flex-row items-center justify-between relative z-10">
+            <div className={`max-w-xl text-center md:text-left transition-all duration-700 delay-300 ${index === current ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+              <span className={`inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-${slide.accent}-500/10 text-${slide.accent}-400 font-black text-[10px] tracking-[0.2em] uppercase mb-6 border border-${slide.accent}-500/20 backdrop-blur-md`}>
                 <FaBolt className="animate-pulse" /> {slide.badge}
               </span>
-              <h1 className="text-5xl md:text-8xl font-black text-white mb-6 leading-tight tracking-tighter">
+              <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight tracking-tighter">
                 {slide.title}
               </h1>
-              <h2 className="text-2xl md:text-3xl font-bold text-white/90 mb-6 drop-shadow-sm">
+              <h2 className="text-xl md:text-2xl font-bold text-white/90 mb-4 drop-shadow-sm">
                  {slide.subtitle}
               </h2>
-              <p className="text-lg text-slate-400 mb-10 font-medium leading-relaxed max-w-md mx-auto md:mx-0">
+              <p className="text-sm text-slate-400 mb-8 font-medium leading-relaxed max-w-sm mx-auto md:mx-0">
                 {slide.description}
               </p>
               
-              <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                <Link to="/search/apple" className={`bg-${slide.accent}-500 text-white font-black py-5 px-10 rounded-2xl transition-all shadow-xl shadow-${slide.accent}-500/20 hover:-translate-y-1 hover:shadow-${slide.accent}-500/40 active:scale-95 flex items-center gap-2 group`}>
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                <Link to="/search/apple" className={`bg-${slide.accent}-500 text-white font-black py-4 px-8 rounded-xl transition-all shadow-xl shadow-${slide.accent}-500/20 hover:-translate-y-1 hover:shadow-${slide.accent}-500/40 active:scale-95 flex items-center gap-2 group text-xs`}>
                   Shop Now <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <div className="bg-white/5 text-white border border-white/10 font-black py-5 px-10 rounded-2xl backdrop-blur-md">
+                <div className="bg-white/5 text-white border border-white/10 font-black py-4 px-8 rounded-xl backdrop-blur-md text-xs">
                    {slide.price}
                 </div>
               </div>
             </div>
 
             {/* Image Section */}
-            <div className={`mt-12 md:mt-0 relative transition-all duration-1000 delay-500 ${index === current ? 'translate-x-0 opacity-100 rotate-0' : 'translate-x-20 opacity-0 rotate-6'}`}>
-               <div className={`absolute inset-x-0 -bottom-10 bg-${slide.accent}-500/20 blur-[120px] h-64 rounded-full`}></div>
+            <div className={`mt-8 md:mt-0 relative transition-all duration-1000 delay-500 ${index === current ? 'translate-x-0 opacity-100 rotate-0' : 'translate-x-20 opacity-0 rotate-6'}`}>
+               <div className={`absolute inset-x-0 -bottom-10 bg-${slide.accent}-500/20 blur-[100px] h-48 rounded-full`}></div>
                <img 
                  src={slide.image} 
-                 className="w-[300px] md:w-[500px] h-auto object-contain relative z-10 drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] active:scale-105 transition-transform" 
+                 className="w-[200px] md:w-[350px] h-auto object-contain relative z-10 drop-shadow-[0_25px_25px_rgba(0,0,0,0.5)] active:scale-105 transition-transform" 
                  alt={slide.title} 
                />
             </div>
