@@ -18,7 +18,7 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id);
+    const token = generateToken(res, user._id);
 
     res.json({
       _id: user._id,
@@ -26,6 +26,7 @@ const authUser = asyncHandler(async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
       addresses: user.addresses || [],
+      token,
     });
   } else {
     res.status(401);
@@ -139,7 +140,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   user.verificationCodeExpiry = undefined;
   await user.save();
 
-  generateToken(res, user._id);
+  const token = generateToken(res, user._id);
 
   res.json({
     _id: user._id,
@@ -147,6 +148,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
     email: user.email,
     isAdmin: user.isAdmin,
     addresses: user.addresses || [],
+    token,
     message: 'Email verified successfully! Welcome to Pooja Telecom.',
   });
 });
@@ -242,6 +244,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     }
 
     const updatedUser = await user.save();
+    const token = generateToken(res, updatedUser._id);
 
     res.json({
       _id: updatedUser._id,
@@ -249,6 +252,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       email: updatedUser.email,
       isAdmin: updatedUser.isAdmin,
       addresses: updatedUser.addresses,
+      token,
     });
   } else {
     res.status(404);

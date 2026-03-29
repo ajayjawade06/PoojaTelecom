@@ -14,6 +14,8 @@ const generateToken = (res, userId) => {
     sameSite: isProd ? 'none' : 'lax', // 'none' for cross-domain support in prod
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 Days
   });
+
+  return token;
 };
 
 export default generateToken;
