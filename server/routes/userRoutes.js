@@ -13,6 +13,7 @@ import {
   forgotPassword,
   resetPassword,
   resendVerification,
+  deleteUserProfile,
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
