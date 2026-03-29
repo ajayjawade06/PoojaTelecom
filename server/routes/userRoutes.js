@@ -28,7 +28,8 @@ router.post('/reset-password', resetPassword);
 router
   .route('/profile')
   .get(protect, getUserProfile)
-  .put(protect, updateUserProfile);
+  .put(protect, updateUserProfile)
+  .delete(protect, deleteUserProfile);
 router
   .route('/:id')
   .delete(protect, admin, deleteUser)

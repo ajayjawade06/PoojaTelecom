@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useProfileMutation } from '../redux/slices/usersApiSlice';
+import { useProfileMutation, useDeleteProfileMutation } from '../redux/slices/usersApiSlice';
 import { useGetMyOrdersQuery } from '../redux/slices/ordersApiSlice';
-import { setCredentials } from '../redux/slices/authSlice';
+import { setCredentials, logout } from '../redux/slices/authSlice';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { FaUser, FaShoppingBag, FaMapMarkerAlt, FaShieldAlt, FaChevronRight, FaCheckCircle, FaTruck, FaClock } from 'react-icons/fa';
+import { FaUser, FaShoppingBag, FaMapMarkerAlt, FaShieldAlt, FaChevronRight, FaCheckCircle, FaTruck, FaClock, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('profile');
@@ -20,7 +20,20 @@ const ProfilePage = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const [updateProfile, { isLoading: loadingUpdate, error: errorUpdate, isSuccess }] = useProfileMutation();
+  const [deleteProfile, { isLoading: loadingDelete }] = useDeleteProfileMutation();
   const { data: orders, isLoading: loadingOrders, error: errorOrders } = useGetMyOrdersQuery();
+
+  const deleteHandler = async () => {
+    if (window.confirm('Are you absolutely sure? This will permanently delete your account and all associated data. This action cannot be undone.')) {
+      try {
+        await deleteProfile().unwrap();
+        dispatch(logout());
+        alert('Your account has been successfully deleted.');
+      } catch (err) {
+        alert(err?.data?.message || err.error);
+      }
+    }
+  };
 
   useEffect(() => {
     if (userInfo) {
@@ -148,6 +161,38 @@ const ProfilePage = () => {
                    <span className="relative z-10">{loadingUpdate ? 'Updating...' : 'Save Changes'}</span>
                 </button>
                    </form>
+
+                   {/* Danger Zone */}
+                   {!userInfo.isAdmin && (
+                     <div className="mt-12 pt-8 border-t border-slate-100 dark:border-white/5 animate-fade-in">
+                       <div className="bg-rose-50 dark:bg-rose-500/5 border border-rose-100 dark:border-rose-500/10 rounded-[24px] p-8 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative group">
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-rose-500/10 transition-colors"></div>
+                          
+                          <div className="relative z-10 flex items-start gap-4 text-center md:text-left">
+                             <div className="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
+                                <FaExclamationTriangle size={20} />
+                             </div>
+                             <div>
+                                <h3 className="text-sm font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest mb-1">Account Termination</h3>
+                                <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">Permanent deletion of your platform identity, order history, and saved credentials. This cannot be reversed.</p>
+                             </div>
+                          </div>
+                          
+                          <button 
+                            onClick={deleteHandler} 
+                            disabled={loadingDelete}
+                            className="relative z-10 bg-rose-600 hover:bg-rose-700 text-white px-8 h-12 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-rose-600/20 disabled:opacity-50 flex items-center gap-3"
+                          >
+                             {loadingDelete ? (
+                               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                             ) : (
+                               <FaTrashAlt size={10} />
+                             )}
+                             Delete Account
+                          </button>
+                       </div>
+                     </div>
+                   )}
                 </div>
              )}
 

@@ -265,12 +265,39 @@ const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (user) {
-    if (user.isAdmin) {
+    if (user._id.toString() === req.user._id.toString()) {
       res.status(400);
-      throw new Error('Cannot delete admin user');
+      throw new Error('Admins cannot delete their own accounts via user management. Please use the profile section.');
     }
     await User.deleteOne({ _id: user._id });
-    res.json({ message: 'User removed' });
+    res.json({ message: 'User removed successfully' });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Delete user profile (Self delete)
+// @route   DELETE /api/users/profile
+// @access  Private
+const deleteUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    if (user.isAdmin) {
+      res.status(400);
+      throw new Error('Admins cannot delete their own accounts via profile. Please contact another administrator.');
+    }
+
+    await User.deleteOne({ _id: user._id });
+
+    // Clear the JWT cookie
+    res.cookie('jwt', '', {
+      httpOnly: true,
+      expires: new Date(0),
+    });
+
+    res.json({ message: 'Your account has been permanently deleted' });
   } else {
     res.status(404);
     throw new Error('User not found');
@@ -388,4 +415,5 @@ export {
   deleteUser,
   getUserById,
   updateUser,
+  deleteUserProfile,
 };

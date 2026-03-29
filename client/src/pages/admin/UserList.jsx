@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { useGetUsersQuery, useDeleteUserMutation } from '../../../src/redux/slices/usersApiSlice';
 import { FaTrash, FaCheck, FaTimes, FaEdit, FaUsers } from 'react-icons/fa';
 import Loader from '../../components/Loader';
@@ -7,6 +7,7 @@ import Message from '../../components/Message';
 const UserList = () => {
   const { data: users, refetch, isLoading, error } = useGetUsersQuery();
   const [deleteUser, { isLoading: loadingDelete }] = useDeleteUserMutation();
+  const { userInfo } = useSelector((state) => state.auth);
 
   const deleteHandler = async (id) => {
     if (window.confirm('Delete User?')) {
@@ -56,7 +57,7 @@ const UserList = () => {
                             )}
                          </td>
                          <td className="p-4 text-right">
-                            {!user.isAdmin && (
+                            {user._id !== userInfo._id && (
                                <button onClick={() => deleteHandler(user._id)} className="opacity-0 group-hover:opacity-100 p-2 text-slate-300 hover:text-rose-500 transition-all">
                                   <FaTrash size={12} />
                                </button>

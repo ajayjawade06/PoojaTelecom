@@ -30,6 +30,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    deleteProfile: builder.mutation({
+      query: () => ({
+        url: `${USERS_URL}/profile`,
+        method: 'DELETE',
+      }),
+    }),
     getUsers: builder.query({
       query: () => ({
         url: USERS_URL,
@@ -79,6 +85,7 @@ export const {
   useLogoutMutation,
   useRegisterMutation,
   useProfileMutation,
+  useDeleteProfileMutation,
   useGetUsersQuery,
   useDeleteUserMutation,
   useVerifyEmailMutation,
