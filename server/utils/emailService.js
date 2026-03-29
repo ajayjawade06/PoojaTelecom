@@ -1,6 +1,6 @@
 export const sendVerificationEmail = async (toEmail, name, code) => {
   const apiKey = process.env.BREVO_API_KEY;
-  const senderEmail = process.env.EMAIL_USER;
+  const senderEmail = process.env.EMAIL_USER || 'lipashaikh005@gmail.com';
 
   const emailData = {
     sender: { name: 'Pooja Telecom', email: senderEmail },
@@ -57,7 +57,7 @@ export const sendVerificationEmail = async (toEmail, name, code) => {
 
 export const sendResetPasswordEmail = async (toEmail, name, code) => {
   const apiKey = process.env.BREVO_API_KEY;
-  const senderEmail = process.env.EMAIL_USER;
+  const senderEmail = process.env.EMAIL_USER || 'lipashaikh005@gmail.com';
 
   const emailData = {
     sender: { name: 'Pooja Telecom', email: senderEmail },
