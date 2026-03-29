@@ -20,6 +20,7 @@ const corsOptions = {
       'http://localhost:5173',
       'http://localhost:3000',
       'https://pooja-telecom.vercel.app',
+      'https://pooja-telecom-git-main-ajayjawade06s-projects.vercel.app',
       'https://poojatelecom.onrender.com',
       'https://pooja-telecom.onrender.com'
     ];
