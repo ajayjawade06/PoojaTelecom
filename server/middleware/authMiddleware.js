@@ -20,6 +20,15 @@ const protect = async (req, res, next) => {
         throw new Error('Not authorized, user not found');
       }
 
+      if (!req.user.isActive) {
+        res.cookie('jwt', '', {
+           httpOnly: true,
+           expires: new Date(0),
+        });
+        res.status(401);
+        throw new Error('Your account has been deactivated. Please contact support.');
+      }
+
       next();
     } catch (error) {
       console.error(error);

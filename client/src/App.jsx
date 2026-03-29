@@ -23,6 +23,8 @@ import ProductEdit from './pages/admin/ProductEdit';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ReportsPage from './pages/admin/ReportsPage';
+import UserReviewsPage from './pages/admin/UserReviewsPage';
 
 const App = () => {
   return (
@@ -58,6 +60,8 @@ const App = () => {
             <Route path="/admin/userlist" element={<UserList />} />
             <Route path="/admin/productlist" element={<ProductList />} />
             <Route path="/admin/product/:id/edit" element={<ProductEdit />} />
+            <Route path="/admin/reports" element={<ReportsPage />} />
+            <Route path="/admin/user/:id/reviews" element={<UserReviewsPage />} />
           </Route>
         </Routes>
       </main>

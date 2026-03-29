@@ -1,17 +1,24 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useGetOrdersQuery } from '../../../src/redux/slices/ordersApiSlice';
-import { FaTimes, FaCheck, FaTruck, FaDatabase } from 'react-icons/fa';
+import { FaTimes, FaCheck, FaTruck, FaDatabase, FaArrowLeft } from 'react-icons/fa';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
 const OrderList = () => {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
+  const navigate = useNavigate();
 
   return (
     <div className="pt-24 pb-20 animate-fade-in bg-white dark:bg-slate-900 min-h-screen">
       <div className="main-container">
         
-        <div className="flex items-center justify-between mb-8 border-b border-slate-100 dark:border-white/5 pb-4">
+        <div className="flex items-center gap-4 mb-8 border-b border-slate-100 dark:border-white/5 pb-4">
+           <button 
+             onClick={() => navigate('/admin')}
+             className="p-2.5 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white rounded-full hover:scale-110 active:scale-90 transition-all shadow-sm"
+           >
+              <FaArrowLeft size={14} />
+           </button>
            <div>
               <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Orders</h1>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">View and Manage Orders</p>

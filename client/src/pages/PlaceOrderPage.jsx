@@ -6,7 +6,7 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { useCreateOrderMutation } from '../redux/slices/ordersApiSlice';
 import { clearCartItems, savePaymentMethod } from '../redux/slices/cartSlice';
-import { FaMapMarkerAlt, FaShieldAlt, FaLock, FaCreditCard, FaArrowRight, FaBox, FaPencilAlt } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaShieldAlt, FaLock, FaCreditCard, FaArrowRight, FaBox, FaPencilAlt, FaArrowLeft } from 'react-icons/fa';
 
 const PlaceOrderPage = () => {
   const navigate = useNavigate();
@@ -44,6 +44,16 @@ const PlaceOrderPage = () => {
 
       <div className="main-container relative z-10">
         <CheckoutSteps step1 step2 step3 />
+
+        <div className="flex items-center gap-4 mb-8">
+           <button 
+             onClick={() => navigate('/shipping')}
+             className="p-2.5 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white rounded-full hover:scale-110 active:scale-90 transition-all shadow-sm"
+           >
+              <FaArrowLeft size={14} />
+           </button>
+           <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase tracking-widest text-[13px]">Review Order Info</h2>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           

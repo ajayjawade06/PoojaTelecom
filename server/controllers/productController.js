@@ -5,24 +5,66 @@ import Product from '../models/productModel.js';
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-  const pageSize = 10000; // Return all products on a single page
+  const pageSize = 12; // Paginate with 12 items per page
   const page = Number(req.query.pageNumber) || 1;
 
-  const keyword = req.query.keyword
-    ? {
-        name: {
-          $regex: req.query.keyword,
-          $options: 'i',
-        },
-      }
-    : {};
+  const { keyword, category, brand, minPrice, maxPrice, rating, stock, sort } = req.query;
 
-  const count = await Product.countDocuments({ ...keyword });
-  const products = await Product.find({ ...keyword })
+  let query = {};
+
+  if (keyword) {
+    query.name = { $regex: keyword, $options: 'i' };
+  }
+
+  if (category && category !== 'All') {
+    query.category = category;
+  }
+
+  if (brand && brand !== 'All') {
+    const brands = brand.split(',');
+    query.brand = { $in: brands };
+  }
+
+  if (minPrice || maxPrice) {
+    query.price = {};
+    if (minPrice) query.price.$gte = Number(minPrice);
+    if (maxPrice) query.price.$lte = Number(maxPrice);
+  }
+
+  if (rating) {
+    query.rating = { $gte: Number(rating) };
+  }
+
+  if (stock) {
+    if (stock === 'in_stock') {
+      query.countInStock = { $gt: 0 };
+    } else if (stock === 'out_of_stock') {
+      query.countInStock = 0;
+    }
+  }
+
+  let sortOption = {};
+  if (sort) {
+    switch (sort) {
+      case 'price_asc': sortOption.price = 1; break;
+      case 'price_desc': sortOption.price = -1; break;
+      case 'newest': sortOption.createdAt = -1; break;
+      case 'best_selling': sortOption.soldCount = -1; break;
+      case 'rating': sortOption.rating = -1; break;
+      case 'name': sortOption.name = 1; break;
+      default: sortOption.createdAt = -1; break;
+    }
+  } else {
+    sortOption.createdAt = -1;
+  }
+
+  const count = await Product.countDocuments(query);
+  const products = await Product.find(query)
+    .sort(sortOption)
     .limit(pageSize)
     .skip(pageSize * (page - 1));
 
-  res.json({ products, page, pages: Math.ceil(count / pageSize) });
+  res.json({ products, page, pages: Math.ceil(count / pageSize), count });
 });
 
 // @desc    Fetch single product
@@ -141,6 +183,95 @@ const createProductReview = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get all unique categories and brands
+// @route   GET /api/products/filters
+// @access  Public
+const getCategoriesAndBrands = asyncHandler(async (req, res) => {
+  const categories = await Product.distinct('category');
+  const brands = await Product.distinct('brand');
+  res.json({ categories, brands });
+});
+
+// @desc    Bulk update product stock
+// @route   PUT /api/products/bulk-stock
+// @access  Private/Admin
+const bulkUpdateStock = asyncHandler(async (req, res) => {
+  const { stockUpdates } = req.body; // Array of { _id, countInStock }
+  if (!stockUpdates || !Array.isArray(stockUpdates)) {
+    res.status(400);
+    throw new Error('Invalid stock updates data');
+  }
+
+  const bulkOps = stockUpdates.map(update => ({
+    updateOne: {
+      filter: { _id: update._id },
+      update: { $set: { countInStock: update.countInStock } }
+    }
+  }));
+
+  if (bulkOps.length > 0) {
+    await Product.bulkWrite(bulkOps);
+    res.json({ message: 'Stock updated successfully' });
+  } else {
+    res.json({ message: 'No updates provided' });
+  }
+});
+
+// @desc    Get user reviews (Admin)
+// @route   GET /api/products/reviews/user/:id
+// @access  Private/Admin
+const getUserReviewsAdmin = asyncHandler(async (req, res) => {
+  const products = await Product.find({ 'reviews.user': req.params.id });
+
+  const userReviews = products.map((product) => {
+    const reviews = product.reviews.filter(
+      (r) => r.user.toString() === req.params.id.toString()
+    );
+    return reviews.map((r) => ({
+      ...r._doc,
+      productName: product.name,
+      productId: product._id,
+    }));
+  }).flat();
+
+  res.json(userReviews);
+});
+
+// @desc    Delete review (Admin)
+// @route   DELETE /api/products/:id/reviews/:reviewId
+// @access  Private/Admin
+const deleteReviewAdmin = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (product) {
+    const reviewIndex = product.reviews.findIndex(
+      (r) => r._id.toString() === req.params.reviewId.toString()
+    );
+
+    if (reviewIndex === -1) {
+      res.status(404);
+      throw new Error('Review not found');
+    }
+
+    product.reviews.splice(reviewIndex, 1);
+    product.numReviews = product.reviews.length;
+
+    if (product.numReviews > 0) {
+      product.rating =
+        product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+        product.reviews.length;
+    } else {
+      product.rating = 0;
+    }
+
+    await product.save();
+    res.json({ message: 'Review deleted successfully' });
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+});
+
 export {
   getProducts,
   getProductById,
@@ -148,4 +279,8 @@ export {
   updateProduct,
   deleteProduct,
   createProductReview,
+  getCategoriesAndBrands,
+  bulkUpdateStock,
+  getUserReviewsAdmin,
+  deleteReviewAdmin,
 };

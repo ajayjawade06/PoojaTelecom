@@ -1,5 +1,6 @@
 import asyncHandler from '../middleware/asyncHandler.js';
 import Order from '../models/orderModel.js';
+import Product from '../models/productModel.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 
@@ -103,9 +104,21 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
         email_address: req.user.email,
       };
       const updatedOrder = await order.save();
+      
+      // Update stock and sold count
+      for (const item of order.orderItems) {
+        const product = await Product.findById(item.product);
+        if (product) {
+          product.countInStock = Math.max(0, product.countInStock - item.qty);
+          product.soldCount = (product.soldCount || 0) + item.qty;
+          await product.save();
+        }
+      }
+      
       return res.json(updatedOrder);
     }
-
+    
+    // Validate Razorpay Payment
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
     // Verify signature
@@ -130,6 +143,17 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
       };
 
       const updatedOrder = await order.save();
+      
+      // Update stock and sold count
+      for (const item of order.orderItems) {
+        const product = await Product.findById(item.product);
+        if (product) {
+          product.countInStock = Math.max(0, product.countInStock - item.qty);
+          product.soldCount = (product.soldCount || 0) + item.qty;
+          await product.save();
+        }
+      }
+
       res.json(updatedOrder);
     } else {
       res.status(400);

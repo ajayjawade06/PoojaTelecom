@@ -12,7 +12,7 @@ import {
   useDeliverOrderMutation,
   useShipOrderMutation,
 } from '../redux/slices/ordersApiSlice';
-import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt, FaClock, FaUser, FaArrowRight } from 'react-icons/fa';
+import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt, FaClock, FaUser, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
@@ -107,14 +107,22 @@ const OrderPage = () => {
         
         {/* Header Badge */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-           <div>
-              <div className="flex items-center gap-3 mb-2">
-                 <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Order Details</h1>
-                 <span className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest leading-none shadow-lg shadow-black/10">#{order._id.slice(-8)}</span>
+           <div className="flex items-center gap-4 group">
+              <button 
+                onClick={() => navigate(-1)}
+                className="p-2.5 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white rounded-full hover:scale-110 active:scale-90 transition-all shadow-sm"
+              >
+                 <FaArrowLeft size={14} />
+              </button>
+              <div>
+                 <div className="flex items-center gap-3 mb-2">
+                    <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Order Details</h1>
+                    <span className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest leading-none shadow-lg shadow-black/10">#{order._id.slice(-8)}</span>
+                 </div>
+                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 items-center">
+                    <FaClock size={10} /> Placed {new Date(order.createdAt).toLocaleDateString('en-IN')}
+                 </p>
               </div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 items-center">
-                 <FaClock size={10} /> Placed {new Date(order.createdAt).toLocaleDateString('en-IN')}
-              </p>
            </div>
            <div className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${order.isDelivered ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
               {order.isDelivered ? 'Order Delivered' : order.isShipped ? 'In Transit' : order.isPaid ? 'Payment Received' : 'Pending Payment'}

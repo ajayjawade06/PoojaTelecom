@@ -36,16 +36,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background);
   color: var(--foreground);
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 11px;
+  line-height: 1.5;
   transition: background-color 0.4s ease, color 0.4s ease;
   overflow-x: hidden;
 }
 
 /* Compact Premium Typography */
-h1 { font-size: 2.25rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; }
-h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; }
-h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+h1 { font-size: 1.6rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; }
+h2 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.03em; }
+h3 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
 
 /* Global Interactions */
 * {
@@ -67,9 +67,36 @@ a, button {
   outline: none;
 }
 
+input[type="range"].no-transition {
+  transition: none !important;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #10b981;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dark input[type="range"]::-webkit-slider-thumb {
+  background: #10b981;
+  border-color: #020617;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
 input, select, textarea {
   outline: none;
-  font-size: 13px;
+  font-size: 11px;
 }
 
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
@@ -112,4 +139,34 @@ input, select, textarea {
   filter: blur(40px);
   pointer-events: none;
   z-index: 0;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.loading-bar-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-bar-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(16, 185, 129, 0.2),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+.smooth-dim {
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }

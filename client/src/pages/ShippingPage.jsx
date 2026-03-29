@@ -6,7 +6,7 @@ import CheckoutSteps from '../components/CheckoutSteps';
 import { saveShippingAddress } from '../redux/slices/cartSlice';
 import { setCredentials } from '../redux/slices/authSlice';
 import { useProfileMutation } from '../redux/slices/usersApiSlice';
-import { FaMapMarkerAlt, FaHistory, FaCheckCircle, FaArrowRight, FaCrosshairs } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaHistory, FaCheckCircle, FaArrowRight, FaCrosshairs, FaArrowLeft } from 'react-icons/fa';
 
 const ShippingPage = () => {
   const cart = useSelector((state) => state.cart);
@@ -89,9 +89,17 @@ const ShippingPage = () => {
         
         <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-2xl rounded-[32px] border border-slate-200/50 dark:border-white/10 p-10 shadow-2xl transition-all duration-500 hover:shadow-emerald-500/5">
           <div className="flex items-center justify-between mb-8">
-             <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-               <FaMapMarkerAlt className="text-emerald-500" size={16} /> Shipping Address
-             </h1>
+             <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => navigate('/cart')}
+                  className="p-2.5 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white rounded-full hover:scale-110 active:scale-90 transition-all shadow-sm"
+                >
+                   <FaArrowLeft size={12} />
+                </button>
+                <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+                  <FaMapMarkerAlt className="text-emerald-500" size={16} /> Shipping
+                </h1>
+             </div>
              <button 
                onClick={getLocationHandler}
                disabled={geoLoading}

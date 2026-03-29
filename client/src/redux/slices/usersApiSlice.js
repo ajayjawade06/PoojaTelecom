@@ -77,6 +77,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    updateUserStatus: builder.mutation({
+      query: (userId) => ({
+        url: `${USERS_URL}/${userId}/status`,
+        method: 'PUT',
+      }),
+      invalidatesTags: ['User'],
+    }),
   }),
 });
 
@@ -92,4 +99,5 @@ export const {
   useResendVerificationMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useUpdateUserStatusMutation,
 } = userApiSlice;

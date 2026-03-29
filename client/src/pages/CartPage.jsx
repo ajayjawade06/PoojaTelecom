@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaTrash, FaShoppingBag, FaArrowRight, FaMinus, FaPlus, FaCheckCircle, FaShieldAlt } from 'react-icons/fa';
+import { FaTrash, FaShoppingBag, FaArrowRight, FaMinus, FaPlus, FaCheckCircle, FaShieldAlt, FaArrowLeft } from 'react-icons/fa';
 import { addToCart, removeFromCart } from '../redux/slices/cartSlice';
 
 const CartPage = () => {
@@ -41,9 +41,17 @@ const CartPage = () => {
       <div className="hidden lg:block absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div className="main-container relative z-10">
-        <div className="flex items-baseline gap-4 mb-10 border-b border-slate-100 dark:border-white/5 pb-6">
-           <h1 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tighter">Shopping Bag</h1>
-           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{totalItems} Units</span>
+        <div className="flex items-center gap-6 mb-10 border-b border-slate-100 dark:border-white/5 pb-6">
+           <button 
+             onClick={() => navigate('/')} 
+             className="p-3 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white rounded-full hover:scale-110 active:scale-90 transition-all shadow-sm"
+           >
+              <FaArrowLeft size={14} />
+           </button>
+           <div className="flex items-baseline gap-4">
+              <h1 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tighter">Shopping Bag</h1>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{totalItems} Units</span>
+           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">

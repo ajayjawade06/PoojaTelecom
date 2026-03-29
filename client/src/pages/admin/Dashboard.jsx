@@ -64,6 +64,8 @@ const Dashboard = () => {
                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Pooja Telecom Stats</p>
             </div>
             <div className="flex gap-2">
+               <Link to="/admin/reports" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-blue-500/10 active:scale-95">Reports</Link>
+               <Link to="/admin/userlist" className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-indigo-500/10 active:scale-95">Users</Link>
                <Link to="/admin/productlist" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg active:scale-95">Products</Link>
                <Link to="/admin/orderlist" className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/10 active:scale-95">Orders</Link>
             </div>
@@ -72,19 +74,19 @@ const Dashboard = () => {
         {/* Global Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {[
-              { label: 'Total Revenue', value: `₹${metrics.totalRevenue.toLocaleString('en-IN')}`, icon: FaChartLine, color: 'text-emerald-500' },
-              { label: 'Total Users', value: metrics.totalUsers, icon: FaUsers, color: 'text-blue-500' },
-              { label: 'Total Orders', value: metrics.totalOrders, icon: FaBoxOpen, color: 'text-purple-500' },
-              { label: 'Avg order value', value: `₹${metrics.avgOrderValue}`, icon: FaCrown, color: 'text-amber-500' },
+              { label: 'Total Revenue', value: `₹${metrics.totalRevenue.toLocaleString('en-IN')}`, icon: FaChartLine, color: 'text-emerald-500', link: '/admin/reports' },
+              { label: 'Total Users', value: metrics.totalUsers, icon: FaUsers, color: 'text-blue-500', link: '/admin/userlist' },
+              { label: 'Total Orders', value: metrics.totalOrders, icon: FaBoxOpen, color: 'text-purple-500', link: '/admin/orderlist' },
+              { label: 'Avg order value', value: `₹${metrics.avgOrderValue}`, icon: FaCrown, color: 'text-amber-500', link: '/admin/reports' },
             ].map((stat, i) => (
-             <div key={i} className="bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 p-6 rounded-2xl flex items-center justify-between group hover:border-emerald-500/20 transition-all">
+             <Link to={stat.link} key={i} className="bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 p-6 rounded-2xl flex items-center justify-between group hover:border-emerald-500/20 transition-all cursor-pointer">
                 <div>
                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{stat.label}</p>
                    <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none">{stat.value}</h3>
                 </div>
                 <stat.icon size={16} className={`${stat.color} opacity-40 group-hover:opacity-100 transition-opacity`} />
-             </div>
-           ))}
+             </Link>
+            ))}
         </div>
 
         {/* Analytics Section */}

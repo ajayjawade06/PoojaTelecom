@@ -414,6 +414,31 @@ const resetPassword = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Update user status (Active/Inactive)
+// @route   PUT /api/users/:id/status
+// @access  Private/Admin
+const updateUserStatus = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    if (user.isAdmin) {
+      res.status(400);
+      throw new Error('Admins cannot be deactivated.');
+    }
+    user.isActive = !user.isActive;
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      isActive: updatedUser.isActive,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
 export {
   authUser,
   registerUser,
@@ -429,4 +454,5 @@ export {
   getUserById,
   updateUser,
   deleteUserProfile,
+  updateUserStatus,
 };

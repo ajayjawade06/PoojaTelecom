@@ -6,7 +6,7 @@ import { addToCart } from '../redux/slices/cartSlice';
 import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { FaUserCircle, FaStar, FaShoppingCart, FaArrowLeft, FaComments, FaShieldAlt, FaTruck, FaClock } from 'react-icons/fa';
+import { FaUserCircle, FaStar, FaShoppingCart, FaArrowLeft, FaComments, FaShieldAlt, FaTruck, FaClock, FaShareAlt } from 'react-icons/fa';
 
 const ProductPage = () => {
   const { id: productId } = useParams();
@@ -44,6 +44,26 @@ const ProductPage = () => {
     }
   };
 
+  const shareHandler = async () => {
+    const shareData = {
+      title: product.name,
+      text: `Check out this ${product.name} on Pooja Telecom!`,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      // Fallback: Copy to clipboard or show options
+      const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+  };
+
   if (isLoading) return <div className="pt-40"><Loader /></div>;
   if (error) return <div className="pt-40 main-container"><Message variant="red">{error?.data?.message || 'Error loading product'}</Message></div>;
 
@@ -55,10 +75,27 @@ const ProductPage = () => {
       <div className="main-container relative z-10">
         
         {/* Navigation / Breadcrumb */}
-        <div className="flex items-center gap-2 mb-8 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-           <Link to="/" className="hover:text-emerald-500 transition-colors">Home</Link>
-           <span>/</span>
-           <span className="text-slate-900 dark:text-white truncate max-w-[200px]">{product.name}</span>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+             <button 
+               onClick={() => navigate(-1)}
+               className="p-2.5 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white rounded-full hover:scale-110 active:scale-90 transition-all shadow-sm"
+             >
+                <FaArrowLeft size={14} />
+             </button>
+             <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                <Link to="/" className="hover:text-emerald-500 transition-colors">Home</Link>
+                <span>/</span>
+                <span className="text-slate-900 dark:text-white truncate max-w-[200px]">{product.name}</span>
+             </div>
+          </div>
+          
+          <button 
+            onClick={shareHandler}
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500 hover:bg-emerald-500/10 px-3 py-2 rounded-lg transition-all"
+          >
+             <FaShareAlt size={12} /> Share Product
+          </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">

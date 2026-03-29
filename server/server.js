@@ -48,6 +48,7 @@ if (process.env.NODE_ENV === 'development') {
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 // Basic Route for testing
@@ -58,6 +59,7 @@ app.get('/', (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/reports', reportRoutes);
 
 app.get('/api/config/razorpay', (req, res) =>
   res.send({ keyId: process.env.RAZORPAY_KEY_ID })

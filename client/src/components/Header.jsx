@@ -68,12 +68,11 @@ const Header = () => {
       <div className="main-container">
         <div className="flex items-center justify-between gap-4 h-auto min-h-[48px] py-1 flex-wrap md:flex-nowrap">
 
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="bg-emerald-500 text-white w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/20">
-              <FaStore size={16} />
+          <Link to="/" className="flex items-center gap-1.5 shrink-0 group">
+            <div className="bg-emerald-500 text-white w-6 h-6 rounded-md flex items-center justify-center transition-transform group-hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/20">
+              <FaStore size={12} />
             </div>
-            <span className={`font-black text-lg tracking-tighter ${isScrolled ? 'text-slate-900 dark:text-white' : 'text-slate-900 dark:text-white'}`}>
+            <span className={`font-black text-base tracking-tighter ${isScrolled ? 'text-slate-900 dark:text-white' : 'text-slate-900 dark:text-white'}`}>
               POOJA<span className="text-emerald-500">TELECOM</span>
             </span>
           </Link>
@@ -84,11 +83,11 @@ const Header = () => {
               <input
                 type="text"
                 placeholder="Search premium tech..."
-                className="w-full bg-slate-100/50 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 focus:border-emerald-500/50 py-2.5 pl-11 pr-4 rounded-full text-[13px] font-medium transition-all outline-none dark:text-white placeholder-slate-400 focus:bg-white dark:focus:bg-white/10 focus:shadow-lg focus:shadow-emerald-500/5"
+                className="w-full bg-slate-100/50 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 focus:border-emerald-500/50 py-2 pl-9 pr-3 rounded-full text-[11px] font-medium transition-all outline-none dark:text-white placeholder-slate-400 focus:bg-white dark:focus:bg-white/10 focus:shadow-lg focus:shadow-emerald-500/5"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <FaSearch size={12} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-emerald-500 transition-colors" />
+              <FaSearch size={10} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-emerald-500 transition-colors" />
             </form>
           )}
 
@@ -98,10 +97,10 @@ const Header = () => {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="hidden sm:flex w-9 h-9 items-center justify-center rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+              className="hidden sm:flex w-7 h-7 items-center justify-center rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
               title="Toggle Theme"
             >
-              {theme === 'dark' ? <FaSun size={14} className="text-amber-400" /> : <FaMoon size={14} />}
+              {theme === 'dark' ? <FaSun size={10} className="text-amber-400" /> : <FaMoon size={10} />}
             </button>
 
             {/* User Access */}
@@ -109,12 +108,12 @@ const Header = () => {
               <div className="relative group/profile pt-1">
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-2 p-1.5 sm:px-2 sm:py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-slate-800 dark:text-white"
+                  className="flex items-center gap-1.5 p-1 sm:px-1.5 sm:py-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-slate-800 dark:text-white"
                 >
-                  <div className="w-8 h-8 sm:w-7 sm:h-7 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                    <FaUser size={12} />
+                  <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <FaUser size={10} />
                   </div>
-                  <FaChevronDown size={8} className={`hidden sm:block text-slate-400 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                  <FaChevronDown size={6} className={`hidden sm:block text-slate-400 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {isProfileDropdownOpen && (
@@ -154,24 +153,22 @@ const Header = () => {
               </Link>
             )}
 
-            {/* Cart Button */}
             <Link to="/cart" className="relative group ml-1 sm:ml-2">
-              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all">
-                <FaShoppingCart size={14} />
+              <div className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all">
+                <FaShoppingCart size={11} />
               </div>
               {cartItems.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-white dark:border-slate-950 shadow-sm animate-scale-up">
+                <span className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[8px] font-black w-4 h-4 flex items-center justify-center rounded-full border border-white dark:border-slate-950 shadow-sm animate-scale-up">
                   {cartItems.reduce((a, c) => a + c.qty, 0)}
                 </span>
               )}
             </Link>
 
-            {/* Mobile Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden w-9 h-9 flex items-center justify-center rounded-full text-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-white/5 ml-1"
+              className="lg:hidden w-7 h-7 flex items-center justify-center rounded-full text-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-white/5 ml-1"
             >
-              {isMobileMenuOpen ? <FaTimes size={18} /> : <FaBars size={18} />}
+              {isMobileMenuOpen ? <FaTimes size={14} /> : <FaBars size={14} />}
             </button>
           </nav>
         </div>
@@ -181,8 +178,8 @@ const Header = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-[120] bg-white dark:bg-slate-900 p-6 animate-slide-up">
           <div className="flex justify-between items-center mb-10">
-            <span className="font-black text-xl tracking-tighter text-slate-900 dark:text-white">POOJA<span className="text-emerald-500">T</span></span>
-            <button onClick={() => setIsMobileMenuOpen(false)} className="w-10 h-10 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-full text-slate-900 dark:text-white"><FaTimes size={18} /></button>
+            <span className="font-black text-lg tracking-tighter text-slate-900 dark:text-white">POOJA<span className="text-emerald-500">T</span></span>
+            <button onClick={() => setIsMobileMenuOpen(false)} className="w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-full text-slate-900 dark:text-white"><FaTimes size={14} /></button>
           </div>
 
           {!isAuthPage && (
@@ -190,11 +187,11 @@ const Header = () => {
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/5 py-3 px-6 rounded-full outline-none font-bold text-slate-700 dark:text-white"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/5 py-2.5 px-5 rounded-full outline-none font-bold text-slate-700 dark:text-white text-[11px]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500"><FaSearch size={16} /></button>
+              <button className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500"><FaSearch size={12} /></button>
             </form>
           )}
 

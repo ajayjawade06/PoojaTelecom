@@ -4,11 +4,17 @@ import { PRODUCTS_URL } from '../../constants';
 export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProducts: builder.query({
-      query: ({ keyword, pageNumber }) => ({
+      query: (params) => ({
         url: PRODUCTS_URL,
-        params: { keyword, pageNumber },
+        params,
       }),
       providesTags: ['Product'],
+      keepUnusedDataFor: 5,
+    }),
+    getCategoriesAndBrands: builder.query({
+      query: () => ({
+        url: `${PRODUCTS_URL}/filters`,
+      }),
       keepUnusedDataFor: 5,
     }),
     getProductDetails: builder.query({
@@ -54,15 +60,41 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Product'],
     }),
+    bulkUpdateStock: builder.mutation({
+      query: (data) => ({
+        url: `${PRODUCTS_URL}/bulk-stock`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['Product'],
+    }),
+    getUserReviews: builder.query({
+      query: (userId) => ({
+        url: `${PRODUCTS_URL}/reviews/user/${userId}`,
+      }),
+      providesTags: ['Product'],
+      keepUnusedDataFor: 5,
+    }),
+    deleteReviewAdmin: builder.mutation({
+      query: (data) => ({
+        url: `${PRODUCTS_URL}/${data.productId}/reviews/${data.reviewId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Product'],
+    }),
   }),
 });
 
 export const {
   useGetProductsQuery,
+  useGetCategoriesAndBrandsQuery,
   useGetProductDetailsQuery,
   useCreateProductMutation,
   useUpdateProductMutation,
   useUploadProductImageMutation,
   useDeleteProductMutation,
   useCreateReviewMutation,
+  useBulkUpdateStockMutation,
+  useGetUserReviewsQuery,
+  useDeleteReviewAdminMutation,
 } = productsApiSlice;
