@@ -12,7 +12,7 @@ import {
   useDeliverOrderMutation,
   useShipOrderMutation,
 } from '../redux/slices/ordersApiSlice';
-import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt, FaClock, FaUser } from 'react-icons/fa';
+import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt, FaClock, FaUser, FaArrowRight } from 'react-icons/fa';
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
@@ -219,6 +219,68 @@ const OrderPage = () => {
                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-500"></div>
                        {razorpayLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin relative z-10"></div> : <span className="relative z-10 flex items-center gap-3"><FaShieldAlt size={16}/> Pay Now</span>}
                     </button>
+                 )}
+
+                 {/* Dummy Card Form */}
+                 {showCardForm && !order.isPaid && (
+                   <div className="mt-4 pt-6 border-t border-white/10 dark:border-slate-100 animate-fade-in relative z-10 text-left">
+                      <div className="flex items-center justify-between mb-4">
+                         <h3 className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Test Credit Card</h3>
+                         <button onClick={() => setShowCardForm(false)} className="text-[9px] font-bold text-slate-400 hover:text-white dark:hover:text-slate-900 border border-white/10 dark:border-slate-200 px-2 py-0.5 rounded transition-colors">Cancel</button>
+                      </div>
+                      
+                      <form onSubmit={dummyPaymentHandler} className="space-y-4 text-left">
+                         <div className="space-y-1.5">
+                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Card Number</label>
+                            <div className="relative">
+                               <FaCreditCard className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={12}/>
+                               <input 
+                                 type="text" 
+                                 readOnly
+                                 className="w-full bg-white/5 dark:bg-slate-50 border border-white/10 dark:border-slate-200 py-3 pl-11 pr-4 rounded-xl text-xs font-bold font-mono text-white dark:text-slate-900 outline-none"
+                                 value={cardDetails.number.replace(/(\d{4})/g, '$1 ').trim()}
+                               />
+                            </div>
+                         </div>
+                         
+                         <div className="grid grid-cols-3 gap-3">
+                            <div className="col-span-2 space-y-1.5">
+                               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Expiry</label>
+                               <input 
+                                 type="text" 
+                                 readOnly
+                                 className="w-full bg-white/5 dark:bg-slate-50 border border-white/10 dark:border-slate-200 py-3 px-4 rounded-xl text-xs font-black text-white dark:text-slate-900 text-center"
+                                 value={cardDetails.expiry}
+                               />
+                            </div>
+                            <div className="space-y-1.5">
+                               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">CVV</label>
+                               <input 
+                                 type="text" 
+                                 readOnly
+                                 className="w-full bg-white/5 dark:bg-slate-50 border border-white/10 dark:border-slate-200 py-3 px-4 rounded-xl text-xs font-black text-white dark:text-slate-900 text-center"
+                                 value={cardDetails.cvv}
+                               />
+                            </div>
+                         </div>
+
+                         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 mb-2">
+                            <p className="text-[9px] font-bold text-emerald-500 leading-tight italic">Sandbox Mode: Unlimited transaction limit enabled for testing.</p>
+                         </div>
+
+                         <button 
+                           type="submit" 
+                           disabled={paymentLoading}
+                           className="w-full h-14 bg-white dark:bg-slate-950 text-slate-950 dark:text-white font-black rounded-xl text-[10px] uppercase tracking-widest shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                         >
+                            {paymentLoading ? (
+                              <div className="w-5 h-5 border-2 border-slate-900 dark:border-white border-t-transparent rounded-full animate-spin"></div>
+                            ) : (
+                              <>Process Payment <FaArrowRight size={10} /></>
+                            )}
+                         </button>
+                      </form>
+                   </div>
                  )}
 
                  {/* Admin Actions */}
