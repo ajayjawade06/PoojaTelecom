@@ -36,11 +36,14 @@ const CartPage = () => {
   }
 
   return (
-    <div className="pt-24 pb-20 animate-fade-in bg-white dark:bg-slate-900 min-h-screen">
-      <div className="main-container">
-        <div className="flex items-baseline gap-4 mb-10 border-b border-slate-100 dark:border-white/5 pb-4">
-           <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Shopping Bag</h1>
-           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{totalItems} Units Total</span>
+    <div className="pt-28 pb-20 animate-fade-in bg-white dark:bg-slate-950 min-h-screen relative overflow-hidden">
+      {/* Ambient backgrounds */}
+      <div className="hidden lg:block absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+      <div className="main-container relative z-10">
+        <div className="flex items-baseline gap-4 mb-10 border-b border-slate-100 dark:border-white/5 pb-6">
+           <h1 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tighter">Shopping Bag</h1>
+           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{totalItems} Units</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -48,20 +51,20 @@ const CartPage = () => {
           {/* Cart Items List */}
           <div className="lg:col-span-8 space-y-4">
              {cartItems.map((item) => (
-               <div key={item._id} className="group flex items-center gap-6 p-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5 hover:border-emerald-500/20 transition-all duration-300">
+              <div key={item._id} className="group flex flex-col sm:flex-row sm:items-center gap-6 p-6 bg-white dark:bg-slate-900/40 backdrop-blur-md rounded-[20px] border border-slate-200/60 dark:border-white/5 hover:border-emerald-500/30 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
                   {/* Small Item Image */}
-                  <Link to={`/product/${item._id}`} className="shrink-0">
-                     <div className="w-20 h-20 bg-white dark:bg-slate-950 rounded-xl p-2 flex items-center justify-center border border-slate-200 dark:border-white/10 shadow-sm transition-transform group-hover:-translate-y-1">
-                        <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain" />
+                  <Link to={`/product/${item._id}`} className="shrink-0 flex justify-center">
+                     <div className="w-24 h-24 bg-slate-50 dark:bg-black/20 rounded-2xl p-3 flex items-center justify-center border border-slate-200 dark:border-white/10 transition-transform group-hover:scale-105">
+                        <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain mix-blend-multiply dark:mix-blend-normal" />
                      </div>
                   </Link>
                   
                   {/* Detailed Info Column */}
-                  <div className="flex-grow">
-                     <Link to={`/product/${item._id}`} className="text-[13px] font-black text-slate-800 dark:text-white hover:text-emerald-500 transition-colors line-clamp-1 mb-1 leading-tight">
+                  <div className="flex-grow text-center sm:text-left">
+                     <Link to={`/product/${item._id}`} className="text-[14px] font-black text-slate-800 dark:text-white hover:text-emerald-500 transition-colors line-clamp-2 mb-1.5 leading-tight">
                         {item.name}
                      </Link>
-                     <p className="text-[10px] uppercase font-bold text-slate-400 mb-2">{item.brand}</p>
+                     <p className="text-[10px] uppercase font-bold text-slate-400 mb-2 tracking-widest">{item.brand}</p>
                      <div className="text-[14px] font-black text-slate-900 dark:text-emerald-400">
                         ₹{item.price.toLocaleString('en-IN')}
                      </div>
@@ -96,10 +99,12 @@ const CartPage = () => {
           </div>
 
           {/* Checkout Sticky Summary */}
-          <div className="lg:col-span-4 lg:sticky lg:top-24">
-             <div className="bg-slate-50 dark:bg-white/5 rounded-2xl p-6 border border-slate-100 dark:border-white/5 shadow-xl dark:shadow-none">
-                <h2 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-6 border-b border-slate-200 dark:border-white/10 pb-4 flex items-center gap-2">
-                   <FaShieldAlt className="text-emerald-500" /> Checkout Gateway
+          <div className="lg:col-span-4 lg:sticky lg:top-28 h-fit">
+             <div className="bg-white dark:bg-slate-900/60 backdrop-blur-xl rounded-[24px] p-8 border border-slate-200/60 dark:border-white/5 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-[-50px] right-[-50px] w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none"></div>
+                
+                <h2 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-8 border-b border-slate-200 dark:border-white/10 pb-4 flex items-center gap-2">
+                   <FaShieldAlt className="text-emerald-500" /> Secure Checkout Gateway
                 </h2>
                 
                 <div className="space-y-4 mb-8">

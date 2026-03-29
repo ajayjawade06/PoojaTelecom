@@ -5,21 +5,21 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-white/5 pt-12 pb-6">
+    <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-white/5 pt-20 pb-10">
       <div className="main-container">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           
           {/* Brand Info */}
           <div className="flex flex-col gap-4">
-            <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="bg-emerald-500 text-white w-7 h-7 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/10">
-                <FaStore size={14} />
+            <Link to="/" className="flex items-center gap-3 group w-fit">
+              <div className="bg-emerald-500 text-white w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                <FaStore size={16} />
               </div>
-              <span className="font-black text-lg tracking-tighter text-slate-900 dark:text-white">
+              <span className="font-black text-xl tracking-tighter text-slate-900 dark:text-white">
                 POOJA<span className="text-emerald-500">T</span>
               </span>
             </Link>
-            <p className="text-slate-500 dark:text-slate-400 text-xs font-medium leading-relaxed max-w-xs">
+            <p className="text-slate-500 dark:text-slate-400 text-[13px] font-medium leading-relaxed max-w-sm">
               Direct-to-consumer premium electronics and telecommunication solutions. High-performance gadgets curated for professionals.
             </p>
             <div className="flex items-center gap-3 mt-2">

@@ -29,15 +29,15 @@ const ProductList = () => {
         
         <div className="flex items-center justify-between mb-8 border-b border-slate-100 dark:border-white/5 pb-4">
            <div>
-              <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Product Catalog</h1>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Inventory Management</p>
+              <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Products</h1>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Manage Inventory</p>
            </div>
            <button 
              onClick={createProductHandler}
              disabled={loadingCreate}
              className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-500/10 flex items-center gap-2"
            >
-              <FaPlus size={10} /> Add Item
+              <FaPlus size={10} /> Add Product
            </button>
         </div>
 
@@ -49,7 +49,7 @@ const ProductList = () => {
                 <thead className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
                    <tr>
                       <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Product</th>
-                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Base Price</th>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Price</th>
                       <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</th>
                       <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Brand</th>
                       <th className="p-4"></th>

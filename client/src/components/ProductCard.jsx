@@ -13,32 +13,33 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl overflow-hidden flex flex-col h-full group transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none relative">
+    <div className="bg-white dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/60 dark:border-white/5 rounded-[20px] overflow-hidden flex flex-col h-full group transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 hover:border-emerald-500/20 relative">
       
-      {/* Badge Overlay */}
-      <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 pointer-events-none">
-        {product.countInStock === 0 ? (
-          <span className="bg-rose-500 text-white text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wider">
-            Sold Out
-          </span>
-        ) : (
-          <>
-            {product.price > 50000 && (
-              <span className="bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-900 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wider shadow-sm">
-                Premium
-              </span>
-            )}
-            {product.rating >= 4.5 && (
-              <span className="bg-amber-400 text-slate-900 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wider shadow-sm flex items-center gap-1">
-                <FaStar size={8} /> Best Rated
-              </span>
-            )}
-          </>
-        )}
-      </div>
 
       {/* Image Section */}
-      <div className="relative aspect-[4/5] bg-slate-50 dark:bg-slate-950/50 overflow-hidden flex items-center justify-center p-6 group-hover:bg-slate-100 dark:group-hover:bg-slate-950 transition-colors duration-300">
+      <div className="relative aspect-[4/5] bg-slate-50/50 dark:bg-black/20 overflow-hidden flex items-center justify-center p-8 transition-colors duration-500">
+        
+        {/* Badge Overlay - Inside Image Container */}
+        <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 pointer-events-none">
+          {product.countInStock === 0 ? (
+            <span className="bg-rose-500 text-white text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wider">
+              Sold Out
+            </span>
+          ) : (
+            <>
+              {product.price > 50000 && (
+                <span className="bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-900 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wider shadow-sm">
+                  Premium
+                </span>
+              )}
+              {product.rating >= 4.5 && (
+                <span className="bg-amber-400 text-slate-900 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-wider shadow-sm flex items-center gap-1">
+                  <FaStar size={8} /> Best Rated
+                </span>
+              )}
+            </>
+          )}
+        </div>
         <Link to={`/product/${product._id}`} className="block w-full h-full">
           <img 
             src={product.image} 
@@ -58,8 +59,8 @@ const ProductCard = ({ product }) => {
       </div>
       
       {/* Product Info */}
-      <div className="p-4 flex flex-col flex-grow bg-white dark:bg-slate-900">
-        <div className="flex items-center justify-between mb-2">
+      <div className="p-5 flex flex-col flex-grow bg-transparent">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{product.brand}</span>
           <div className="flex items-center gap-1 text-slate-400">
             <FaStar className="text-amber-400" size={10} />

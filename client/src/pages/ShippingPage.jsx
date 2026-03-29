@@ -80,14 +80,17 @@ const ShippingPage = () => {
   };
 
   return (
-    <div className="pt-24 pb-20 animate-fade-in bg-slate-50 dark:bg-slate-950 min-h-screen">
-      <div className="max-w-xl mx-auto px-6">
+    <div className="pt-28 pb-20 animate-fade-in bg-white dark:bg-slate-950 min-h-screen relative overflow-hidden z-0">
+      {/* Background Ambience */}
+      <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+      <div className="max-w-xl mx-auto px-6 relative z-10">
         <CheckoutSteps step1 step2 />
         
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/5 p-8 shadow-2xl shadow-slate-200/50 dark:shadow-none">
+        <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-2xl rounded-[32px] border border-slate-200/50 dark:border-white/10 p-10 shadow-2xl transition-all duration-500 hover:shadow-emerald-500/5">
           <div className="flex items-center justify-between mb-8">
              <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-               <FaMapMarkerAlt className="text-emerald-500" size={16} /> Destination
+               <FaMapMarkerAlt className="text-emerald-500" size={16} /> Shipping Address
              </h1>
              <button 
                onClick={getLocationHandler}
@@ -100,7 +103,7 @@ const ShippingPage = () => {
 
           <form onSubmit={submitHandler} className="space-y-4">
             <div className="space-y-1.5">
-               <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Street Address</label>
+               <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Address</label>
                <input 
                  type="text" 
                  placeholder="Locality, Building" 
@@ -124,7 +127,7 @@ const ShippingPage = () => {
                   />
                </div>
                <div className="space-y-1.5">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Pincode</label>
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Postal Code</label>
                   <input 
                     type="text" 
                     placeholder="400001" 
@@ -137,7 +140,7 @@ const ShippingPage = () => {
             </div>
 
             <div className="space-y-1.5">
-               <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Region/Country</label>
+               <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Country</label>
                <input 
                  type="text" 
                  placeholder="India" 
@@ -150,15 +153,16 @@ const ShippingPage = () => {
 
             <button 
               type="submit"
-              className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-12 rounded-xl font-black text-[11px] uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 mt-6"
+              className="w-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 h-14 rounded-2xl font-black text-[12px] uppercase tracking-widest shadow-xl hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 mt-8 relative overflow-hidden group/btn"
             >
-               Final Review <FaArrowRight size={10} />
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-500"></div>
+              <span className="relative z-10 flex items-center gap-3">Continue to Review <FaArrowRight size={10} /></span>
             </button>
           </form>
 
           {userInfo?.addresses?.length > 0 && (
             <div className="mt-8 pt-8 border-t border-slate-100 dark:border-white/5">
-               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-1">Saved Locations</p>
+               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-1">Select Saved Address</p>
                <div className="space-y-2">
                   {userInfo.addresses.map((addr, i) => (
                     <button 

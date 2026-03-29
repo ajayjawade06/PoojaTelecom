@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from './context/ThemeContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -19,6 +21,8 @@ import UserList from './pages/admin/UserList';
 import ProductList from './pages/admin/ProductList';
 import ProductEdit from './pages/admin/ProductEdit';
 import VerifyEmailPage from './pages/VerifyEmailPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 const App = () => {
   return (
@@ -37,6 +41,8 @@ const App = () => {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/login" element={<div className="-mt-24"><LoginPage /></div>} />
           <Route path="/register" element={<div className="-mt-24"><RegisterPage /></div>} />
+          <Route path="/forgot-password" element={<div className="-mt-24"><ForgotPasswordPage /></div>} />
+          <Route path="/reset-password" element={<div className="-mt-24"><ResetPasswordPage /></div>} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           
           <Route path="" element={<PrivateRoute />}>
@@ -56,6 +62,18 @@ const App = () => {
         </Routes>
       </main>
       <Footer />
+      <ToastContainer 
+        position="bottom-right" 
+        autoClose={3000} 
+        hideProgressBar={false} 
+        newestOnTop={false} 
+        closeOnClick 
+        rtl={false} 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
+        theme="colored" 
+      />
     </div>
     </ThemeProvider>
   );

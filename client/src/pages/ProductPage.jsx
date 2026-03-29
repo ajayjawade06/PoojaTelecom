@@ -48,8 +48,11 @@ const ProductPage = () => {
   if (error) return <div className="pt-40 main-container"><Message variant="red">{error?.data?.message || 'Error loading product'}</Message></div>;
 
   return (
-    <div className="pt-24 pb-20 animate-fade-in bg-white dark:bg-slate-900 min-h-screen">
-      <div className="main-container">
+    <div className="pt-28 pb-20 animate-fade-in bg-white dark:bg-slate-950 min-h-screen relative overflow-hidden">
+      {/* Ambient background glow */}
+      <div className="hidden lg:block absolute top-[10%] content-none right-[-5%] w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+      <div className="main-container relative z-10">
         
         {/* Navigation / Breadcrumb */}
         <div className="flex items-center gap-2 mb-8 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
@@ -62,11 +65,13 @@ const ProductPage = () => {
           
           {/* Gallery - Left */}
           <div className="lg:col-span-7 space-y-4">
-             <div className="aspect-square bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-200 dark:border-white/5 overflow-hidden flex items-center justify-center p-12 group">
+             <div className="aspect-square bg-white dark:bg-black/20 rounded-[32px] border border-slate-200 dark:border-white/5 overflow-hidden flex items-center justify-center p-16 group hover:shadow-2xl transition-all duration-500 relative">
+                {/* Subtle inner glow for product gallery */}
+                <div className="absolute inset-0 bg-radial-gradient from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                 <img 
                   src={product.image} 
                   alt={product.name} 
-                  className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal group-hover:scale-110 transition-transform duration-700" 
+                  className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal group-hover:scale-[1.05] transition-transform duration-700 z-10 relative" 
                 />
              </div>
              {/* Tiny thumbnails could go here */}
@@ -113,9 +118,11 @@ const ProductPage = () => {
 
                   <button 
                     onClick={addToCartHandler}
-                    className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-14 rounded-xl font-black text-[12px] uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                    className="w-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 h-16 rounded-[16px] font-black text-[13px] uppercase tracking-[0.2em] shadow-2xl hover:shadow-emerald-500/20 hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-3 overflow-hidden relative group/btn"
                   >
-                    <FaShoppingCart size={14} /> Add to Cart
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-500"></div>
+                    <FaShoppingCart size={16} className="relative z-10" /> 
+                    <span className="relative z-10">Add to Cart</span>
                   </button>
                </div>
              )}

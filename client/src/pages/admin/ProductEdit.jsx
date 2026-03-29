@@ -60,17 +60,17 @@ const ProductEdit = () => {
       <div className="max-w-xl mx-auto px-6">
         
         <Link to="/admin/productlist" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-500 mb-8 transition-colors">
-           <FaArrowLeft size={10} /> Back to Catalog
+           <FaArrowLeft size={10} /> Back to Products
         </Link>
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/5 p-8 shadow-2xl shadow-slate-200/50 dark:shadow-none">
-           <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight mb-8 border-b border-slate-50 dark:border-white/5 pb-4">Edit Product Profile</h1>
+           <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight mb-8 border-b border-slate-50 dark:border-white/5 pb-4">Edit Product</h1>
 
            {loadingUpdate && <Loader />}
            {isLoading ? <Loader /> : error ? <Message variant="red">Sync Error</Message> : (
              <form onSubmit={submitHandler} className="space-y-4">
                 <div className="space-y-1.5">
-                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Title</label>
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Product Name</label>
                    <input 
                      type="text" 
                      className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
@@ -90,7 +90,7 @@ const ProductEdit = () => {
                       />
                    </div>
                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Stock Units</label>
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Count In Stock</label>
                       <input 
                         type="number" 
                         className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
@@ -101,7 +101,7 @@ const ProductEdit = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Brand Identity</label>
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Brand</label>
                    <input 
                      type="text" 
                      className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
@@ -111,7 +111,7 @@ const ProductEdit = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Catalog Category</label>
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Category</label>
                    <input 
                      type="text" 
                      className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
@@ -121,7 +121,7 @@ const ProductEdit = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Visual Resource</label>
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Image URL</label>
                    <div className="flex gap-2">
                       <input 
                         type="text" 
@@ -138,7 +138,7 @@ const ProductEdit = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Specs / Description</label>
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Description</label>
                    <textarea 
                      rows="3"
                      className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white resize-none"
@@ -148,7 +148,7 @@ const ProductEdit = () => {
                 </div>
 
                 <button type="submit" className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-12 rounded-xl font-black text-[11px] uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 mt-4">
-                   <FaSave size={14} /> Commit Changes
+                   <FaSave size={14} /> Update Product
                 </button>
              </form>
            )}

@@ -9,7 +9,7 @@ const UserList = () => {
   const [deleteUser, { isLoading: loadingDelete }] = useDeleteUserMutation();
 
   const deleteHandler = async (id) => {
-    if (window.confirm('Terminate User Access?')) {
+    if (window.confirm('Delete User?')) {
       try { await deleteUser(id); refetch(); } catch (err) {}
     }
   };
@@ -20,8 +20,8 @@ const UserList = () => {
         
         <div className="flex items-center justify-between mb-8 border-b border-slate-100 dark:border-white/5 pb-4">
            <div>
-              <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Identity Directory</h1>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Access Management</p>
+              <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Users</h1>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Manage User Accounts</p>
            </div>
         </div>
 
@@ -32,9 +32,9 @@ const UserList = () => {
              <table className="w-full text-left">
                 <thead className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
                    <tr>
-                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Descriptor</th>
-                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Source</th>
-                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Auth Level</th>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">User</th>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</th>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Role</th>
                       <th className="p-4"></th>
                    </tr>
                 </thead>
@@ -50,9 +50,9 @@ const UserList = () => {
                          </td>
                          <td className="p-4 text-center">
                             {user.isAdmin ? (
-                               <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/20">System Admin</span>
+                               <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/20">Admin</span>
                             ) : (
-                               <span className="text-[9px] font-black text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded uppercase border border-slate-200 dark:border-white/10">Base User</span>
+                               <span className="text-[9px] font-black text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded uppercase border border-slate-200 dark:border-white/10">Customer</span>
                             )}
                          </td>
                          <td className="p-4 text-right">

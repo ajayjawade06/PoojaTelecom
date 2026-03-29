@@ -58,25 +58,25 @@ const Dashboard = () => {
       <div className="main-container">
         
         {/* Compact Admin Header */}
-        <div className="flex items-center justify-between mb-10 border-b border-slate-100 dark:border-white/5 pb-4">
-           <div>
-              <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Mission Control</h1>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">HQ Console • v2.0</p>
-           </div>
-           <div className="flex gap-2">
-              <Link to="/admin/productlist" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg active:scale-95">Catalog</Link>
-              <Link to="/admin/orderlist" className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/10 active:scale-95">Orders</Link>
-           </div>
+         <div className="flex items-center justify-between mb-10 border-b border-slate-100 dark:border-white/5 pb-4">
+            <div>
+               <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Admin Dashboard</h1>
+               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Pooja Telecom Stats</p>
+            </div>
+            <div className="flex gap-2">
+               <Link to="/admin/productlist" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg active:scale-95">Products</Link>
+               <Link to="/admin/orderlist" className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/10 active:scale-95">Orders</Link>
+            </div>
         </div>
 
         {/* Global Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-           {[
-             { label: 'Net Revenue', value: `₹${metrics.totalRevenue.toLocaleString('en-IN')}`, icon: FaChartLine, color: 'text-emerald-500' },
-             { label: 'Total Base', value: metrics.totalUsers, icon: FaUsers, color: 'text-blue-500' },
-             { label: 'Throughput', value: metrics.totalOrders, icon: FaBoxOpen, color: 'text-purple-500' },
-             { label: 'Avg payload', value: `₹${metrics.avgOrderValue}`, icon: FaCrown, color: 'text-amber-500' },
-           ].map((stat, i) => (
+            {[
+              { label: 'Total Revenue', value: `₹${metrics.totalRevenue.toLocaleString('en-IN')}`, icon: FaChartLine, color: 'text-emerald-500' },
+              { label: 'Total Users', value: metrics.totalUsers, icon: FaUsers, color: 'text-blue-500' },
+              { label: 'Total Orders', value: metrics.totalOrders, icon: FaBoxOpen, color: 'text-purple-500' },
+              { label: 'Avg order value', value: `₹${metrics.avgOrderValue}`, icon: FaCrown, color: 'text-amber-500' },
+            ].map((stat, i) => (
              <div key={i} className="bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 p-6 rounded-2xl flex items-center justify-between group hover:border-emerald-500/20 transition-all">
                 <div>
                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{stat.label}</p>
@@ -92,13 +92,13 @@ const Dashboard = () => {
            
            {/* Revenue Area Chart */}
            <div className="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8 shadow-sm">
-              <div className="flex items-center justify-between mb-10">
-                 <h2 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>
-                    Revenue Trajectory
-                 </h2>
-                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-white/5 px-2 py-1 rounded">7D Metrics</span>
-              </div>
+               <div className="flex items-center justify-between mb-10">
+                  <h2 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-2">
+                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>
+                     Revenue Growth
+                  </h2>
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-white/5 px-2 py-1 rounded">Last 7 Days</span>
+               </div>
               <div className="h-64 w-full">
                  <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={metrics.revenueData}>
@@ -120,9 +120,9 @@ const Dashboard = () => {
               </div>
            </div>
 
-           {/* Order status Pie Chart */}
-           <div className="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8 shadow-sm text-center">
-              <h2 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-8 border-b border-slate-50 dark:border-white/5 pb-4">Status Distribution</h2>
+            {/* Order status Pie Chart */}
+            <div className="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8 shadow-sm text-center">
+               <h2 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-8 border-b border-slate-50 dark:border-white/5 pb-4">Order Status</h2>
               <div className="h-48 flex items-center justify-center relative">
                  <ResponsiveContainer width="100%" height="100%">
                     <PieChart>

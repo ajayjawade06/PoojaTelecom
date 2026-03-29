@@ -40,20 +40,23 @@ const ProfilePage = () => {
         setMessage('');
         setPassword('');
         setConfirmPassword('');
-        alert('Credentials updated');
+        alert('Profile updated');
       } catch (err) {}
     }
   };
 
   const tabs = [
-    { id: 'profile', name: 'Identity', icon: <FaUser size={12}/> },
-    { id: 'orders', name: 'Order Logs', icon: <FaShoppingBag size={12}/> },
-    { id: 'addresses', name: 'Locations', icon: <FaMapMarkerAlt size={12}/> },
+    { id: 'profile', name: 'Profile', icon: <FaUser size={12}/> },
+    { id: 'orders', name: 'Orders', icon: <FaShoppingBag size={12}/> },
+    { id: 'addresses', name: 'Addresses', icon: <FaMapMarkerAlt size={12}/> },
   ];
 
   return (
-    <div className="pt-24 pb-20 animate-fade-in bg-white dark:bg-slate-900 min-h-screen">
-      <div className="main-container">
+    <div className="pt-28 pb-20 animate-fade-in bg-white dark:bg-slate-950 min-h-screen relative overflow-hidden z-0">
+      {/* Background Ambience */}
+      <div className="absolute top-[10%] left-[-10%] w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+      <div className="main-container relative z-10">
         <div className="flex flex-col lg:flex-row gap-12">
           
           {/* Dashboard Sidebar */}
@@ -64,7 +67,7 @@ const ProfilePage = () => {
                 </div>
                 <div>
                    <h2 className="text-[13px] font-black text-slate-900 dark:text-white leading-tight">{name}</h2>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Member</p>
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Customer</p>
                 </div>
              </div>
 
@@ -86,14 +89,14 @@ const ProfilePage = () => {
           <div className="flex-grow">
              {activeTab === 'profile' && (
                 <div className="animate-fade-in max-w-2xl">
-                   <h2 className="text-xl font-black text-slate-900 dark:text-white mb-8 tracking-tight">Identity Management</h2>
+                   <h2 className="text-xl font-black text-slate-900 dark:text-white mb-8 tracking-tight">Profile Settings</h2>
                    
                    {message && <Message variant="red">{message}</Message>}
                    {errorUpdate && <Message variant="red">{errorUpdate?.data?.message}</Message>}
-                   {isSuccess && <Message variant="green">Profile Synchronized</Message>}
+                   {isSuccess && <Message variant="green">Profile Updated</Message>}
 
-                   <form onSubmit={submitHandler} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                   <form onSubmit={submitHandler} className="space-y-6 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 rounded-[24px] p-8 shadow-lg">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                          <div className="space-y-1.5">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
                             <input 
@@ -104,7 +107,7 @@ const ProfilePage = () => {
                             />
                          </div>
                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Source</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
                             <input 
                               type="email" 
                               className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
@@ -114,69 +117,70 @@ const ProfilePage = () => {
                          </div>
                       </div>
 
-                      <div className="pt-4 space-y-4">
-                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 border-b border-emerald-500/10 pb-2">Security Override</h3>
-                         <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">New Access Key</label>
-                               <input 
-                                 type="password" 
-                                 placeholder="••••••••"
-                                 className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white tracking-widest"
-                                 value={password}
-                                 onChange={e => setPassword(e.target.value)}
-                               />
-                            </div>
-                            <div className="space-y-1.5">
-                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Verify Access Key</label>
-                               <input 
-                                 type="password" 
-                                 placeholder="••••••••"
-                                 className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white tracking-widest"
-                                 value={confirmPassword}
-                                 onChange={e => setConfirmPassword(e.target.value)}
-                               />
-                            </div>
-                         </div>
+                <div className="pt-4 space-y-4">
+                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 border-b border-emerald-500/10 pb-2">Update Password</h3>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">New Password</label>
+                         <input 
+                           type="password" 
+                           placeholder="••••••••"
+                           className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white tracking-widest"
+                           value={password}
+                           onChange={e => setPassword(e.target.value)}
+                         />
                       </div>
+                      <div className="space-y-1.5">
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Confirm Password</label>
+                         <input 
+                           type="password" 
+                           placeholder="••••••••"
+                           className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white tracking-widest"
+                           value={confirmPassword}
+                           onChange={e => setConfirmPassword(e.target.value)}
+                         />
+                      </div>
+                   </div>
+                </div>
 
-                      <button type="submit" disabled={loadingUpdate} className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-12 px-10 rounded-xl font-black text-[11px] uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all mt-4">
-                         {loadingUpdate ? 'Syncing...' : 'Update Credentials'}
-                      </button>
+                <button type="submit" disabled={loadingUpdate} className="w-full md:w-auto bg-slate-950 dark:bg-white text-white dark:text-slate-950 h-12 px-10 rounded-xl font-black text-[11px] uppercase tracking-widest shadow-xl hover:shadow-emerald-500/20 active:scale-95 transition-all mt-4 relative overflow-hidden group/btn z-10">
+                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-500"></div>
+                   <span className="relative z-10">{loadingUpdate ? 'Updating...' : 'Save Changes'}</span>
+                </button>
                    </form>
                 </div>
              )}
 
              {activeTab === 'orders' && (
                 <div className="animate-fade-in">
-                   <h2 className="text-xl font-black text-slate-900 dark:text-white mb-8 tracking-tight">Order Logs</h2>
+                   <h2 className="text-xl font-black text-slate-900 dark:text-white mb-8 tracking-tight">Order History</h2>
                    {loadingOrders ? <Loader /> : errorOrders ? <Message variant="red">{errorOrders?.data?.message}</Message> : (
-                      <div className="rounded-xl border border-slate-100 dark:border-white/5 overflow-hidden">
+                      <div className="rounded-[24px] border border-slate-200/50 dark:border-white/10 overflow-hidden bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl shadow-lg">
                          <table className="w-full text-left">
-                            <thead className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                            <thead className="bg-slate-50/50 dark:bg-white/5 border-b border-slate-200/50 dark:border-white/10">
                                <tr>
-                                  <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Descriptor</th>
-                                  <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Timestamp</th>
-                                  <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Net Value</th>
+                                  <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Order ID</th>
+                                  <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
+                                  <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</th>
                                   <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
                                   <th className="p-4"></th>
                                </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                                {orders.map(order => (
-                                  <tr key={order._id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                  <tr key={order._id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                                      <td className="p-4 text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-tight">#{order._id.slice(-8)}</td>
                                      <td className="p-4 text-[11px] font-bold text-slate-400">{order.createdAt.substring(0, 10)}</td>
                                      <td className="p-4 text-[11px] font-black text-slate-900 dark:text-white">₹{order.totalPrice.toLocaleString('en-IN')}</td>
                                      <td className="p-4">
                                         {order.isPaid ? (
-                                           <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded uppercase tracking-widest">Authorized</span>
+                                           <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded uppercase tracking-widest">Paid</span>
                                         ) : (
-                                           <span className="text-[9px] font-black text-rose-500 bg-rose-500/10 px-2 py-1 rounded uppercase tracking-widest">Pending</span>
+                                           <span className="text-[9px] font-black text-rose-500 bg-rose-500/10 px-2 py-1 rounded uppercase tracking-widest">Unpaid</span>
                                         )}
                                      </td>
                                      <td className="p-4 text-right">
-                                        <Link to={`/order/${order._id}`} className="text-emerald-500 font-black text-[10px] uppercase tracking-widest hover:underline">Inspect</Link>
+                                        <Link to={`/order/${order._id}`} className="text-emerald-500 font-black text-[10px] uppercase tracking-widest group-hover:underline flex items-center justify-end gap-1">Details <FaChevronRight size={8}/></Link>
                                      </td>
                                   </tr>
                                ))}
@@ -189,19 +193,19 @@ const ProfilePage = () => {
 
              {activeTab === 'addresses' && (
                 <div className="animate-fade-in max-w-2xl">
-                   <h2 className="text-xl font-black text-slate-900 dark:text-white mb-8 tracking-tight">Saved Locations</h2>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <h2 className="text-xl font-black text-slate-900 dark:text-white mb-8 tracking-tight">My Addresses</h2>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {userInfo.addresses?.map((addr, i) => (
-                         <div key={i} className="p-5 rounded-xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 flex flex-col gap-2">
-                            <span className="text-[9px] font-black bg-emerald-500 text-white w-fit px-2 py-0.5 rounded shadow-sm">TAG #{i+1}</span>
-                            <p className="text-[12px] font-bold text-slate-900 dark:text-white leading-tight">{addr.address}</p>
+                         <div key={i} className="p-6 rounded-[24px] border border-slate-200/50 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl shadow-lg flex flex-col gap-2 hover:shadow-emerald-500/5 transition-all">
+                            <span className="text-[9px] font-black bg-emerald-500 text-white w-fit px-2 py-0.5 rounded shadow-sm">Address #{i+1}</span>
+                            <p className="text-[12px] font-bold text-slate-900 dark:text-white leading-tight mt-2">{addr.address}</p>
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{addr.city}, {addr.postalCode}</p>
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{addr.country}</p>
                          </div>
                       ))}
                       {(!userInfo.addresses || userInfo.addresses.length === 0) && (
-                         <div className="col-span-full py-12 text-center bg-slate-50 dark:bg-white/5 rounded-xl border border-dashed border-slate-200 dark:border-white/10">
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No primary locations established</p>
+                         <div className="col-span-full py-12 text-center bg-white/50 dark:bg-white/5 rounded-[24px] border border-dashed border-slate-200/50 dark:border-white/10 backdrop-blur-xl">
+                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No addresses saved</p>
                          </div>
                       )}
                    </div>

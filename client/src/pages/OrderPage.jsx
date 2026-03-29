@@ -12,7 +12,7 @@ import {
   useDeliverOrderMutation,
   useShipOrderMutation,
 } from '../redux/slices/ordersApiSlice';
-import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt, FaClock } from 'react-icons/fa';
+import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt, FaClock, FaUser } from 'react-icons/fa';
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
@@ -99,14 +99,17 @@ const OrderPage = () => {
   ) : error ? (
     <div className="pt-24 min-h-screen main-container"><Message variant="red">{error?.data?.message || error.error}</Message></div>
   ) : (
-    <div className="pt-24 pb-20 animate-fade-in bg-slate-50 dark:bg-slate-950 min-h-screen">
-      <div className="main-container">
+    <div className="pt-28 pb-20 animate-fade-in bg-white dark:bg-slate-950 min-h-screen relative overflow-hidden z-0">
+      {/* Background Ambience */}
+      <div className="absolute top-[10%] left-[-10%] w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      
+      <div className="main-container relative z-10">
         
         {/* Header Badge */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
            <div>
               <div className="flex items-center gap-3 mb-2">
-                 <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Order Record</h1>
+                 <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Order Details</h1>
                  <span className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest leading-none shadow-lg shadow-black/10">#{order._id.slice(-8)}</span>
               </div>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 items-center">
@@ -114,12 +117,12 @@ const OrderPage = () => {
               </p>
            </div>
            <div className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${order.isDelivered ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
-              {order.isDelivered ? 'Synchronized & Delivered' : order.isShipped ? 'Carrier In-Transit' : order.isPaid ? 'Payment Authorized' : 'Awaiting Authorization'}
+              {order.isDelivered ? 'Order Delivered' : order.isShipped ? 'In Transit' : order.isPaid ? 'Payment Received' : 'Pending Payment'}
            </div>
         </div>
 
         {/* Minimal Progress Map */}
-        <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-white/5 mb-8 shadow-sm overflow-x-auto">
+        <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl p-10 rounded-[32px] border border-slate-200/50 dark:border-white/10 mb-10 shadow-xl overflow-x-auto relative">
            <div className="flex justify-between items-start min-w-[600px] relative">
               <div className="absolute top-3 left-[12%] right-[12%] h-[1px] bg-slate-100 dark:bg-white/5"></div>
               <div 
@@ -146,14 +149,14 @@ const OrderPage = () => {
            <div className="lg:col-span-8 space-y-4">
               
               {/* Shipping & User Split */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-6">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><FaUser size={10} /> Origin Identity</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 rounded-[24px] p-8 shadow-lg hover:shadow-emerald-500/5 transition-all">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><FaUser size={10} /> Customer Details</h3>
                     <p className="text-[13px] font-black text-slate-800 dark:text-white leading-tight mb-1">{order.user.name}</p>
                     <p className="text-[11px] font-bold text-slate-500 truncate">{order.user.email}</p>
                  </div>
-                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-6">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><FaMapMarkerAlt size={10} /> Shipping Matrix</h3>
+                 <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 rounded-[24px] p-8 shadow-lg hover:shadow-emerald-500/5 transition-all">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><FaMapMarkerAlt size={10} /> Shipping Address</h3>
                     <p className="text-[12px] font-bold text-slate-800 dark:text-white leading-tight">
                        {order.shippingAddress.address}, {order.shippingAddress.city}<br />
                        {order.shippingAddress.postalCode}, {order.shippingAddress.country}
@@ -162,8 +165,8 @@ const OrderPage = () => {
               </div>
 
               {/* Items Manifest */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-6">
-                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 border-b border-slate-50 dark:border-white/5 pb-4"><FaBoxOpen size={10} className="inline mr-2" /> Items Manifest</h3>
+              <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 rounded-[24px] p-8 shadow-lg hover:shadow-emerald-500/5 transition-all">
+                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 border-b border-slate-100 dark:border-white/10 pb-4 flex items-center gap-2"><FaBoxOpen size={12} className="text-emerald-500"/> Order Items</h3>
                  <div className="space-y-3">
                     {order.orderItems.map((item, index) => (
                        <div key={index} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
@@ -184,26 +187,26 @@ const OrderPage = () => {
            </div>
 
            {/* Totals & Actions Sticky Column */}
-           <div className="lg:col-span-4 lg:sticky lg:top-24">
-              <div className="bg-slate-900 dark:bg-white rounded-2xl p-8 text-white dark:text-slate-900 shadow-2xl relative overflow-hidden">
-                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[40px] pointer-events-none"></div>
+           <div className="lg:col-span-4 lg:sticky lg:top-28 h-fit">
+              <div className="bg-slate-950 dark:bg-white rounded-[32px] p-10 text-white dark:text-slate-950 shadow-2xl relative overflow-hidden">
+                 <div className="absolute top-[-50px] right-[-50px] w-40 h-40 bg-emerald-500/20 rounded-full blur-[40px] pointer-events-none"></div>
                  
-                 <h2 className="text-[11px] font-black uppercase tracking-[0.2em] mb-8 border-b border-white/10 dark:border-slate-100 pb-4">Financial Overview</h2>
+                 <h2 className="text-[11px] font-black uppercase tracking-[0.2em] mb-8 border-b border-white/10 dark:border-slate-100 pb-4 relative z-10">Order Summary</h2>
                  
-                 <div className="space-y-4 mb-8">
+                 <div className="space-y-4 mb-8 relative z-10">
                     <div className="flex justify-between items-baseline opacity-60">
-                       <span className="text-[10px] font-bold uppercase tracking-widest">Base Value</span>
-                       <span className="text-[13px] font-black">₹{order.itemsPrice.toLocaleString('en-IN')}</span>
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Items</span>
+                       <span className="text-[14px] font-black">₹{order.itemsPrice.toLocaleString('en-IN')}</span>
                     </div>
                     <div className="flex justify-between items-baseline opacity-60">
-                       <span className="text-[10px] font-bold uppercase tracking-widest">Logistics</span>
-                       <span className="text-[13px] font-black">₹{order.shippingPrice}</span>
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Shipping</span>
+                       <span className="text-[14px] font-black">₹{order.shippingPrice}</span>
                     </div>
                  </div>
 
-                 <div className="border-t border-white/10 dark:border-slate-100 pt-6 mb-10 flex justify-between items-center">
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Net Net</span>
-                    <span className="text-3xl font-black tracking-tighter">₹{order.totalPrice.toLocaleString('en-IN')}</span>
+                 <div className="border-t border-white/10 dark:border-slate-100 pt-8 mb-10 flex justify-between items-center relative z-10">
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Total</span>
+                    <span className="text-4xl font-black tracking-tighter">₹{order.totalPrice.toLocaleString('en-IN')}</span>
                  </div>
 
                  {/* Payment Action Buffer */}
@@ -211,35 +214,36 @@ const OrderPage = () => {
                     <button 
                       onClick={paymentHandler} 
                       disabled={razorpayLoading}
-                      className="w-full h-14 bg-emerald-500 text-white font-black rounded-xl text-[12px] uppercase tracking-[0.2em] hover:bg-emerald-600 active:scale-95 transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3"
+                      className="w-full h-16 bg-emerald-500 text-white font-black rounded-2xl text-[12px] uppercase tracking-[0.2em] shadow-xl hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 relative overflow-hidden group/btn disabled:opacity-50 z-10"
                     >
-                       {razorpayLoading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><FaShieldAlt size={16}/> Authorize Payment</>}
+                       <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-500"></div>
+                       {razorpayLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin relative z-10"></div> : <span className="relative z-10 flex items-center gap-3"><FaShieldAlt size={16}/> Pay Now</span>}
                     </button>
                  )}
 
-                 {/* Admin Controls Area */}
+                 {/* Admin Actions */}
                  {userInfo?.isAdmin && order.isPaid && (
                    <div className="space-y-3 pt-6 border-t border-white/10 dark:border-slate-100 mt-6">
-                      <p className="text-[9px] font-black text-rose-400 uppercase tracking-widest mb-3">Priority Overrides</p>
+                      <p className="text-[9px] font-black text-rose-400 uppercase tracking-widest mb-3">Admin Actions</p>
                       {!order.isShipped && (
                          <button onClick={shipOrderHandler} disabled={loadingShip} className="w-full h-12 bg-white/10 hover:bg-white/20 dark:bg-slate-100 dark:hover:bg-slate-200 text-white dark:text-slate-900 border border-white/10 dark:border-slate-300 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
-                            <FaTruck size={12}/> {loadingShip ? 'Wait...' : 'Trigger Shipping'}
+                            <FaTruck size={12}/> {loadingShip ? 'Wait...' : 'Mark as Shipped'}
                          </button>
                       )}
                       {order.isShipped && !order.isDelivered && (
                          <button onClick={deliverOrderHandler} disabled={loadingDeliver} className="w-full h-12 bg-emerald-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/20">
-                            <FaCheckCircle size={12}/> {loadingDeliver ? 'Wait...' : 'Conclude Delivery'}
+                            <FaCheckCircle size={12}/> {loadingDeliver ? 'Wait...' : 'Mark as Delivered'}
                          </button>
                       )}
                       {order.isDelivered && (
-                         <div className="text-center py-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase tracking-widest rounded-xl">Sequence Closed</div>
+                         <div className="text-center py-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase tracking-widest rounded-xl">Order Completed</div>
                       )}
                    </div>
                  )}
               </div>
               
               <div className="mt-8 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500">
-                 <FaLock size={12} /> Secure Protocol Active
+                 <FaLock size={12} /> Secure Checkout
               </div>
            </div>
         </div>

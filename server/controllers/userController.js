@@ -1,7 +1,7 @@
 import asyncHandler from '../middleware/asyncHandler.js';
 import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.js';
-import { sendVerificationEmail } from '../utils/emailService.js';
+import { sendVerificationEmail, sendResetPasswordEmail } from '../utils/emailService.js';
 
 // Strict email validator
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
@@ -49,11 +49,20 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (userExists) {
     if (!userExists.isVerified) {
-      // Auto-verify existing unverified account (temporary - email disabled)
-      userExists.isVerified = true;
+      // Resend OTP for existing unverified account
+      const otp = generateOTP();
+      const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
+      userExists.verificationCode = otp;
+      userExists.verificationCodeExpiry = expiry;
       await userExists.save();
+      
+      try {
+        await sendVerificationEmail(email, userExists.name, otp);
+      } catch (emailError) {
+        console.error('Email sending failed:', emailError.message);
+      }
       return res.status(200).json({ 
-        message: 'Account verified! You can now log in.', 
+        message: 'Verification code resent. Please check your email.', 
         email 
       });
     }
@@ -62,14 +71,14 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const otp = generateOTP();
-  const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+  const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
 
   try {
     const user = await User.create({
       name,
       email,
       password,
-      isVerified: true, // TEMPORARY: Auto-verify until SendGrid is fixed
+      isVerified: false,
       verificationCode: otp,
       verificationCodeExpiry: expiry,
     });
@@ -79,12 +88,11 @@ const registerUser = asyncHandler(async (req, res) => {
       try {
         await sendVerificationEmail(email, name, otp);
       } catch (emailError) {
-        console.error('Email sending skipped (temporarily):', emailError.message);
+        console.error('Email sending failed:', emailError.message);
       }
       
-      // Always return success - user is auto-verified
       return res.status(201).json({
-        message: 'Registration successful! You can now log in.',
+        message: 'Registration successful! Check your email for verification code.',
         email,
       });
     } else {
@@ -141,6 +149,38 @@ const verifyEmail = asyncHandler(async (req, res) => {
     addresses: user.addresses || [],
     message: 'Email verified successfully! Welcome to Pooja Telecom.',
   });
+});
+
+// @desc    Resend verification email
+// @route   POST /api/users/resend-verification
+// @access  Public
+const resendVerification = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  if (user.isVerified) {
+    return res.status(400).json({ message: 'Account is already verified. Please login.' });
+  }
+
+  const otp = generateOTP();
+  const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
+
+  user.verificationCode = otp;
+  user.verificationCodeExpiry = expiry;
+  await user.save();
+
+  try {
+    await sendVerificationEmail(email, user.name, otp);
+    res.status(200).json({ message: 'Verification code resent. Please check your email.' });
+  } catch (error) {
+    console.error('Email sending failed:', error.message);
+    res.status(500).json({ message: 'Failed to send verification email. Please try again.' });
+  }
 });
 
 // @desc    Logout user / clear cookie
@@ -276,10 +316,71 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Forgot Password - Send OTP
+// @route   POST /api/users/forgot-password
+// @access  Public
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    const otp = generateOTP();
+    const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
+
+    user.verificationCode = otp;
+    user.verificationCodeExpiry = expiry;
+    await user.save();
+
+    try {
+      await sendResetPasswordEmail(user.email, user.name, otp);
+      res.status(200).json({ message: 'Reset code sent to your email' });
+    } catch (error) {
+      // In development, we log it so user can see it if SendGrid fails
+      console.log('RESET OTP (Dev):', otp);
+      res.status(200).json({ 
+        message: 'Reset code generated (check server console if email fails)',
+        devMode: true 
+      });
+    }
+  } else {
+    res.status(404);
+    throw new Error('User with this email does not exist');
+  }
+});
+
+// @desc    Reset Password
+// @route   POST /api/users/reset-password
+// @access  Public
+const resetPassword = asyncHandler(async (req, res) => {
+  const { email, code, newPassword } = req.body;
+
+  const user = await User.findOne({ 
+    email,
+    verificationCode: code,
+    verificationCodeExpiry: { $gt: Date.now() }
+  });
+
+  if (user) {
+    user.password = newPassword;
+    user.verificationCode = undefined;
+    user.verificationCodeExpiry = undefined;
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successful! You can now log in.' });
+  } else {
+    res.status(400);
+    throw new Error('Invalid or expired reset code');
+  }
+});
+
 export {
   authUser,
   registerUser,
+  forgotPassword,
+  resetPassword,
   verifyEmail,
+  resendVerification,
   logoutUser,
   getUserProfile,
   updateUserProfile,

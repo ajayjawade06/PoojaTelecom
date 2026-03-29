@@ -24,34 +24,38 @@ const HomePage = () => {
   return (
     <div className="bg-transparent min-h-screen pb-12 pt-20 animate-fade-in relative z-10 w-full flex flex-col items-center">
       
+      {/* Ambient Aesthetics */}
+      <div className="hidden lg:block absolute top-[-5%] left-[-5%] w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="hidden lg:block absolute top-[40%] right-[-10%] w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
       {/* Hero Carousel */}
-      <div className="main-container mb-12">
+      <div className="main-container mb-20 relative z-10">
         <HeroCarousel />
       </div>
 
       <div className="main-container">
         
         {/* Compact Features Grid */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-20">
           {[
             { icon: FaTruck, title: 'Express Delivery', desc: 'Secure & Fast' },
             { icon: FaShieldAlt, title: 'Warranty Plus', desc: '100% Genuine' },
             { icon: FaHeadset, title: 'Elite Support', desc: '24/7 Expert Help' },
             { icon: FaUndo, title: 'Easy Returns', desc: 'Simple 7-Day Policy' }
           ].map((f, i) => (
-            <div key={i} className="flex flex-col items-center text-center p-4 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-2 shadow-sm border border-emerald-500/10">
-                <f.icon size={16} />
+            <div key={i} className="flex flex-col items-center text-center p-8 rounded-[24px] bg-white dark:bg-slate-900/50 backdrop-blur-sm border border-slate-100 dark:border-white/5 shadow-lg shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-14 h-14 rounded-[16px] bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-4 border border-emerald-100 dark:border-emerald-500/10 group-hover:scale-110 transition-transform">
+                <f.icon size={24} />
               </div>
-              <h4 className="font-black text-slate-800 dark:text-white uppercase tracking-wider text-[10px] mb-1">{f.title}</h4>
-              <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{f.desc}</p>
+              <h4 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-widest text-[12px] mb-2">{f.title}</h4>
+              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </section>
 
         {/* Featured Products Section */}
         <section className="mb-20">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
             <div className="flex items-center gap-4">
                <div className="w-1 h-8 bg-emerald-500 rounded-full"></div>
                <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">
@@ -63,7 +67,7 @@ const HomePage = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {isLoading ? (
               [...Array(10)].map((_, i) => <ProductSkeleton key={i} />)
             ) : error ? (

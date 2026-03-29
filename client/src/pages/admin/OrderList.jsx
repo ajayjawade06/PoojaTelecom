@@ -13,8 +13,8 @@ const OrderList = () => {
         
         <div className="flex items-center justify-between mb-8 border-b border-slate-100 dark:border-white/5 pb-4">
            <div>
-              <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Order Registry</h1>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Transaction Monitoring</p>
+              <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Orders</h1>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">View and Manage Orders</p>
            </div>
         </div>
 
@@ -25,9 +25,9 @@ const OrderList = () => {
                    <tr>
                       <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Order ID</th>
                       <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
-                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Net Value</th>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</th>
                       <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Payment</th>
-                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Logistics</th>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Shipping</th>
                       <th className="p-4"></th>
                    </tr>
                 </thead>
@@ -42,22 +42,22 @@ const OrderList = () => {
                          <td className="p-4 text-[12px] font-black text-slate-900 dark:text-emerald-400">₹{order.totalPrice.toLocaleString('en-IN')}</td>
                          <td className="p-4 text-center">
                             {order.isPaid ? (
-                               <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/20">Authorized</span>
+                               <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/20">Paid</span>
                             ) : (
-                               <span className="text-[9px] font-black text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded uppercase border border-rose-500/20">Awaiting</span>
+                               <span className="text-[9px] font-black text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded uppercase border border-rose-500/20">Unpaid</span>
                             )}
                          </td>
                          <td className="p-4 text-center">
                             {order.isDelivered ? (
                                <span className="text-[9px] font-black text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded uppercase border border-blue-500/20">Delivered</span>
                             ) : order.isShipped ? (
-                               <span className="text-[9px] font-black text-purple-500 bg-purple-500/10 px-2 py-0.5 rounded uppercase border border-purple-500/20">In Transit</span>
+                               <span className="text-[9px] font-black text-purple-500 bg-purple-500/10 px-2 py-0.5 rounded uppercase border border-purple-500/20">Shipped</span>
                             ) : (
-                               <span className="text-[9px] font-black text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded uppercase border border-slate-200 dark:border-white/10">Queue</span>
+                               <span className="text-[9px] font-black text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded uppercase border border-slate-200 dark:border-white/10">Pending</span>
                             )}
                          </td>
                          <td className="p-4 text-right">
-                            <Link to={`/order/${order._id}`} className="text-emerald-500 font-black text-[10px] uppercase tracking-widest hover:underline">Inspect</Link>
+                            <Link to={`/order/${order._id}`} className="text-emerald-500 font-black text-[10px] uppercase tracking-widest hover:underline">Details</Link>
                          </td>
                       </tr>
                    ))}
