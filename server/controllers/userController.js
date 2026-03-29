@@ -187,7 +187,13 @@ const resendVerification = asyncHandler(async (req, res) => {
 // @route   POST /api/users/logout
 // @access  Public
 const logoutUser = asyncHandler(async (req, res) => {
-  res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) });
+  const isProd = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
+  res.cookie('jwt', '', { 
+    httpOnly: true, 
+    expires: new Date(0),
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax'
+  });
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
@@ -292,9 +298,12 @@ const deleteUserProfile = asyncHandler(async (req, res) => {
     await User.deleteOne({ _id: user._id });
 
     // Clear the JWT cookie
+    const isProd = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
     res.cookie('jwt', '', {
       httpOnly: true,
       expires: new Date(0),
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax'
     });
 
     res.json({ message: 'Your account has been permanently deleted' });
