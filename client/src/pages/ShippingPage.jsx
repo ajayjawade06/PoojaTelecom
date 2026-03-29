@@ -6,7 +6,7 @@ import CheckoutSteps from '../components/CheckoutSteps';
 import { saveShippingAddress } from '../redux/slices/cartSlice';
 import { setCredentials } from '../redux/slices/authSlice';
 import { useProfileMutation } from '../redux/slices/usersApiSlice';
-import { FaMapMarkerAlt, FaHistory, FaCheckCircle, FaArrowRight } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaHistory, FaCheckCircle, FaArrowRight, FaCrosshairs } from 'react-icons/fa';
 
 const ShippingPage = () => {
   const cart = useSelector((state) => state.cart);
@@ -28,7 +28,6 @@ const ShippingPage = () => {
     e.preventDefault();
     dispatch(saveShippingAddress({ address, city, postalCode, country }));
     
-    // Save address to user profile historically
     if (userInfo) {
        try {
          const updatedUser = await updateProfile({
@@ -53,20 +52,14 @@ const ShippingPage = () => {
   };
 
   const getLocationHandler = () => {
-    if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser');
-      return;
-    }
-
+    if (!navigator.geolocation) return alert('Geolocation not supported');
     setGeoLoading(true);
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
-          // Reverse Geocoding with OpenStreetMap Nominatim API 
           const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
           const data = await response.json();
-          
           if (data.address) {
             setAddress(data.address.road || data.address.suburb || data.display_name.split(',')[0]);
             setCity(data.address.city || data.address.town || data.address.village || data.address.state_district || '');
@@ -74,125 +67,119 @@ const ShippingPage = () => {
             setCountry(data.address.country || '');
           }
         } catch (error) {
-          alert('Failed to detect exact address from coordinates. ' + error.message);
+          alert('Location detection failed');
         } finally {
           setGeoLoading(false);
         }
       },
-      (error) => {
+      () => {
         setGeoLoading(false);
-        alert('Permission denied or location unavailable.');
+        alert('Permission denied');
       }
     );
   };
 
   return (
-    <FormContainer>
-      <CheckoutSteps step1 step2 />
-      <h1 className="text-4xl font-black mb-8 text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-        <FaMapMarkerAlt className="text-emerald-500" /> Shipping Details
-      </h1>
+    <div className="pt-24 pb-20 animate-fade-in bg-slate-50 dark:bg-slate-950 min-h-screen">
+      <div className="max-w-xl mx-auto px-6">
+        <CheckoutSteps step1 step2 />
+        
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/5 p-8 shadow-2xl shadow-slate-200/50 dark:shadow-none">
+          <div className="flex items-center justify-between mb-8">
+             <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+               <FaMapMarkerAlt className="text-emerald-500" size={16} /> Destination
+             </h1>
+             <button 
+               onClick={getLocationHandler}
+               disabled={geoLoading}
+               className="text-[10px] font-black uppercase tracking-widest text-emerald-500 hover:text-emerald-600 transition-colors flex items-center gap-1.5"
+             >
+               <FaCrosshairs size={10} /> {geoLoading ? 'Detecting...' : 'Autofill'}
+             </button>
+          </div>
 
-      {/* Saved Addresses feature */}
-      {userInfo && userInfo.addresses && userInfo.addresses.length > 0 && (
-        <div className="mb-10">
-           <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><FaHistory className="text-slate-400 dark:text-slate-500" /> Saved Addresses</h3>
-           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-             {userInfo.addresses.map((addr, idx) => (
-               <div 
-                 key={idx} 
-                 onClick={() => autofillSavedAddress(addr)}
-                 className="p-5 border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 rounded-2xl cursor-pointer hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all relative group shadow-md dark:shadow-xl shadow-black/10 dark:shadow-black/20"
-               >
-                 <div className="font-black text-slate-900 dark:text-white text-sm mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">{addr.address}</div>
-                 <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">{addr.city}, {addr.postalCode}</div>
-                 <div className="text-xs text-slate-400 dark:text-slate-500 mt-1 uppercase tracking-widest">{addr.country}</div>
-                 
-                 <div className="absolute top-4 right-4 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity scale-75 group-hover:scale-100">
-                    <FaCheckCircle size={20} />
-                 </div>
+          <form onSubmit={submitHandler} className="space-y-4">
+            <div className="space-y-1.5">
+               <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Street Address</label>
+               <input 
+                 type="text" 
+                 placeholder="Locality, Building" 
+                 className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
+                 value={address}
+                 onChange={e => setAddress(e.target.value)}
+                 required
+               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+               <div className="space-y-1.5">
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">City</label>
+                  <input 
+                    type="text" 
+                    placeholder="Mumbai" 
+                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
+                    value={city}
+                    onChange={e => setCity(e.target.value)}
+                    required
+                  />
                </div>
-             ))}
-           </div>
-        </div>
-      )}
-      
-      {/* Geolocation Autodetect */}
-      <button 
-         type="button" 
-         onClick={getLocationHandler}
-         disabled={geoLoading}
-         className="w-full mb-10 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 font-black py-4 rounded-2xl transition-colors flex items-center justify-center gap-3 disabled:opacity-50 uppercase tracking-widest text-[10px]"
-      >
-         <FaMapMarkerAlt size={14} /> {geoLoading ? 'Locating...' : 'Auto-Detect Location'}
-      </button>
+               <div className="space-y-1.5">
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Pincode</label>
+                  <input 
+                    type="text" 
+                    placeholder="400001" 
+                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
+                    value={postalCode}
+                    onChange={e => setPostalCode(e.target.value)}
+                    required
+                  />
+               </div>
+            </div>
 
-      <div className="relative flex py-5 items-center mb-6">
-         <div className="flex-grow border-t border-slate-200 dark:border-white/5"></div>
-         <span className="flex-shrink-0 mx-4 text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">Or enter manually</span>
-         <div className="flex-grow border-t border-slate-200 dark:border-white/5"></div>
+            <div className="space-y-1.5">
+               <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Region/Country</label>
+               <input 
+                 type="text" 
+                 placeholder="India" 
+                 className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
+                 value={country}
+                 onChange={e => setCountry(e.target.value)}
+                 required
+               />
+            </div>
+
+            <button 
+              type="submit"
+              className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-12 rounded-xl font-black text-[11px] uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 mt-6"
+            >
+               Final Review <FaArrowRight size={10} />
+            </button>
+          </form>
+
+          {userInfo?.addresses?.length > 0 && (
+            <div className="mt-8 pt-8 border-t border-slate-100 dark:border-white/5">
+               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-1">Saved Locations</p>
+               <div className="space-y-2">
+                  {userInfo.addresses.map((addr, i) => (
+                    <button 
+                      key={i}
+                      onClick={() => autofillSavedAddress(addr)}
+                      className="w-full bg-slate-50 dark:bg-white/5 p-3 rounded-xl border border-slate-200 dark:border-white/10 hover:border-emerald-500/30 flex items-center justify-between text-left group transition-all"
+                    >
+                       <div>
+                          <p className="text-[12px] font-bold text-slate-900 dark:text-white truncate max-w-[200px]">{addr.address}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{addr.city}, {addr.postalCode}</p>
+                       </div>
+                       <FaHistory className="text-slate-300 group-hover:text-emerald-500 transition-colors" size={10}/>
+                    </button>
+                  ))}
+               </div>
+            </div>
+          )}
+        </div>
       </div>
-      
-      <form onSubmit={submitHandler} className="space-y-6">
-        <div className="group">
-          <label className="block text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400">Street Address</label>
-          <input
-            type="text"
-            placeholder="Area 51, Block B"
-            className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="group">
-            <label className="block text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400">City</label>
-            <input
-              type="text"
-              placeholder="Mumbai"
-              className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="group">
-            <label className="block text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400">Postal Code</label>
-            <input
-              type="text"
-              placeholder="400001"
-              className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
-              value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="group pb-4">
-          <label className="block text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400">Country</label>
-          <input
-            type="text"
-            placeholder="India"
-            className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full relative overflow-hidden group bg-emerald-500 hover:bg-emerald-400 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 active:scale-[0.98] mt-8 flex items-center justify-center gap-3 uppercase tracking-widest text-sm"
-        >
-          <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-          Continue to Payment <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
-        </button>
-      </form>
-    </FormContainer>
+    </div>
   );
 };
+
 export default ShippingPage;

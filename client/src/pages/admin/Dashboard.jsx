@@ -4,27 +4,24 @@ import { useGetOrdersQuery } from '../../../src/redux/slices/ordersApiSlice';
 import { useGetUsersQuery } from '../../../src/redux/slices/usersApiSlice';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import { FaUsers, FaBoxOpen, FaChartLine, FaArrowUp, FaArrowDown, FaCrown } from 'react-icons/fa';
+import { FaUsers, FaBoxOpen, FaChartLine, FaArrowUp, FaArrowDown, FaCrown, FaCheckCircle, FaClock } from 'react-icons/fa';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 const Dashboard = () => {
   const { data: orders, isLoading: loadingOrders, error: errorOrders } = useGetOrdersQuery();
   const { data: users, isLoading: loadingUsers, error: errorUsers } = useGetUsersQuery();
 
-  // Metric Calculations
   const metrics = useMemo(() => {
     if (!orders || !users) return null;
-
     const totalRevenue = orders.reduce((acc, order) => (order.isPaid ? acc + order.totalPrice : acc), 0);
     const totalOrders = orders.length;
     const totalUsers = users.length;
-    const avgOrderValue = totalOrders > 0 ? (totalRevenue / totalOrders).toFixed(2) : 0;
+    const avgOrderValue = totalOrders > 0 ? (totalRevenue / totalOrders).toFixed(0) : 0;
 
-    // Time-series Data for Revenue Area Chart (Last 7 Days)
     const last7Days = [...Array(7)].map((_, i) => {
       const d = new Date();
       d.setDate(d.getDate() - (6 - i));
-      return { date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), dateObj: d, revenue: 0 };
+      return { date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), revenue: 0 };
     });
 
     orders.forEach(order => {
@@ -35,7 +32,6 @@ const Dashboard = () => {
       }
     });
 
-    // Categorical Data for Order Status Pie Chart
     let paid = 0, shipped = 0, delivered = 0, pending = 0;
     orders.forEach(order => {
       if (order.isDelivered) delivered++;
@@ -45,7 +41,7 @@ const Dashboard = () => {
     });
 
     const orderStatusData = [
-      { name: 'Pending', value: pending, color: '#f59e0b' },
+      { name: 'Pending', value: pending, color: '#94a3b8' },
       { name: 'Paid', value: paid, color: '#3b82f6' },
       { name: 'Shipped', value: shipped, color: '#8b5cf6' },
       { name: 'Delivered', value: delivered, color: '#10b981' },
@@ -54,169 +50,111 @@ const Dashboard = () => {
     return { totalRevenue, totalOrders, totalUsers, avgOrderValue, revenueData: last7Days, orderStatusData };
   }, [orders, users]);
 
-  if (loadingOrders || loadingUsers) return <div className="h-screen flex items-center justify-center"><Loader /></div>;
-  if (errorOrders || errorUsers) return <Message variant="red">Error loading backend analytics.</Message>;
+  if (loadingOrders || loadingUsers) return <Loader />;
+  if (errorOrders || errorUsers) return <Message variant="red">Sync Error</Message>;
 
   return (
-    <div className="container mx-auto px-4 mt-8 lg:mt-12 pb-24 relative z-10 w-full animate-fade-in">
-      {/* Decorative Glows */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[150px] pointer-events-none -z-10"></div>
-      <div className="absolute top-1/2 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none -z-10"></div>
-
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 relative z-10">
-        <div className="flex items-center gap-5">
-           <div className="w-16 h-16 bg-slate-900/80 rounded-3xl flex items-center justify-center border border-white/10 shadow-[0_0_30px_rgba(16,185,129,0.1)] backdrop-blur-xl">
-              <FaChartLine size={28} className="text-emerald-400" />
-           </div>
-           <div>
-              <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-1">
-                Admin <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">Dashboard</span>
-              </h1>
-              <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Real-time Sales & Analytics</p>
-           </div>
-        </div>
-        <div className="relative group">
-          <div className="absolute inset-0 bg-emerald-500/20 blur-xl rounded-full group-hover:bg-emerald-500/30 transition-all"></div>
-          <button className="relative bg-slate-900/80 backdrop-blur-xl border border-white/10 px-8 py-4 rounded-2xl font-black text-xs text-white shadow-xl shadow-slate-900/50 group-hover:-translate-y-1 transition-transform flex items-center gap-3 uppercase tracking-widest">
-            <span className="text-emerald-400">📄</span> Generate Report
-          </button>
-        </div>
-      </div>
-      
-      {/* Top Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 relative z-10">
-        {[
-          { label: 'Total Revenue', value: `₹${metrics.totalRevenue.toLocaleString('en-IN')}`, icon: FaChartLine, color: 'emerald', trend: '+12.5%' },
-          { label: 'Active Users', value: metrics.totalUsers, icon: FaUsers, color: 'blue', trend: '+5.2%' },
-          { label: 'Orders Placed', value: metrics.totalOrders, icon: FaBoxOpen, color: 'indigo', trend: '+18.1%' },
-          { label: 'Avg. Order', value: `₹${metrics.avgOrderValue}`, icon: FaCrown, color: 'amber', trend: '-2.4%' },
-        ].map((stat, i) => (
-          <div key={i} className={`bg-slate-900/80 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white/5 shadow-2xl shadow-slate-950 hover:-translate-y-2 transition-transform duration-500 group relative overflow-hidden`}>
-            {/* Background Glow */}
-            <div className={`absolute -right-10 -bottom-10 w-40 h-40 bg-${stat.color}-500/10 rounded-full blur-[40px] group-hover:scale-150 group-hover:bg-${stat.color}-500/20 transition-all duration-700 pointer-events-none`}></div>
-            
-            <div className="flex justify-between items-start mb-6 relative z-10">
-              <div className={`p-4 rounded-2xl bg-${stat.color}-500/10 text-${stat.color}-400 border border-${stat.color}-500/20 shadow-[0_0_15px_rgba(var(--tw-color-${stat.color}-500),0.1)]`}>
-                <stat.icon size={24} />
-              </div>
-              <span className={`flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-black px-3 py-1.5 rounded-xl border ${stat.trend.startsWith('+') ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20 shadow-inner' : 'text-rose-400 bg-rose-500/10 border-rose-500/20 shadow-inner'}`}>
-                {stat.trend.startsWith('+') ? <FaArrowUp size={8}/> : <FaArrowDown size={8}/>} {stat.trend.replace(/[-+]/g, '')}
-              </span>
-            </div>
-            <div className="relative z-10">
-              <h3 className="text-4xl font-black text-white tracking-tight mb-2 drop-shadow-lg">{stat.value}</h3>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{stat.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Analytics Charts & Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12 relative z-10">
+    <div className="pt-24 pb-20 animate-fade-in bg-white dark:bg-slate-900 min-h-screen">
+      <div className="main-container">
         
-        {/* Main Revenue Chart */}
-        <div className="lg:col-span-2 bg-slate-900/80 backdrop-blur-xl rounded-[3rem] p-10 border border-white/5 shadow-2xl shadow-slate-950 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none -z-10 group-hover:bg-emerald-500/10 transition-colors"></div>
-          
-          <div className="flex justify-between items-center mb-10 relative z-10">
-            <div className="flex items-center gap-3">
-               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-               <h2 className="text-xl font-black text-white uppercase tracking-widest">Revenue Over Time</h2>
-            </div>
-            <select className="bg-slate-950 border border-white/10 outline-none text-[10px] uppercase tracking-widest font-black text-slate-400 hover:text-white transition-colors px-4 py-3 rounded-xl cursor-pointer shadow-inner">
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-            </select>
-          </div>
-          <div className="h-80 w-full relative z-10">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={metrics.revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 800, textTransform: 'uppercase' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 800 }} tickFormatter={(val) => `₹${val/1000}k`} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', color: '#fff', fontWeight: 800, padding: '16px 24px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}
-                  itemStyle={{ color: '#34d399', fontWeight: 900, textTransform: 'uppercase', fontSize: '12px', letterSpacing: '1px' }}
-                  labelStyle={{ color: '#94a3b8', marginBottom: '8px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px' }}
-                />
-                <Area type="monotone" dataKey="revenue" name="Rev (₹)" stroke="#34d399" strokeWidth={4} fillOpacity={1} fill="url(#colorRevenue)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+        {/* Compact Admin Header */}
+        <div className="flex items-center justify-between mb-10 border-b border-slate-100 dark:border-white/5 pb-4">
+           <div>
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Mission Control</h1>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">HQ Console • v2.0</p>
+           </div>
+           <div className="flex gap-2">
+              <Link to="/admin/productlist" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg active:scale-95">Catalog</Link>
+              <Link to="/admin/orderlist" className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/10 active:scale-95">Orders</Link>
+           </div>
         </div>
 
-        {/* Order Status Donut */}
-        <div className="bg-slate-900/80 backdrop-blur-xl rounded-[3rem] p-10 border border-white/5 shadow-2xl shadow-slate-950 flex flex-col relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/5 rounded-full blur-[80px] pointer-events-none -z-10 group-hover:bg-blue-500/10 transition-colors"></div>
-          
-          <div className="flex items-center gap-3 mb-8 relative z-10">
-             <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-             <h2 className="text-xl font-black text-white uppercase tracking-widest">Order Status</h2>
-          </div>
-          <div className="flex-grow flex items-center justify-center relative z-10">
-            <ResponsiveContainer width="100%" height={260}>
-              <PieChart>
-                <Pie
-                  data={metrics.orderStatusData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={70}
-                  outerRadius={90}
-                  paddingAngle={8}
-                  dataKey="value"
-                  stroke="none"
-                  animationDuration={1500}
-                >
-                  {metrics.orderStatusData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', color: '#fff', fontWeight: 800, padding: '12px 20px' }}
-                  itemStyle={{ fontWeight: 900, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}
-                />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px', paddingTop: '20px' }} />
-              </PieChart>
-            </ResponsiveContainer>
-            {/* Center Donut Text */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-[-20px]">
-              <span className="text-4xl font-black text-white">{metrics.totalOrders}</span>
-              <span className="text-[10px] font-black text-slate-500 tracking-widest uppercase mt-1">Orders</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Launch / Management Links */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-        {[
-          { title: 'Products', desc: 'Manage Store Products', path: '/admin/productlist', icon: FaBoxOpen, color: 'emerald' },
-          { title: 'Orders', desc: 'Manage Customer Orders', path: '/admin/orderlist', icon: FaChartLine, color: 'blue' },
-          { title: 'Users', desc: 'Manage Registered Users', path: '/admin/userlist', icon: FaUsers, color: 'amber' },
-        ].map((link, i) => (
-          <Link key={i} to={link.path} className={`group block p-8 bg-slate-900/80 backdrop-blur-xl rounded-[2.5rem] border border-white/5 hover:border-${link.color}-500/30 hover:bg-slate-900 transition-all duration-300 relative overflow-hidden shadow-2xl shadow-slate-950`}>
-             <div className={`absolute -right-6 -bottom-6 w-32 h-32 bg-${link.color}-500/5 rounded-full blur-[30px] group-hover:bg-${link.color}-500/20 transition-all duration-500 pointer-events-none`}></div>
-             
-             <div className="relative z-10 flex items-center justify-between">
+        {/* Global Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+           {[
+             { label: 'Net Revenue', value: `₹${metrics.totalRevenue.toLocaleString('en-IN')}`, icon: FaChartLine, color: 'text-emerald-500' },
+             { label: 'Total Base', value: metrics.totalUsers, icon: FaUsers, color: 'text-blue-500' },
+             { label: 'Throughput', value: metrics.totalOrders, icon: FaBoxOpen, color: 'text-purple-500' },
+             { label: 'Avg payload', value: `₹${metrics.avgOrderValue}`, icon: FaCrown, color: 'text-amber-500' },
+           ].map((stat, i) => (
+             <div key={i} className="bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 p-6 rounded-2xl flex items-center justify-between group hover:border-emerald-500/20 transition-all">
                 <div>
-                   <h3 className="text-lg font-black text-white tracking-tight mb-1">{link.title}</h3>
-                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{link.desc}</p>
+                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{stat.label}</p>
+                   <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none">{stat.value}</h3>
                 </div>
-                <div className={`w-14 h-14 rounded-[1.5rem] bg-${link.color}-500/10 text-${link.color}-400 flex items-center justify-center border border-${link.color}-500/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-[0_0_20px_rgba(var(--tw-color-${link.color}-500),0.1)]`}>
-                   <link.icon size={22} className="relative z-10" />
-                </div>
+                <stat.icon size={16} className={`${stat.color} opacity-40 group-hover:opacity-100 transition-opacity`} />
              </div>
-             {/* Hover Beam */}
-             <div className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-${link.color}-400 to-transparent opacity-0 group-hover:opacity-100 -translate-x-full group-hover:translate-x-full transition-all duration-[1.5s] ease-in-out`}></div>
-          </Link>
-        ))}
+           ))}
+        </div>
+
+        {/* Analytics Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+           
+           {/* Revenue Area Chart */}
+           <div className="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8 shadow-sm">
+              <div className="flex items-center justify-between mb-10">
+                 <h2 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>
+                    Revenue Trajectory
+                 </h2>
+                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-white/5 px-2 py-1 rounded">7D Metrics</span>
+              </div>
+              <div className="h-64 w-full">
+                 <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={metrics.revenueData}>
+                       <defs>
+                          <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                             <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
+                             <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                          </linearGradient>
+                       </defs>
+                       <XAxis dataKey="date" hide />
+                       <Tooltip 
+                         contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px', padding: '12px' }}
+                         itemStyle={{ color: '#10b981', fontWeight: 900, fontSize: '10px', textTransform: 'uppercase' }}
+                         labelStyle={{ color: '#94a3b8', fontSize: '8px', fontWeight: 900, marginBottom: '4px' }}
+                       />
+                       <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
+                    </AreaChart>
+                 </ResponsiveContainer>
+              </div>
+           </div>
+
+           {/* Order status Pie Chart */}
+           <div className="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8 shadow-sm text-center">
+              <h2 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-8 border-b border-slate-50 dark:border-white/5 pb-4">Status Distribution</h2>
+              <div className="h-48 flex items-center justify-center relative">
+                 <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                       <Pie 
+                         data={metrics.orderStatusData} 
+                         innerRadius={50} 
+                         outerRadius={65} 
+                         paddingAngle={5} 
+                         dataKey="value" 
+                         stroke="none"
+                       >
+                          {metrics.orderStatusData.map((e, i) => <Cell key={i} fill={e.color} />)}
+                       </Pie>
+                       <Tooltip />
+                    </PieChart>
+                 </ResponsiveContainer>
+                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-[-4px]">
+                    <span className="text-2xl font-black text-slate-900 dark:text-white">{metrics.totalOrders}</span>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest opacity-40">Orders</span>
+                 </div>
+              </div>
+              <div className="flex flex-wrap justify-center gap-4 mt-6">
+                 {metrics.orderStatusData.map((e, i) => (
+                    <div key={i} className="flex items-center gap-1.5">
+                       <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: e.color }}></div>
+                       <span className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400">{e.name}</span>
+                    </div>
+                 ))}
+              </div>
+           </div>
+        </div>
+
       </div>
     </div>
   );

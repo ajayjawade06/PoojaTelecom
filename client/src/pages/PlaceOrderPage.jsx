@@ -6,7 +6,7 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { useCreateOrderMutation } from '../redux/slices/ordersApiSlice';
 import { clearCartItems, savePaymentMethod } from '../redux/slices/cartSlice';
-import { FaMapMarkerAlt, FaShieldAlt, FaLock, FaCreditCard, FaWallet, FaArrowRight, FaBox } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaShieldAlt, FaLock, FaCreditCard, FaArrowRight, FaBox, FaPencilAlt } from 'react-icons/fa';
 
 const PlaceOrderPage = () => {
   const navigate = useNavigate();
@@ -15,7 +15,6 @@ const PlaceOrderPage = () => {
 
   const [createOrder, { isLoading, error }] = useCreateOrderMutation();
 
-  // Logic fix: guard both address AND navigate to shipping if missing
   useEffect(() => {
     if (!cart.shippingAddress?.address) {
       navigate('/shipping');
@@ -35,175 +34,136 @@ const PlaceOrderPage = () => {
       }).unwrap();
       dispatch(clearCartItems());
       navigate(`/order/${res._id}`);
-    } catch (err) {
-      // shown by error state
-    }
+    } catch (err) {}
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 lg:py-12 animate-fade-in relative z-10 w-full flex flex-col items-center">
-      <div className="w-full max-w-5xl relative z-10">
+    <div className="pt-24 pb-20 animate-fade-in bg-slate-50 dark:bg-slate-950 min-h-screen">
+      <div className="main-container">
         <CheckoutSteps step1 step2 step3 />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Left: details */}
-          <div className="lg:col-span-8 space-y-8">
-            {/* Shipping Address */}
-            <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 p-6 relative overflow-hidden group transition-colors duration-300">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-500/10 transition-colors"></div>
-              
-              <div className="flex items-center justify-between mb-6 relative z-10">
-                <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-3 tracking-tighter">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
-                    <FaMapMarkerAlt />
-                  </div>
-                  Shipping Address
-                </h2>
-                <Link to="/shipping" className="text-xs text-emerald-600 dark:text-emerald-400 font-black uppercase tracking-widest hover:text-emerald-500 dark:hover:text-emerald-300 transition-colors underline decoration-emerald-500/30 underline-offset-4">
-                  Modify
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Details Column */}
+          <div className="lg:col-span-8 space-y-4">
+             
+             {/* Shipping Preview */}
+             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/5 p-6 flex items-start justify-between">
+                <div className="flex gap-4">
+                   <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
+                      <FaMapMarkerAlt size={16} />
+                   </div>
+                   <div>
+                      <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2">Shipping Information</h3>
+                      <p className="text-[13px] font-bold text-slate-900 dark:text-white leading-tight">
+                         {cart.shippingAddress.address}, {cart.shippingAddress.city}<br />
+                         {cart.shippingAddress.postalCode}, {cart.shippingAddress.country}
+                      </p>
+                   </div>
+                </div>
+                <Link to="/shipping" className="text-slate-300 hover:text-emerald-500 transition-colors">
+                   <FaPencilAlt size={12} />
                 </Link>
-              </div>
-              <div className="bg-slate-50 dark:bg-white/5 rounded-2xl p-6 text-slate-600 dark:text-slate-300 leading-relaxed font-medium border border-slate-100 dark:border-white/5 relative z-10 transition-colors duration-300">
-                <span className="text-slate-900 dark:text-white font-bold block mb-1">Address:</span>
-                {cart.shippingAddress.address},<br />
-                {cart.shippingAddress.city}, {cart.shippingAddress.postalCode},<br />
-                <span className="uppercase tracking-widest text-[10px] text-emerald-600 dark:text-emerald-500 font-black mt-2 block">{cart.shippingAddress.country}</span>
-              </div>
-            </div>
+             </div>
 
-            {/* Payment Method Selection */}
-            <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 p-6 relative overflow-hidden group transition-colors duration-300">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-blue-500/10 transition-colors"></div>
-
-              <h2 className="text-lg font-black text-slate-900 dark:text-white mb-4 flex items-center gap-3 tracking-tighter relative z-10">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-500 dark:text-blue-400">
-                  <FaCreditCard />
+             {/* Payment Selection Preview */}
+             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/5 p-6">
+                <div className="flex gap-4 mb-6">
+                   <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
+                      <FaCreditCard size={16} />
+                   </div>
+                   <div>
+                      <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Payment Gateway</h3>
+                   </div>
                 </div>
-                Payment Method
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
-                <label className={`cursor-pointer rounded-2xl border-2 p-5 flex items-center gap-4 transition-all ${cart.paymentMethod === 'Credit Card' ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.1)]' : 'border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 hover:border-emerald-500/30 hover:bg-emerald-50 dark:hover:bg-white/10'}`}>
-                  <input 
-                    type="radio" 
-                    name="paymentMethod" 
-                    value="Credit Card" 
-                    checked={cart.paymentMethod === 'Credit Card'} 
-                    onChange={(e) => dispatch(savePaymentMethod(e.target.value))}
-                    className="w-5 h-5 accent-emerald-500 cursor-pointer"
-                  />
-                  <div>
-                     <div className="font-black text-slate-900 dark:text-white tracking-tight">Credit/Debit Card</div>
-                     <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-black uppercase tracking-widest mt-1">Secure Checkout</div>
-                  </div>
-                </label>
-
-                <label className={`cursor-pointer rounded-2xl border-2 p-5 flex items-center gap-4 transition-all ${cart.paymentMethod === 'Razorpay' || !cart.paymentMethod ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.1)]' : 'border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 hover:border-emerald-500/30 hover:bg-emerald-50 dark:hover:bg-white/10'}`}>
-                  <input 
-                    type="radio" 
-                    name="paymentMethod" 
-                    value="Razorpay" 
-                    checked={cart.paymentMethod === 'Razorpay' || !cart.paymentMethod} 
-                    onChange={(e) => dispatch(savePaymentMethod(e.target.value))}
-                    className="w-5 h-5 accent-emerald-500 cursor-pointer"
-                  />
-                  <div>
-                     <div className="font-black text-slate-900 dark:text-white tracking-tight">Razorpay</div>
-                     <div className="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest mt-1">UPI, Wallets, NetBanking</div>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            {/* Order Items */}
-            <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 p-6 relative overflow-hidden group transition-colors duration-300">
-              <h2 className="text-lg font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3 tracking-tighter relative z-10">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-500 dark:text-purple-400">
-                  <FaBox />
+                <div className="grid grid-cols-2 gap-4">
+                   {['Razorpay', 'Credit Card'].map(method => (
+                      <button 
+                        key={method}
+                        onClick={() => dispatch(savePaymentMethod(method))}
+                        className={`flex items-center justify-between p-4 rounded-xl border transition-all ${cart.paymentMethod === method || (!cart.paymentMethod && method === 'Razorpay') ? 'border-emerald-500 bg-emerald-500/5' : 'border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5 hover:border-emerald-500/20'}`}
+                      >
+                         <span className={`text-[12px] font-black uppercase tracking-widest ${cart.paymentMethod === method || (!cart.paymentMethod && method === 'Razorpay') ? 'text-emerald-500' : 'text-slate-400'}`}>{method}</span>
+                         {(cart.paymentMethod === method || (!cart.paymentMethod && method === 'Razorpay')) && <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>}
+                      </button>
+                   ))}
                 </div>
-                Order Items ({cart.cartItems.reduce((a, c) => a + c.qty, 0)})
-              </h2>
-              {cart.cartItems.length === 0 ? (
-                <Message variant="blue">Your cart is empty.</Message>
-              ) : (
-                <div className="space-y-4 relative z-10">
-                  {cart.cartItems.map((item, index) => (
-                    <div key={index} className="flex items-center gap-5 p-4 bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-2xl hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
-                      <div className="w-20 h-20 bg-white dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-white/10 p-2 flex-shrink-0 flex items-center justify-center">
-                        <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain filter drop-shadow-md" />
+             </div>
+
+             {/* Items Review */}
+             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/5 p-6">
+                <div className="flex gap-4 mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
+                   <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
+                      <FaBox size={16} />
+                   </div>
+                   <div>
+                      <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Review Bag Contents</h3>
+                   </div>
+                </div>
+                <div className="space-y-3">
+                   {cart.cartItems.map((item, i) => (
+                      <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                         <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/10 rounded-lg p-1">
+                               <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                            </div>
+                            <div>
+                               <p className="text-[12px] font-black text-slate-900 dark:text-white truncate max-w-[250px]">{item.name}</p>
+                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.qty} × ₹{item.price.toLocaleString('en-IN')}</p>
+                            </div>
+                         </div>
+                         <p className="text-[14px] font-black text-slate-900 dark:text-emerald-400">₹{(item.qty * item.price).toLocaleString('en-IN')}</p>
                       </div>
-                      <Link to={`/product/${item._id}`} className="flex-grow text-lg font-black text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors line-clamp-2 tracking-tight">
-                        {item.name}
-                      </Link>
-                      <div className="text-right flex-shrink-0">
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-2 py-1 rounded-lg inline-block mb-1">{item.qty} Units × ₹{item.price.toLocaleString('en-IN')}</div>
-                        <div className="font-black text-emerald-600 dark:text-emerald-400 text-xl tracking-tighter">
-                          ₹{(item.qty * item.price).toLocaleString('en-IN')}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                   ))}
                 </div>
-              )}
-            </div>
+             </div>
           </div>
 
-          {/* Right: Summary */}
-          <div className="lg:col-span-4">
-            <div className="bg-gradient-to-br from-slate-100 to-white dark:from-slate-800 dark:to-slate-900 rounded-[1.5rem] shadow-xl dark:shadow-2xl p-6 sticky top-28 border border-slate-200 dark:border-white/10 relative overflow-hidden transition-colors duration-300">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none -z-0"></div>
-              
-              <h2 className="text-lg font-black text-slate-900 dark:text-white mb-6 pb-4 border-b border-slate-200 dark:border-white/10 relative z-10 tracking-tighter">Order Summary</h2>
-
-              <div className="space-y-6 text-sm mb-8 relative z-10">
-                <div className="flex justify-between items-center text-slate-600 dark:text-slate-300 font-medium">
-                  <span className="font-black uppercase tracking-widest text-[10px]">Items Total</span>
-                  <span className="font-black text-slate-900 dark:text-white text-lg">₹{cart.itemsPrice}</span>
+          {/* Totals Summary Column */}
+          <div className="lg:col-span-4 lg:sticky lg:top-24">
+             <div className="bg-slate-900 dark:bg-white rounded-xl p-8 text-white dark:text-slate-900 shadow-2xl">
+                <h2 className="text-[12px] font-black uppercase tracking-[0.2em] mb-8 border-b border-white/10 dark:border-slate-100 pb-4">Order Confirmation</h2>
+                
+                <div className="space-y-4 mb-8">
+                   <div className="flex justify-between items-baseline">
+                      <span className="text-[11px] font-bold uppercase tracking-widest opacity-60">Products</span>
+                      <span className="text-[14px] font-black">₹{cart.itemsPrice.toLocaleString('en-IN')}</span>
+                   </div>
+                   <div className="flex justify-between items-baseline">
+                      <span className="text-[11px] font-bold uppercase tracking-widest opacity-60">Shipping</span>
+                      <span className="text-[14px] font-black">{cart.shippingPrice == 0 ? 'FREE' : `₹${cart.shippingPrice}`}</span>
+                   </div>
+                   <div className="flex justify-between items-baseline">
+                      <span className="text-[11px] font-bold uppercase tracking-widest opacity-60">Taxes</span>
+                      <span className="text-[14px] font-black">₹{cart.taxPrice || 0}</span>
+                   </div>
                 </div>
-                <div className="flex justify-between items-center text-slate-600 dark:text-slate-300 font-medium">
-                  <span className="font-black uppercase tracking-widest text-[10px]">Shipping</span>
-                  <span className={`font-black tracking-wider ${cart.shippingPrice == 0 ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-lg' : 'text-slate-900 dark:text-white text-lg'}`}>
-                    {cart.shippingPrice == 0 ? 'FREE' : `₹${cart.shippingPrice}`}
-                  </span>
+
+                <div className="border-t border-white/10 dark:border-slate-100 pt-6 mb-10 flex justify-between items-center">
+                   <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Subtotal</span>
+                   <span className="text-3xl font-black tracking-tighter">₹{cart.totalPrice.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between items-center text-slate-600 dark:text-slate-300 font-medium">
-                  <span className="font-black uppercase tracking-widest text-[10px]">Tax</span>
-                  <span className="font-black text-slate-900 dark:text-white text-lg">₹{cart.taxPrice || 0}</span>
-                </div>
-              </div>
 
-              <div className="flex justify-between items-center py-6 border-t border-slate-200 dark:border-white/10 mb-8 relative z-10">
-                <span className="font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest text-xs">Total</span>
-                <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-400 dark:from-emerald-400 dark:to-emerald-200">₹{cart.totalPrice}</span>
-              </div>
+                {error && <div className="mb-6"><Message variant="red">{error?.data?.message || 'Placement error'}</Message></div>}
 
-              {error && (
-                <div className="mb-6 relative z-10">
-                   <Message variant="red">{error?.data?.message || 'Order placement failed.'}</Message>
-                </div>
-              )}
-
-              <button
-                className="w-full relative overflow-hidden group bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-xl transition-all shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] mb-6 flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] z-10"
-                disabled={cart.cartItems.length === 0 || isLoading}
-                onClick={placeOrderHandler}
-              >
-                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                {isLoading ? (
-                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                ) : (
-                   <><FaShieldAlt size={16} /> Place Order</>
-                )}
-              </button>
-
-              <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-widest relative z-10">
-                <FaLock />
-                <span>Secure Checkout Process</span>
-              </div>
-            </div>
+                <button 
+                  onClick={placeOrderHandler}
+                  disabled={isLoading}
+                  className="w-full bg-emerald-500 text-white font-black h-14 rounded-xl text-[12px] uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 shadow-xl shadow-emerald-500/20"
+                >
+                   {isLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><FaShieldAlt size={16} /> Finalize Order</>}
+                </button>
+             </div>
+             
+             <div className="mt-8 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500">
+                <FaLock size={12} /> Encrypted Payment Channel
+             </div>
           </div>
+
         </div>
       </div>
     </div>
   );
 };
+
 export default PlaceOrderPage;

@@ -4,22 +4,28 @@
 /* Enable class-based dark mode in Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Light mode (default) */
+/* New Design System Tokens */
 :root {
-  --background: #f8fafc;
+  --background: #ffffff;
   --foreground: #020617;
+  --surface: #f8fafc;
+  --border: #e2e8f0;
+  --primary: #10b981;
+  --primary-hover: #059669;
 }
 
-/* Dark mode overrides */
 .dark {
   --background: #020617;
   --foreground: #f8fafc;
+  --surface: #0f172a;
+  --border: #1e293b;
 }
 
 @theme {
-  --animate-fade-in: fade-in 0.5s ease-out;
-  --animate-slide-up: slide-up 0.5s ease-out;
-  --animate-scale-up: scale-up 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-slide-up: slide-up 0.2s ease-out;
+  --animate-scale-up: scale-up 0.15s cubic-bezier(0, 0, 0.2, 1);
+  --border-radius-custom: 10px;
 }
 
 body {
@@ -29,57 +35,51 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background);
   color: var(--foreground);
-  /* Light mode: subtle warm gradient */
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.04), transparent 30%),
-    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.04), transparent 30%);
-  background-attachment: fixed;
-  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Dark mode body gradient */
-.dark body {
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.05), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.05), transparent 25%);
+/* Compact Typography */
+h1 { font-size: 1.875rem; font-weight: 900; letter-spacing: -0.05em; line-height: 1.1; }
+h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; }
+h3 { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.03em; }
+
+/* Global Interactions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Branded selection colour */
-::selection {
-  background: #10b981;
-  color: #fff;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: #64748b; }
-
-.dark ::-webkit-scrollbar-track { background: #0f172a; }
+/* Scrollbar Optimization */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 .dark ::-webkit-scrollbar-thumb { background: #334155; }
-.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-/* Smooth transitions globally */
-* { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slide-up {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes scale-up {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-/* Input focus ring */
-input:focus, select:focus, textarea:focus {
+/* Interactive States */
+a, button {
+  cursor: pointer;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+}
+
+input, select, textarea {
+  outline: none;
+  font-size: 13px;
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-up { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes scale-up { from { transform: scale(0.98); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* Global Container Utility */
+.main-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }

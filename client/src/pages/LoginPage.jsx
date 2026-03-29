@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoginMutation } from '../redux/slices/usersApiSlice';
 import { setCredentials } from '../redux/slices/authSlice';
-import { FaBoxOpen, FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaArrowRight, FaLock, FaEnvelope } from 'react-icons/fa';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -34,110 +34,85 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex animate-fade-in bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      {/* Left decorative panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-white dark:bg-slate-900 items-center justify-center p-16 relative overflow-hidden border-r border-slate-100 dark:border-white/5 transition-colors duration-300">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-pulse delay-1000" />
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-6 animate-fade-in">
+      <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/5 shadow-2xl shadow-slate-200 dark:shadow-none p-8 relative overflow-hidden">
+        
+        {/* Top Accent */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-blue-500"></div>
+
+        <div className="text-center mb-8">
+           <div className="w-12 h-12 bg-emerald-500/10 text-emerald-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <FaLock size={20} />
+           </div>
+           <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight mb-1">Welcome Back</h1>
+           <p className="text-[12px] font-bold text-slate-400 uppercase tracking-widest leading-loose">Pooja Telecom Hub</p>
         </div>
-        <div className="text-center z-10 relative">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-[2rem] mb-10 shadow-2xl shadow-emerald-500/40 relative group">
-            <div className="absolute inset-0 bg-emerald-400 rounded-[2rem] blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <FaBoxOpen size={40} className="text-white relative z-10 drop-shadow-lg" />
+
+        {error && (
+          <div className="mb-6 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-500 text-[11px] font-bold text-center animate-slide-up">
+            {error?.data?.message || 'Invalid Credentials'}
           </div>
-          <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400 mb-6 tracking-tighter">
-            Pooja <br/> Telecom
-          </h1>
-          <p className="text-slate-400 text-xl max-w-sm mx-auto font-medium leading-relaxed">
-            Your reliable source for premium electronics and mobile devices.
-          </p>
-        </div>
-      </div>
+        )}
 
-      {/* Right form panel */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 relative overflow-hidden">
-        {/* Mobile background glows */}
-        <div className="absolute lg:hidden top-0 left-0 w-full h-full">
-           <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-[80px]"></div>
-        </div>
-
-        <div className="w-full max-w-md relative z-10">
-          <div className="mb-12">
-            <div className="flex items-center gap-3 mb-8 lg:hidden">
-              <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 p-3 rounded-2xl shadow-lg shadow-emerald-500/20">
-                <FaBoxOpen size={24} className="text-white" />
-              </div>
-              <span className="font-black text-3xl tracking-tighter text-slate-900 dark:text-white">Pooja</span>
-            </div>
-          <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">Welcome Back</h2>
-            <p className="text-slate-500 dark:text-slate-400 font-medium">Sign in to access your account.</p>
-          </div>
-
-          {error && (
-            <div className="mb-8 p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-400 text-sm font-bold flex items-center gap-3 animate-slide-up">
-              <span className="text-xl">⚠️</span>
-              <span>{error?.data?.message || 'Authentication failed or credentials invalid.'}</span>
-            </div>
-          )}
-
-          <form onSubmit={submitHandler} className="space-y-6">
-            <div className="group">
-              <label className="block text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest mb-2 transition-colors group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400">Email Address</label>
+        <form onSubmit={submitHandler} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Source</label>
+            <div className="relative group">
               <input
                 type="email"
-                placeholder="email@example.com"
-                className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10"
+                placeholder="id@poojatelecom.com"
+                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 pl-10 pr-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 transition-all dark:text-white"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+              <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-hover:text-emerald-500 transition-colors" size={12} />
             </div>
+          </div>
 
-            <div className="group">
-              <div className="flex justify-between mb-2">
-                <label className="text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest transition-colors group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400">Password</label>
-              </div>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  className="w-full px-5 py-4 pr-12 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:bg-slate-50 dark:focus:bg-white/10 focus:border-emerald-500/50 text-slate-900 dark:text-white font-medium transition-all outline-none placeholder-slate-400 dark:placeholder-slate-600 ring-4 ring-transparent focus:ring-emerald-500/10 tracking-widest"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-emerald-400 transition-colors"
-                >
-                  {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                </button>
-              </div>
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Access Key</label>
+            <div className="relative group">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 pl-10 pr-12 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 transition-all dark:text-white tracking-widest"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-hover:text-emerald-500 transition-colors" size={12} />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500"
+              >
+                {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+              </button>
             </div>
+          </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full relative overflow-hidden group bg-emerald-500 hover:bg-emerald-400 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] mt-8 flex items-center justify-center gap-3 uppercase tracking-widest text-sm"
-            >
-              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-              {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              ) : (
-                <>Sign In <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></>
-              )}
-            </button>
-          </form>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-12 rounded-xl font-black text-[11px] uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 mt-4"
+          >
+            {isLoading ? (
+              <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <>Authorize <FaArrowRight size={10} /></>
+            )}
+          </button>
+        </form>
 
-          <p className="mt-10 text-center text-slate-500 font-medium text-sm">
-            New Customer?{' '}
+        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-white/5 text-center">
+          <p className="text-[12px] font-medium text-slate-500">
+            No account?{' '}
             <Link
               to={redirect ? `/register?redirect=${redirect}` : '/register'}
-              className="text-emerald-500 dark:text-emerald-400 font-black hover:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
+              className="text-emerald-500 font-black hover:underline"
             >
-              Register Here
+              Sign up here
             </Link>
           </p>
         </div>
@@ -145,4 +120,5 @@ const LoginPage = () => {
     </div>
   );
 };
+
 export default LoginPage;

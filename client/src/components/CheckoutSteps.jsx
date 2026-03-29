@@ -1,53 +1,42 @@
 import { Link } from 'react-router-dom';
-import { FaUser, FaTruck, FaClipboardCheck } from 'react-icons/fa';
 
 const steps = [
-  { label: 'Sign In',  path: '/login',     icon: FaUser,           key: 'step1' },
-  { label: 'Shipping', path: '/shipping',   icon: FaTruck,          key: 'step2' },
-  { label: 'Confirm',  path: '/placeorder', icon: FaClipboardCheck, key: 'step3' },
+  { label: 'Login', path: '/login', key: 'step1' },
+  { label: 'Shipping', path: '/shipping', key: 'step2' },
+  { label: 'Confirm', path: '/placeorder', key: 'step3' },
 ];
 
 const CheckoutSteps = ({ step1, step2, step3 }) => {
   const activeMap = { step1, step2, step3 };
 
   return (
-    <nav className="flex justify-center mb-12">
-      <ol className="flex items-center w-full max-w-lg relative z-10">
-        {steps.map(({ label, path, icon: Icon, key }, idx) => {
+    <nav className="flex justify-center mb-10">
+      <div className="flex items-center gap-4">
+        {steps.map(({ label, path, key }, idx) => {
           const active = activeMap[key];
-          const isNextActive = idx < steps.length - 1 && activeMap[steps[idx + 1].key];
-          
           return (
-            <li key={key} className={`flex items-center ${idx < steps.length - 1 ? 'flex-1' : ''}`}>
-              <div className="flex flex-col items-center relative z-10">
+            <div key={key} className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${active ? 'bg-emerald-500 scale-125 shadow-lg shadow-emerald-500/50' : 'bg-slate-200 dark:bg-slate-800'}`}></div>
                 {active ? (
-                  <Link to={path} className="flex flex-col items-center group relative cursor-pointer">
-                    {/* Glow Effect */}
-                    <div className="absolute inset-0 bg-emerald-500 rounded-full blur-[20px] opacity-40 group-hover:opacity-60 transition-opacity"></div>
-                    <span className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center relative z-10 shadow-[0_0_20px_rgba(16,185,129,0.5)] border-2 border-emerald-400 group-hover:scale-110 transition-transform">
-                      <Icon size={18} />
-                    </span>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mt-3 whitespace-nowrap drop-shadow-md">{label}</span>
+                  <Link to={path} className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white transition-colors">
+                    {label}
                   </Link>
                 ) : (
-                  <div className="flex flex-col items-center opacity-50 cursor-not-allowed">
-                    <span className="w-12 h-12 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center border-2 border-slate-700">
-                      <Icon size={18} />
-                    </span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mt-3 whitespace-nowrap">{label}</span>
-                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600">
+                    {label}
+                  </span>
                 )}
               </div>
               {idx < steps.length - 1 && (
-                <div className="flex-1 h-1 mx-4 rounded-full mb-6 relative overflow-hidden bg-slate-800 border border-white/5">
-                   <div className={`absolute top-0 left-0 h-full w-full transition-transform duration-1000 origin-left ${isNextActive ? 'scale-x-100 bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]' : 'scale-x-0 bg-emerald-500'}`}></div>
-                </div>
+                <div className="w-8 h-[1px] bg-slate-100 dark:bg-white/5"></div>
               )}
-            </li>
+            </div>
           );
         })}
-      </ol>
+      </div>
     </nav>
   );
 };
+
 export default CheckoutSteps;

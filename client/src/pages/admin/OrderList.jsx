@@ -8,97 +8,66 @@ const OrderList = () => {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-7xl animate-fade-in relative z-10 w-full flex flex-col items-center">
-      <div className="w-full relative z-10">
-        <div className="flex items-center gap-4 mb-10 relative z-10">
-          <div className="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-3xl flex items-center justify-center border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-             <FaDatabase size={24} />
-          </div>
-          <div>
-             <h1 className="text-4xl font-black text-white tracking-tighter">Orders</h1>
-             <p className="text-slate-400 font-medium mt-1">List of all customer orders in the system.</p>
-          </div>
+    <div className="pt-24 pb-20 animate-fade-in bg-white dark:bg-slate-900 min-h-screen">
+      <div className="main-container">
+        
+        <div className="flex items-center justify-between mb-8 border-b border-slate-100 dark:border-white/5 pb-4">
+           <div>
+              <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Order Registry</h1>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Transaction Monitoring</p>
+           </div>
         </div>
 
-        {isLoading ? (
-          <Loader />
-        ) : error ? (
-          <Message variant="red">{error?.data?.message || error.error}</Message>
-        ) : (
-          <div className="bg-slate-900/80 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-white/5 p-2 overflow-hidden relative group">
-            <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
-            
-            <div className="overflow-x-auto rounded-[2rem] bg-slate-950 border border-white/5 relative z-10">
-              <table className="w-full text-left text-sm whitespace-nowrap border-collapse">
-                <thead className="bg-white/5 border-b border-white/10 uppercase tracking-widest text-[10px] font-black text-slate-400">
-                  <tr>
-                    <th className="px-6 py-6 border-r border-white/5">Order ID</th>
-                    <th className="px-6 py-6">User</th>
-                    <th className="px-6 py-6">Date</th>
-                    <th className="px-6 py-6">Total Amount</th>
-                    <th className="px-6 py-6 text-center">Paid Status</th>
-                    <th className="px-6 py-6 text-center">Shipped</th>
-                    <th className="px-6 py-6 text-center">Delivered</th>
-                    <th className="px-6 py-6 border-l border-white/5 text-right flex justify-end">Actions</th>
-                  </tr>
+        {isLoading ? <Loader /> : error ? <Message variant="red">Sync Error</Message> : (
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl overflow-hidden shadow-sm">
+             <table className="w-full text-left">
+                <thead className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                   <tr>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Order ID</th>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Net Value</th>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Payment</th>
+                      <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Logistics</th>
+                      <th className="p-4"></th>
+                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
-                  {orders.map((order) => (
-                    <tr key={order._id} className="hover:bg-white/5 transition-colors group/row">
-                      <td className="px-6 py-5 text-emerald-400/80 font-mono text-[10px] bg-emerald-500/5 tracking-widest border-r border-white/5">#{order._id.slice(-8).toUpperCase()}</td>
-                      <td className="px-6 py-5 text-white font-black">{order.user && order.user.name}</td>
-                      <td className="px-6 py-5 text-slate-400 font-medium text-xs tracking-wider">{order.createdAt.substring(0, 10)}</td>
-                      <td className="px-6 py-5 font-black text-white text-base">₹{order.totalPrice.toLocaleString('en-IN')}</td>
-                      
-                      <td className="px-6 py-5 text-center">
-                        {order.isPaid ? (
-                          <div className="inline-flex items-center gap-2 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20">
-                             <FaCheck className="text-emerald-500" />
-                             <span className="text-[10px] font-black uppercase text-emerald-400">{order.paidAt.substring(0, 10)}</span>
-                          </div>
-                        ) : (
-                          <span className="bg-rose-500/10 text-rose-400 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border border-rose-500/20 shadow-inner">Unpaid</span>
-                        )}
-                      </td>
-                      
-                      <td className="px-6 py-5 text-center">
-                        {order.isShipped ? (
-                          <div className="inline-flex items-center gap-2 bg-blue-500/10 px-3 py-1.5 rounded-xl border border-blue-500/20">
-                             <FaTruck className="text-blue-400" />
-                             <span className="text-[10px] font-black uppercase text-blue-400">{order.shippedAt.substring(0, 10)}</span>
-                          </div>
-                        ) : (
-                          <span className="bg-amber-500/10 text-amber-500 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border border-amber-500/20">No</span>
-                        )}
-                      </td>
-                      
-                      <td className="px-6 py-5 text-center">
-                        {order.isDelivered ? (
-                          <div className="inline-flex items-center gap-2 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20">
-                             <FaCheck className="text-emerald-500" />
-                             <span className="text-[10px] font-black uppercase text-emerald-400">{order.deliveredAt.substring(0, 10)}</span>
-                          </div>
-                        ) : (
-                          <span className="bg-amber-500/10 text-amber-500 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border border-amber-500/20">No</span>
-                        )}
-                      </td>
-                      
-                      <td className="px-6 py-5 text-center border-l border-white/5 flex justify-end">
-                        <Link to={`/order/${order._id}`}>
-                          <button className="bg-white/5 border border-white/10 hover:border-emerald-500 hover:text-white hover:bg-emerald-500/20 text-slate-400 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-inner hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                            Details
-                          </button>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                   {orders.map(order => (
+                      <tr key={order._id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+                         <td className="p-4 text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-tight">#{order._id.slice(-8)}</td>
+                         <td className="p-4">
+                            <p className="text-[12px] font-black text-slate-800 dark:text-white leading-tight">{order.user?.name || 'Deleted User'}</p>
+                            <p className="text-[10px] font-bold text-slate-400">{order.createdAt.substring(0, 10)}</p>
+                         </td>
+                         <td className="p-4 text-[12px] font-black text-slate-900 dark:text-emerald-400">₹{order.totalPrice.toLocaleString('en-IN')}</td>
+                         <td className="p-4 text-center">
+                            {order.isPaid ? (
+                               <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/20">Authorized</span>
+                            ) : (
+                               <span className="text-[9px] font-black text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded uppercase border border-rose-500/20">Awaiting</span>
+                            )}
+                         </td>
+                         <td className="p-4 text-center">
+                            {order.isDelivered ? (
+                               <span className="text-[9px] font-black text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded uppercase border border-blue-500/20">Delivered</span>
+                            ) : order.isShipped ? (
+                               <span className="text-[9px] font-black text-purple-500 bg-purple-500/10 px-2 py-0.5 rounded uppercase border border-purple-500/20">In Transit</span>
+                            ) : (
+                               <span className="text-[9px] font-black text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded uppercase border border-slate-200 dark:border-white/10">Queue</span>
+                            )}
+                         </td>
+                         <td className="p-4 text-right">
+                            <Link to={`/order/${order._id}`} className="text-emerald-500 font-black text-[10px] uppercase tracking-widest hover:underline">Inspect</Link>
+                         </td>
+                      </tr>
+                   ))}
                 </tbody>
-              </table>
-            </div>
+             </table>
           </div>
         )}
       </div>
     </div>
   );
 };
+
 export default OrderList;

@@ -7,6 +7,7 @@ import {
 } from '../../../src/redux/slices/productsApiSlice';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
+import { FaArrowLeft, FaCloudUploadAlt, FaSave } from 'react-icons/fa';
 
 const ProductEdit = () => {
   const { id: productId } = useParams();
@@ -40,20 +41,9 @@ const ProductEdit = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      await updateProduct({
-        productId,
-        name,
-        price,
-        image,
-        brand,
-        category,
-        description,
-        countInStock,
-      }).unwrap();
+      await updateProduct({ productId, name, price, image, brand, category, description, countInStock }).unwrap();
       navigate('/admin/productlist');
-    } catch (err) {
-      alert(err?.data?.message || err.error);
-    }
+    } catch (err) {}
   };
 
   const uploadFileHandler = async (e) => {
@@ -62,64 +52,107 @@ const ProductEdit = () => {
     try {
       const res = await uploadProductImage(formData).unwrap();
       setImage(res.image);
-    } catch (err) {
-      alert(err?.data?.message || err.error);
-    }
+    } catch (err) {}
   };
 
   return (
-    <div className="container mx-auto px-4 mt-8">
-      <Link to="/admin/productlist" className="inline-block mb-6 bg-slate-100 hover:bg-slate-200 py-2 px-4 rounded text-slate-800 font-medium transition-colors">
-        &larr; Go Back
-      </Link>
-      
-      <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-        <h1 className="text-3xl font-bold mb-6 text-slate-800">Edit Product</h1>
-        {loadingUpdate && <Loader />}
-        {isLoading ? <Loader /> : error ? <Message variant="red">{error.data.message}</Message> : (
-          <form onSubmit={submitHandler}>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Name</label>
-              <input type="text" className="w-full px-3 py-2 border rounded focus:outline-none focus:border-emerald-500" value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
+    <div className="pt-24 pb-20 animate-fade-in bg-slate-50 dark:bg-slate-950 min-h-screen">
+      <div className="max-w-xl mx-auto px-6">
+        
+        <Link to="/admin/productlist" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-500 mb-8 transition-colors">
+           <FaArrowLeft size={10} /> Back to Catalog
+        </Link>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Price</label>
-              <input type="number" className="w-full px-3 py-2 border rounded focus:outline-none focus:border-emerald-500" value={price} onChange={(e) => setPrice(e.target.value)} />
-            </div>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/5 p-8 shadow-2xl shadow-slate-200/50 dark:shadow-none">
+           <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight mb-8 border-b border-slate-50 dark:border-white/5 pb-4">Edit Product Profile</h1>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Image URL</label>
-              <input type="text" className="w-full px-3 py-2 border rounded focus:outline-none focus:border-emerald-500 mb-2" value={image} onChange={(e) => setImage(e.target.value)} />
-              <input type="file" className="w-full px-3 py-2 border rounded focus:outline-none focus:border-emerald-500" onChange={uploadFileHandler} />
-              {loadingUpload && <Loader />}
-            </div>
+           {loadingUpdate && <Loader />}
+           {isLoading ? <Loader /> : error ? <Message variant="red">Sync Error</Message> : (
+             <form onSubmit={submitHandler} className="space-y-4">
+                <div className="space-y-1.5">
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Title</label>
+                   <input 
+                     type="text" 
+                     className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
+                     value={name}
+                     onChange={e => setName(e.target.value)}
+                   />
+                </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Brand</label>
-              <input type="text" className="w-full px-3 py-2 border rounded focus:outline-none focus:border-emerald-500" value={brand} onChange={(e) => setBrand(e.target.value)} />
-            </div>
+                <div className="grid grid-cols-2 gap-4">
+                   <div className="space-y-1.5">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Price (₹)</label>
+                      <input 
+                        type="number" 
+                        className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
+                        value={price}
+                        onChange={e => setPrice(e.target.value)}
+                      />
+                   </div>
+                   <div className="space-y-1.5">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Stock Units</label>
+                      <input 
+                        type="number" 
+                        className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
+                        value={countInStock}
+                        onChange={e => setCountInStock(e.target.value)}
+                      />
+                   </div>
+                </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Count In Stock</label>
-              <input type="number" className="w-full px-3 py-2 border rounded focus:outline-none focus:border-emerald-500" value={countInStock} onChange={(e) => setCountInStock(e.target.value)} />
-            </div>
+                <div className="space-y-1.5">
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Brand Identity</label>
+                   <input 
+                     type="text" 
+                     className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
+                     value={brand}
+                     onChange={e => setBrand(e.target.value)}
+                   />
+                </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Category</label>
-              <input type="text" className="w-full px-3 py-2 border rounded focus:outline-none focus:border-emerald-500" value={category} onChange={(e) => setCategory(e.target.value)} />
-            </div>
+                <div className="space-y-1.5">
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Catalog Category</label>
+                   <input 
+                     type="text" 
+                     className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
+                     value={category}
+                     onChange={e => setCategory(e.target.value)}
+                   />
+                </div>
 
-            <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Description</label>
-              <textarea className="w-full px-3 py-2 border rounded focus:outline-none focus:border-emerald-500" rows="3" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
-            </div>
+                <div className="space-y-1.5">
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Visual Resource</label>
+                   <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        className="flex-grow bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
+                        value={image}
+                        onChange={e => setImage(e.target.value)}
+                      />
+                      <label className="cursor-pointer bg-slate-100 dark:bg-white/10 px-4 flex items-center justify-center rounded-xl hover:bg-emerald-500 hover:text-white transition-all text-slate-500">
+                         <FaCloudUploadAlt size={16} />
+                         <input type="file" className="hidden" onChange={uploadFileHandler} />
+                      </label>
+                   </div>
+                   {loadingUpload && <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest animate-pulse mt-1">Uploading...</p>}
+                </div>
 
-            <button type="submit" className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded transition-colors shadow-sm">
-              Update Product
-            </button>
-          </form>
-        )}
+                <div className="space-y-1.5">
+                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Specs / Description</label>
+                   <textarea 
+                     rows="3"
+                     className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white resize-none"
+                     value={description}
+                     onChange={e => setDescription(e.target.value)}
+                   />
+                </div>
+
+                <button type="submit" className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-12 rounded-xl font-black text-[11px] uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 mt-4">
+                   <FaSave size={14} /> Commit Changes
+                </button>
+             </form>
+           )}
+        </div>
       </div>
     </div>
   );

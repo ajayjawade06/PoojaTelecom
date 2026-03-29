@@ -6,7 +6,7 @@ import { addToCart } from '../redux/slices/cartSlice';
 import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { FaUserCircle, FaStar, FaShoppingCart, FaArrowLeft, FaComments } from 'react-icons/fa';
+import { FaUserCircle, FaStar, FaShoppingCart, FaArrowLeft, FaComments, FaShieldAlt, FaTruck, FaClock } from 'react-icons/fa';
 
 const ProductPage = () => {
   const { id: productId } = useParams();
@@ -15,11 +15,10 @@ const ProductPage = () => {
 
   const [qty, setQty] = useState(1);
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [activeTab, setActiveTab] = useState('description');
 
   const { userInfo } = useSelector((state) => state.auth);
-
   const { data: product, isLoading, error, refetch } = useGetProductDetailsQuery(productId);
   const [createReview, { isLoading: loadingProductReview }] = useCreateReviewMutation();
 
@@ -31,275 +30,197 @@ const ProductPage = () => {
   const submitReviewHandler = async (e) => {
     e.preventDefault();
     if (rating === 0) {
-      alert('Please select a star rating before submitting.');
+      alert('Selection Required');
       return;
     }
     try {
       await createReview({ productId, rating, comment }).unwrap();
       refetch();
-      alert('Review submitted successfully!');
       setRating(0);
-      setHoverRating(0);
       setComment('');
+      alert('Thank you for your review!');
     } catch (err) {
       alert(err?.data?.message || err.error);
     }
   };
 
-  const starLabels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+  if (isLoading) return <div className="pt-40"><Loader /></div>;
+  if (error) return <div className="pt-40 main-container"><Message variant="red">{error?.data?.message || 'Error loading product'}</Message></div>;
 
   return (
-    <div className="container mx-auto px-4 my-10 animate-fade-in relative z-10 w-full flex flex-col items-center">
-      <div className="w-full max-w-7xl relative z-10">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 mb-8 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white font-black py-3 px-6 rounded-full transition-colors uppercase tracking-widest text-xs"
-        >
-          <FaArrowLeft /> Back to Products
-        </Link>
+    <div className="pt-24 pb-20 animate-fade-in bg-white dark:bg-slate-900 min-h-screen">
+      <div className="main-container">
+        
+        {/* Navigation / Breadcrumb */}
+        <div className="flex items-center gap-2 mb-8 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+           <Link to="/" className="hover:text-emerald-500 transition-colors">Home</Link>
+           <span>/</span>
+           <span className="text-slate-900 dark:text-white truncate max-w-[200px]">{product.name}</span>
+        </div>
 
-        {isLoading ? (
-          <Loader />
-        ) : error ? (
-          <Message variant="red">{error?.data?.message || error.error}</Message>
-        ) : (
-          <>
-            {/* Product Detail Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 relative">
-              {/* Decorative Glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
-
-              {/* Image */}
-              <div className="lg:col-span-5 bg-slate-100 dark:bg-slate-900/50 backdrop-blur-md p-8 rounded-[2.5rem] border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl flex items-center justify-center relative overflow-hidden group transition-colors duration-300">
-                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/5 to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-1000"></div>
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="max-w-full h-auto object-contain max-h-[500px] hover:scale-110 transition-transform duration-700 filter drop-shadow-[0_20px_20px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_20px_20px_rgba(0,0,0,0.5)] cursor-zoom-in relative z-10"
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          
+          {/* Gallery - Left */}
+          <div className="lg:col-span-7 space-y-4">
+             <div className="aspect-square bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-200 dark:border-white/5 overflow-hidden flex items-center justify-center p-12 group">
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal group-hover:scale-110 transition-transform duration-700" 
                 />
-              </div>
+             </div>
+             {/* Tiny thumbnails could go here */}
+          </div>
 
-              {/* Info */}
-              <div className="lg:col-span-4 flex flex-col py-6">
-                <div className="mb-4">
-                  <span className="text-[10px] font-black tracking-widest text-emerald-600 dark:text-emerald-400 uppercase bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)] px-4 py-1.5 rounded-xl">
-                    {product.brand}
-                  </span>
+          {/* Details - Right */}
+          <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-24">
+             <div>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-2 block">{product.brand}</span>
+                <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tighter leading-tight">
+                  {product.name}
+                </h1>
+                
+                <div className="flex items-center gap-4 py-3 border-y border-slate-100 dark:border-white/5">
+                   <div className="flex items-center gap-1">
+                      {[1,2,3,4,5].map(s => <FaStar key={s} className={s <= product.rating ? 'text-amber-400' : 'text-slate-200'} size={12}/>)}
+                   </div>
+                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{product.numReviews} Reviews</span>
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight tracking-tighter">{product.name}</h1>
-                <div className="flex items-center gap-4 bg-slate-100 dark:bg-white/5 w-fit px-4 py-2 rounded-xl border border-slate-200 dark:border-white/5 transition-colors duration-300">
-                  <Rating value={product.rating} text={`${product.numReviews} Reviews`} color="#34d399" />
-                  <span className="text-slate-300 dark:text-white/20">|</span>
-                  <a href="#reviews" className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest hover:text-emerald-500 dark:hover:text-emerald-300 transition-colors">
-                    Read Reviews
-                  </a>
+             </div>
+
+             <div className="space-y-4">
+                <div className="flex items-baseline gap-3">
+                   <span className="text-4xl font-black text-slate-900 dark:text-emerald-400 tracking-tighter">
+                     ₹{product.price.toLocaleString('en-IN')}
+                   </span>
+                   <span className="text-sm font-bold text-slate-400 line-through">₹{(product.price * 1.3).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
                 </div>
-                <div className="mt-8 text-slate-600 dark:text-slate-300 leading-relaxed pt-8 border-t border-slate-200 dark:border-white/10 relative transition-colors duration-300">
-                  <h3 className="font-black text-slate-900 dark:text-white mb-4 text-xl tracking-tighter flex items-center gap-2">
-                     <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 flex items-center justify-center">
-                        <FaComments size={14} />
+                
+                <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md inline-block ${product.countInStock > 0 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-500'}`}>
+                   {product.countInStock > 0 ? `In Stock (${product.countInStock} available)` : 'Unavailable'}
+                </div>
+             </div>
+
+             {product.countInStock > 0 && (
+               <div className="space-y-4 pt-4">
+                  <div className="flex items-center gap-3">
+                     <div className="flex-grow flex items-center border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden h-12">
+                        <button onClick={() => setQty(q => Math.max(1, q-1))} className="w-12 h-full hover:bg-slate-100 dark:hover:bg-white/5 font-bold transition-colors">-</button>
+                        <span className="flex-grow text-center font-black text-xs text-slate-900 dark:text-white uppercase tracking-widest">{qty} Units</span>
+                        <button onClick={() => setQty(q => Math.min(product.countInStock, q+1))} className="w-12 h-full hover:bg-slate-100 dark:hover:bg-white/5 font-bold transition-colors">+</button>
                      </div>
-                     Product Specifications
-                  </h3>
-                  <p className="whitespace-pre-line text-sm font-medium">{product.description}</p>
-                </div>
-              </div>
-
-              {/* Purchase Box */}
-              <div className="lg:col-span-3">
-                <div className="bg-gradient-to-b from-slate-100 to-white dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-white/10 text-center rounded-[2.5rem] p-8 shadow-xl dark:shadow-2xl sticky top-28 overflow-hidden relative transition-colors duration-300">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none -z-0"></div>
-
-                  <div className="mb-8 relative z-10">
-                    <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-2">Price</span>
-                    <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 dark:from-white dark:to-slate-400">
-                      ₹{product.price.toLocaleString('en-IN')}
-                    </span>
                   </div>
 
-                  <div
-                    className={`mb-8 py-3 px-6 rounded-2xl font-black inline-block text-[10px] uppercase tracking-widest w-full relative z-10 ${
-                      product.countInStock > 0
-                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)]'
-                        : 'bg-rose-500/10 text-rose-500 dark:text-rose-400 border border-rose-500/30'
-                    }`}
-                  >
-                    {product.countInStock > 0 ? 'In Stock · Ready to Ship' : 'Out of Stock'}
-                  </div>
-
-                  {product.countInStock > 0 && (
-                    <div className="flex flex-col mb-8 relative z-10">
-                      <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3 text-left">Quantity</span>
-                      <div className="relative group">
-                        <select
-                          className="w-full border border-slate-200 dark:border-white/10 rounded-2xl p-4 bg-slate-50 dark:bg-slate-950 focus:outline-none focus:border-emerald-500/50 focus:bg-white dark:focus:bg-white/5 transition-colors font-black text-slate-900 dark:text-white appearance-none cursor-pointer tracking-widest text-center"
-                          value={qty}
-                          onChange={(e) => setQty(Number(e.target.value))}
-                        >
-                          {[...Array(product.countInStock).keys()].map((x) => (
-                            <option key={x + 1} value={x + 1} className="bg-white dark:bg-slate-900">
-                              {x + 1} UNITS
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-emerald-500 group-hover:text-emerald-400 transition-colors">
-                           ▼
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <button
-                    className="w-full relative overflow-hidden group bg-emerald-500 hover:bg-emerald-400 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] flex items-center justify-center gap-3 uppercase tracking-widest text-sm z-10"
-                    disabled={product.countInStock === 0}
+                  <button 
                     onClick={addToCartHandler}
+                    className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-14 rounded-xl font-black text-[12px] uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
                   >
-                    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                    <FaShoppingCart size={16} /> Add to Cart
+                    <FaShoppingCart size={14} /> Add to Cart
                   </button>
-                </div>
-              </div>
-            </div>
+               </div>
+             )}
 
-            {/* REVIEWS SECTION */}
-            <div className="mt-24 pt-16 border-t border-slate-200 dark:border-white/10 relative" id="reviews">
-              <div className="absolute top-16 left-1/2 -translate-x-1/2 w-1/2 h-[200px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none -z-10"></div>
-              
-              <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tighter mb-12 flex items-center justify-center gap-4">
-                 <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
-                    <FaStar />
+             {/* Minimal Features List */}
+             <div className="grid grid-cols-3 gap-4 border-t border-slate-100 dark:border-white/5 pt-8">
+                <div className="flex flex-col items-center text-center gap-2">
+                   <FaTruck className="text-emerald-500" size={14}/>
+                   <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Fast Ship</span>
+                </div>
+                <div className="flex flex-col items-center text-center gap-2">
+                   <FaShieldAlt className="text-emerald-500" size={14}/>
+                   <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Genuine</span>
+                </div>
+                <div className="flex flex-col items-center text-center gap-2">
+                   <FaClock className="text-emerald-500" size={14}/>
+                   <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">24/7 Support</span>
+                </div>
+             </div>
+          </div>
+        </div>
+
+        {/* Dynamic Tabs Section */}
+        <section className="mt-20 border-t border-slate-100 dark:border-white/5 pt-12">
+           <div className="flex items-center gap-8 mb-10 border-b border-slate-100 dark:border-white/5">
+              {['description', 'reviews'].map(tab => (
+                 <button 
+                   key={tab}
+                   onClick={() => setActiveTab(tab)}
+                   className={`pb-4 text-[11px] font-black uppercase tracking-[0.2em] transition-all relative ${activeTab === tab ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+                 >
+                    {tab}
+                    {activeTab === tab && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-emerald-500 animate-fade-in"></div>}
+                 </button>
+              ))}
+           </div>
+
+           <div className="max-w-4xl">
+              {activeTab === 'description' && (
+                 <div className="animate-fade-in">
+                    <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed whitespace-pre-line font-medium">
+                       {product.description}
+                    </p>
                  </div>
-                 Reviews & Feedback
-              </h2>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
-                {/* Write Review Form */}
-                <div className="bg-white dark:bg-slate-900 p-8 md:p-10 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl dark:shadow-2xl h-fit relative overflow-hidden transition-colors duration-300">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-emerald-300 to-transparent"></div>
-                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter">Write a Review</h3>
-                  
-                  {loadingProductReview && <Loader />}
-                  
-                  {userInfo ? (
-                    <form onSubmit={submitReviewHandler} className="space-y-8 relative z-10">
-                      {/* Interactive Star Rating */}
-                      <div>
-                        <label className="block text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-4">Rating</label>
-                        <div className="flex flex-col items-center justify-center bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/5 transition-colors duration-300">
-                          <div className="flex items-center gap-2 mb-3">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <button
-                                key={star}
-                                type="button"
-                                onClick={() => setRating(star)}
-                                onMouseEnter={() => setHoverRating(star)}
-                                onMouseLeave={() => setHoverRating(0)}
-                                className="focus:outline-none transition-transform hover:scale-125 active:scale-110 p-2"
-                              >
-                                <FaStar
-                                  size={42}
-                                  className={`transition-colors duration-200 filter drop-shadow-lg ${
-                                    star <= (hoverRating || rating)
-                                      ? 'text-amber-400'
-                                      : 'text-slate-300 dark:text-slate-800'
-                                  }`}
-                                />
-                              </button>
-                            ))}
-                          </div>
-                          <div className="h-6 flex items-center justify-center text-sm font-black text-slate-800 dark:text-white tracking-widest uppercase bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full border border-slate-200 dark:border-white/10 w-fit transition-colors duration-300">
-                            {starLabels[hoverRating || rating] || <span className="text-slate-400 dark:text-slate-600">UNRATED</span>}
-                          </div>
-                          {rating === 0 && (
-                            <p className="text-[10px] text-rose-500 mt-4 font-black uppercase tracking-widest">
-                              Selection Required
-                            </p>
+              )}
+
+              {activeTab === 'reviews' && (
+                 <div className="animate-fade-in space-y-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                       {/* Review List */}
+                       <div className="space-y-6">
+                          {product.reviews.length === 0 ? (
+                             <p className="text-slate-400 text-xs italic">No reviews yet. Be the first to share your experience.</p>
+                          ) : (
+                             product.reviews.map(r => (
+                                <div key={r._id} className="bg-slate-50 dark:bg-white/5 p-5 rounded-xl border border-slate-100 dark:border-white/5">
+                                   <div className="flex justify-between items-start mb-3">
+                                      <div className="flex items-center gap-2">
+                                         <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-[10px] font-black">
+                                            {r.name.charAt(0)}
+                                         </div>
+                                         <span className="text-[11px] font-bold text-slate-900 dark:text-white">{r.name}</span>
+                                      </div>
+                                      <div className="flex gap-0.5">
+                                         {[1,2,3,4,5].map(s => <FaStar key={s} size={8} className={s <= r.rating ? 'text-amber-400' : 'text-slate-200'}/>)}
+                                      </div>
+                                   </div>
+                                   <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed italic">"{r.comment}"</p>
+                                </div>
+                             ))
                           )}
-                        </div>
-                      </div>
+                       </div>
 
-                      {/* Optional Comment */}
-                      <div className="group">
-                        <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3 group-focus-within:text-emerald-500 dark:group-focus-within:text-emerald-400 transition-colors">
-                          Comment <span className="text-slate-400 dark:text-slate-600">(Optional)</span>
-                        </label>
-                        <textarea
-                          rows="4"
-                          className="w-full border border-slate-200 dark:border-white/10 rounded-2xl p-5 bg-slate-50 dark:bg-white/5 focus:outline-none focus:border-emerald-500/50 focus:bg-white dark:focus:bg-white/10 transition-all font-medium text-slate-900 dark:text-white min-h-[140px] resize-none ring-4 ring-transparent focus:ring-emerald-500/10 placeholder-slate-400 dark:placeholder-slate-600"
-                          value={comment}
-                          placeholder="Write your review here..."
-                          onChange={(e) => setComment(e.target.value)}
-                        ></textarea>
-                      </div>
-
-                      <button
-                        disabled={loadingProductReview}
-                        type="submit"
-                        className="w-full relative overflow-hidden group bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest text-xs"
-                      >
-                         <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                         Submit Review
-                      </button>
-                    </form>
-                  ) : (
-                    <Message variant="blue">
-                      Please{' '}
-                      <Link to="/login" className="font-black underline text-blue-500 hover:text-blue-400">
-                        sign in
-                      </Link>{' '}
-                      to write a review.
-                    </Message>
-                  )}
-                </div>
-
-                {/* Existing Reviews List */}
-                <div>
-                  {product.reviews.length === 0 ? (
-                    <div className="text-center py-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[2.5rem] shadow-xl dark:shadow-2xl relative overflow-hidden flex flex-col items-center justify-center transition-colors duration-300">
-                      <div className="w-24 h-24 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 dark:text-slate-700 mb-6 border border-slate-200 dark:border-white/5">
-                        <FaComments size={32} />
-                      </div>
-                      <p className="text-xl text-slate-900 dark:text-white font-black tracking-tighter mb-2">No Reviews Yet</p>
-                      <p className="text-slate-500 text-sm font-medium">Be the first to review this product.</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-6">
-                      {product.reviews.map((review) => (
-                        <div key={review._id} className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-lg dark:shadow-xl border border-slate-100 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 transition-colors">
-                          <div className="flex justify-between items-start mb-4">
-                            <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 bg-emerald-500/20 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center font-black text-xl shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                                {review.name.charAt(0).toUpperCase()}
-                              </div>
-                              <div>
-                                <h4 className="font-black text-slate-900 dark:text-white tracking-tight">{review.name}</h4>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1">{review.createdAt.substring(0, 10)}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/5 transition-colors duration-300">
-                              {[1, 2, 3, 4, 5].map((s) => (
-                                <FaStar
-                                  key={s}
-                                  size={12}
-                                  className={s <= review.rating ? 'text-amber-400' : 'text-slate-300 dark:text-slate-800'}
+                       {/* Write Review */}
+                       <div className="bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-slate-100 dark:border-white/5 h-fit">
+                          <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-6">Write a review</h4>
+                          {userInfo ? (
+                             <form onSubmit={submitReviewHandler} className="space-y-4">
+                                <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-100 dark:border-white/10">
+                                   {[1,2,3,4,5].map(s => (
+                                      <button key={s} type="button" onClick={() => setRating(s)} className="hover:scale-110 transition-transform">
+                                         <FaStar size={16} className={s <= rating ? 'text-amber-400' : 'text-slate-200'}/>
+                                      </button>
+                                   ))}
+                                </div>
+                                <textarea 
+                                  className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/10 p-4 rounded-xl text-xs font-medium outline-none focus:border-emerald-500/30 transition-all min-h-[100px] resize-none"
+                                  placeholder="How was your experience?"
+                                  value={comment}
+                                  onChange={e => setComment(e.target.value)}
                                 />
-                              ))}
-                            </div>
-                          </div>
-                          {review.comment && (
-                            <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm font-medium italic border-l-2 border-emerald-500 pl-5 ml-2 mt-4">
-                              "{review.comment}"
-                            </p>
+                                <button type="submit" disabled={loadingProductReview} className="w-full bg-emerald-500 text-white font-black py-3 rounded-lg text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-500/10 active:scale-95 transition-all">
+                                   Submit Review
+                                </button>
+                             </form>
+                          ) : (
+                             <p className="text-[11px] font-medium text-slate-400">Please <Link to="/login" className="text-emerald-500 font-black underline">login</Link> to write a review.</p>
                           )}
-                        </div>
-                      ))}
+                       </div>
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+                 </div>
+              )}
+           </div>
+        </section>
+
       </div>
     </div>
   );

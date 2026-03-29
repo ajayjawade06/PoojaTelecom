@@ -1,24 +1,26 @@
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 
-const Rating = ({ value, text }) => {
+const Rating = ({ value, text, color }) => {
   return (
-    <div className="flex items-center text-amber-500 my-2">
-      <span className="text-sm">
-        {value >= 1 ? <FaStar /> : value >= 0.5 ? <FaStarHalfAlt /> : <FaRegStar />}
-      </span>
-      <span className="text-sm">
-        {value >= 2 ? <FaStar /> : value >= 1.5 ? <FaStarHalfAlt /> : <FaRegStar />}
-      </span>
-      <span className="text-sm">
-        {value >= 3 ? <FaStar /> : value >= 2.5 ? <FaStarHalfAlt /> : <FaRegStar />}
-      </span>
-      <span className="text-sm">
-        {value >= 4 ? <FaStar /> : value >= 3.5 ? <FaStarHalfAlt /> : <FaRegStar />}
-      </span>
-      <span className="text-sm">
-        {value >= 5 ? <FaStar /> : value >= 4.5 ? <FaStarHalfAlt /> : <FaRegStar />}
-      </span>
-      {text && <span className="text-xs text-gray-500 ml-2 font-medium">{text}</span>}
+    <div className="flex items-center gap-1.5 whitespace-nowrap">
+      <div className="flex items-center gap-0.5">
+        {[1, 2, 3, 4, 5].map((index) => (
+          <span key={index}>
+            {value >= index ? (
+              <FaStar className="text-amber-400" size={10} />
+            ) : value >= index - 0.5 ? (
+              <FaStarHalfAlt className="text-amber-400" size={10} />
+            ) : (
+              <FaRegStar className="text-slate-200 dark:text-slate-700" size={10} />
+            )}
+          </span>
+        ))}
+      </div>
+      {text && (
+        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+          {text}
+        </span>
+      )}
     </div>
   );
 };
