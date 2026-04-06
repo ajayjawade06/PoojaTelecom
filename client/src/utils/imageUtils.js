@@ -10,23 +10,41 @@ import { BASE_URL } from '../constants';
 export const getFullImageUrl = (imagePath) => {
   if (!imagePath) return '';
 
+  // Clean the path
+  let path = imagePath.trim();
+
   // If it's already an absolute URL, return as is
-  if (imagePath.startsWith('http')) {
-    return imagePath;
+  if (path.startsWith('http')) {
+    return path;
   }
 
-  // Handle raw filenames that might be missing the /api/upload/image/ prefix
-  let formattedPath = imagePath;
-  if (imagePath.startsWith('image-')) {
-    formattedPath = `/api/upload/image/${imagePath}`;
+  // Remove leading slash for consistency during processing
+  if (path.startsWith('/')) {
+    path = path.slice(1);
   }
 
-  // If it's a backend relative path, use BASE_URL (which is emptystring on production for proxying)
+  // Handle various relative formats
+  let formattedPath = path;
+
+  // Case 1: Just a filename (e.g., 'image-123.jpg')
+  if (path.startsWith('image-')) {
+    formattedPath = `api/upload/image/${path}`;
+  } 
+  // Case 2: Wrong relative path (e.g., 'upload/image/image-123.jpg')
+  else if (path.startsWith('upload/image/')) {
+    formattedPath = `api/${path}`;
+  }
+
+  // Ensure it starts with a leading slash for the final resolution
+  if (!formattedPath.startsWith('/')) {
+    formattedPath = `/${formattedPath}`;
+  }
+
+  // Resolve with BASE_URL (empty string in production for Vercel rewrites)
   if (formattedPath.startsWith('/api/upload') || formattedPath.startsWith('/uploads')) {
     const baseUrl = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
     return `${baseUrl}${formattedPath}`;
   }
 
-  // Return as is (could be a local public folder asset or already correctly formatted)
   return formattedPath;
 };
