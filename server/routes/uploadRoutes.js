@@ -60,13 +60,16 @@ router.post('/', (req, res, next) => {
   console.log('Upload request received...');
   upload.single('image')(req, res, (err) => {
     if (err) {
-      console.error('Multer/Upload Error:', err);
-      return res.status(400).send({ message: err.message || 'Upload failed' });
+      console.error('Multer/Upload Error Detail:', err);
+      return res.status(400).send({ 
+        message: err.message || 'Upload failed',
+        error: err.code || 'UPLOAD_ERROR' 
+      });
     }
     
     if (!req.file) {
-      console.warn('No file in request after multer processing');
-      return res.status(400).send({ message: 'No file uploaded' });
+      console.warn('No file in request after multer processing. Headers:', req.headers['content-type']);
+      return res.status(400).send({ message: 'No file uploaded. Verify field name is "image".' });
     }
 
     console.log(`File uploaded successfully: ${req.file.filename}`);
