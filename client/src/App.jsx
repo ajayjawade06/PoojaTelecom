@@ -25,6 +25,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import UserReviewsPage from './pages/admin/UserReviewsPage';
+import CarouselManager from './pages/admin/CarouselManager';
 
 const App = () => {
   return (
@@ -62,6 +63,7 @@ const App = () => {
             <Route path="/admin/product/:id/edit" element={<ProductEdit />} />
             <Route path="/admin/reports" element={<ReportsPage />} />
             <Route path="/admin/user/:id/reviews" element={<UserReviewsPage />} />
+            <Route path="/admin/carousel" element={<CarouselManager />} />
           </Route>
         </Routes>
       </main>

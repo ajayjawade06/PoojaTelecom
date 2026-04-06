@@ -68,6 +68,7 @@ const Dashboard = () => {
                <Link to="/admin/userlist" className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-indigo-500/10 active:scale-95">Users</Link>
                <Link to="/admin/productlist" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg active:scale-95">Products</Link>
                <Link to="/admin/orderlist" className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/10 active:scale-95">Orders</Link>
+               <Link to="/admin/carousel" className="bg-violet-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-violet-500/10 active:scale-95">Carousel</Link>
             </div>
         </div>
 
