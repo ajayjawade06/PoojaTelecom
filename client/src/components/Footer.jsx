@@ -8,7 +8,7 @@ const Footer = () => {
     <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-white/5 pt-20 pb-10">
       <div className="main-container">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          
+
           {/* Brand Info */}
           <div className="flex flex-col gap-4">
             <Link to="/" className="flex items-center gap-3 group w-fit">
@@ -69,12 +69,13 @@ const Footer = () => {
               </div>
               <div className="flex items-start gap-3">
                 <FaPhoneAlt className="text-emerald-500 shrink-0 mt-0.5" size={12} />
-                <span className="text-[13px] font-bold text-slate-600 dark:text-slate-400">+91 98765 43210</span>
+                <span className="text-[13px] font-bold text-slate-600 dark:text-slate-400">+91 7721852240
+                </span>
               </div>
               <div className="flex items-start gap-3">
                 <FaMapMarkerAlt className="text-emerald-500 shrink-0 mt-1" size={12} />
                 <span className="text-[13px] font-bold text-slate-600 dark:text-slate-400 leading-tight">
-                  123 Market Street, Tech Hub District, India
+                  Shop No. 2, Near BRT Bus Stop, Mukai Chowk, Kiwale, Pune - 412101, India
                 </span>
               </div>
             </div>
