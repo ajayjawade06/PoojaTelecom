@@ -19,9 +19,9 @@ conn.once('open', () => {
   gfs.collection('uploads');
 });
 
-// Create storage engine
+// Create storage engine using the existing connection
 const storage = new GridFsStorage({
-  url: process.env.MONGO_URI,
+  db: mongoose.connection.asPromise().then(conn => conn.db),
   file: (req, file) => {
     return new Promise((resolve, reject) => {
       const filename = `image-${Date.now()}${path.extname(file.originalname)}`;
@@ -44,11 +44,15 @@ function fileFilter(req, file, cb) {
   if (extname && mimetype) {
     cb(null, true);
   } else {
-    cb(new Error('Images only!'), false);
+    cb(new Error('Images only! (jpeg, png, webp)'), false);
   }
 }
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({ 
+  storage, 
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
 // @desc    Upload image to MongoDB
 // @route   POST /api/upload
