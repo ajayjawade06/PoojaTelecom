@@ -67,7 +67,8 @@ const getProducts = asyncHandler(async (req, res) => {
   const products = await Product.find(query)
     .sort(sortOption)
     .limit(pageSize)
-    .skip(pageSize * (page - 1));
+    .skip(pageSize * (page - 1))
+    .lean();
 
   res.json({ products, page, pages: Math.ceil(count / pageSize), count });
 });
@@ -76,7 +77,7 @@ const getProducts = asyncHandler(async (req, res) => {
 // @route   GET /api/products/:id
 // @access  Public
 const getProductById = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findById(req.params.id).lean();
 
   if (product) {
     res.json(product);
