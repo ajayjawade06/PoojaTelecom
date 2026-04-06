@@ -74,6 +74,11 @@ const productSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    isPublished: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
   },
   {
     timestamps: true,

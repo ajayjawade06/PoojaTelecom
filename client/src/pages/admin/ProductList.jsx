@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 
 const ProductList = () => {
   const [page, setPage] = useState(1);
-  const { data: productsData, isLoading, error, refetch } = useGetProductsQuery({ pageNumber: page });
+  const { data: productsData, isLoading, error, refetch } = useGetProductsQuery({ pageNumber: page, isAdmin: 'true' });
   const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation();
   const [deleteProduct, { isLoading: loadingDelete }] = useDeleteProductMutation();
   const [bulkUpdateStock, { isLoading: loadingBulk }] = useBulkUpdateStockMutation();
@@ -37,6 +37,7 @@ const ProductList = () => {
   const createProductHandler = async () => {
     try {
       const res = await createProduct().unwrap();
+      toast.success('Product created successfully');
       navigate(`/admin/product/${res._id}/edit`);
     } catch (err) {
       toast.error(err?.data?.message || err.error);
@@ -166,14 +167,19 @@ const ProductList = () => {
                             className="w-20 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-[12px] font-black text-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
                           />
                         ) : (
-                          <div className="flex items-center gap-2">
-                            <span className={`text-[12px] font-black ${product.countInStock === 0 ? 'text-rose-500' : product.countInStock < 5 ? 'text-amber-500' : 'text-emerald-500'}`}>
-                              {product.countInStock} Units
-                            </span>
-                            {product.countInStock < 5 && (
-                              <span className="text-[8px] font-black uppercase tracking-widest text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded animate-pulse">Low</span>
-                            )}
-                          </div>
+                           <div className="flex flex-col gap-1.5">
+                             <div className="flex items-center gap-2">
+                               <span className={`text-[12px] font-black ${product.countInStock === 0 ? 'text-rose-500' : product.countInStock < 5 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                                 {product.countInStock} Units
+                               </span>
+                               {product.countInStock < 5 && (
+                                 <span className="text-[8px] font-black uppercase tracking-widest text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded animate-pulse">Low</span>
+                               )}
+                             </div>
+                             {!product.isPublished && (
+                               <span className="text-[8px] font-black uppercase tracking-widest text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded w-fit border border-rose-500/20">Draft</span>
+                             )}
+                           </div>
                         )}
                       </td>
                       <td className="p-5 text-[13px] font-black text-slate-900 dark:text-white">₹{product.price.toLocaleString('en-IN')}</td>

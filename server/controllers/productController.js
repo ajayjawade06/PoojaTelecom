@@ -8,9 +8,14 @@ const getProducts = asyncHandler(async (req, res) => {
   const pageSize = 12; // Paginate with 12 items per page
   const page = Number(req.query.pageNumber) || 1;
 
-  const { keyword, category, brand, minPrice, maxPrice, rating, stock, sort } = req.query;
+  const { keyword, category, brand, minPrice, maxPrice, rating, stock, sort, isAdmin } = req.query;
 
   let query = {};
+
+  // Public users only see published products
+  if (isAdmin !== 'true') {
+    query.isPublished = true;
+  }
 
   if (keyword) {
     query.name = { $regex: keyword, $options: 'i' };
@@ -86,16 +91,17 @@ const getProductById = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
   const product = new Product({
-    name: 'Sample name',
+    name: 'New Draft Product',
     price: 0,
     user: req.user._id,
     image: '/images/sample.jpg',
-    brand: 'Sample brand',
-    category: 'Sample category',
+    brand: 'New Brand',
+    category: 'New Category',
     countInStock: 0,
     costPrice: 0,
     numReviews: 0,
-    description: 'Sample description',
+    description: 'New Description',
+    isPublished: false,
   });
 
   const createdProduct = await product.save();
@@ -106,7 +112,7 @@ const createProduct = asyncHandler(async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 const updateProduct = asyncHandler(async (req, res) => {
-  const { name, price, costPrice, description, image, brand, category, countInStock } =
+  const { name, price, costPrice, description, image, brand, category, countInStock, isPublished } =
     req.body;
 
   const product = await Product.findById(req.params.id);
@@ -120,6 +126,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     product.category = category;
     product.countInStock = countInStock;
     product.costPrice = costPrice;
+    product.isPublished = isPublished;
 
     const updatedProduct = await product.save();
     res.json(updatedProduct);
