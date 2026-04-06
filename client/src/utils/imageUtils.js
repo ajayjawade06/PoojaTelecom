@@ -15,13 +15,18 @@ export const getFullImageUrl = (imagePath) => {
     return imagePath;
   }
 
-  // If it's a backend relative path, prepend the BASE_URL
-  if (imagePath.startsWith('/api/upload') || imagePath.startsWith('/uploads')) {
-    // Ensure we don't have double slashes if BASE_URL ends with a slash
-    const baseUrl = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
-    return `${baseUrl}${imagePath}`;
+  // Handle raw filenames that might be missing the /api/upload/image/ prefix
+  let formattedPath = imagePath;
+  if (imagePath.startsWith('image-')) {
+    formattedPath = `/api/upload/image/${imagePath}`;
   }
 
-  // Return as is (could be a local public folder asset)
-  return imagePath;
+  // If it's a backend relative path, use BASE_URL (which is emptystring on production for proxying)
+  if (formattedPath.startsWith('/api/upload') || formattedPath.startsWith('/uploads')) {
+    const baseUrl = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+    return `${baseUrl}${formattedPath}`;
+  }
+
+  // Return as is (could be a local public folder asset or already correctly formatted)
+  return formattedPath;
 };
