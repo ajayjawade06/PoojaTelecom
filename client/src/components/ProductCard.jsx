@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { FaStar, FaBolt, FaCheckCircle, FaShoppingCart, FaEye, FaShareAlt } from 'react-icons/fa';
 import { addToCart } from '../redux/slices/cartSlice';
+import { getFullImageUrl } from '../utils/imageUtils';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -43,7 +44,7 @@ const ProductCard = ({ product }) => {
         </div>
         <Link to={`/product/${product._id}`} className="block w-full h-full">
           <img 
-            src={product.image} 
+            src={getFullImageUrl(product.image)} 
             alt={product.name} 
             className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal transform group-hover:scale-110 transition-transform duration-500 ease-out" 
           />

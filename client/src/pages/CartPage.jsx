@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaTrash, FaShoppingBag, FaArrowRight, FaMinus, FaPlus, FaCheckCircle, FaShieldAlt, FaArrowLeft } from 'react-icons/fa';
 import { addToCart, removeFromCart } from '../redux/slices/cartSlice';
+import { getFullImageUrl } from '../utils/imageUtils';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -63,7 +64,7 @@ const CartPage = () => {
                   {/* Small Item Image */}
                   <Link to={`/product/${item._id}`} className="shrink-0 flex justify-center">
                      <div className="w-24 h-24 bg-slate-50 dark:bg-black/20 rounded-2xl p-3 flex items-center justify-center border border-slate-200 dark:border-white/10 transition-transform group-hover:scale-105">
-                        <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain mix-blend-multiply dark:mix-blend-normal" />
+                        <img src={getFullImageUrl(item.image)} alt={item.name} className="max-w-full max-h-full object-contain mix-blend-multiply dark:mix-blend-normal" />
                      </div>
                   </Link>
                   

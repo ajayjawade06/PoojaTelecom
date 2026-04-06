@@ -10,6 +10,7 @@ import { FaEdit, FaTrash, FaPlus, FaBoxOpen, FaSave, FaTimes, FaLayerGroup, FaAr
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 import { toast } from 'react-toastify';
+import { getFullImageUrl } from '../../utils/imageUtils';
 
 const ProductList = () => {
   const [page, setPage] = useState(1);
@@ -146,7 +147,7 @@ const ProductList = () => {
                       <td className="p-5">
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/10 rounded-lg p-1.5 shadow-sm">
-                            <img src={product.image} alt="" className="w-full h-full object-contain" />
+                            <img src={getFullImageUrl(product.image)} alt="" className="w-full h-full object-contain" />
                           </div>
                           <div className="flex flex-col min-w-0">
                             <span className="text-[13px] font-black text-slate-900 dark:text-white truncate max-w-[240px] leading-tight">{product.name}</span>

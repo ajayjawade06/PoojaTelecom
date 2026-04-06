@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBolt, FaArrowRight } from 'react-icons/fa';
 import { useGetCarouselSlidesQuery } from '../redux/slices/carouselApiSlice';
+import { getFullImageUrl } from '../utils/imageUtils';
 
 const HeroCarousel = () => {
   const { data: slides, isLoading, error } = useGetCarouselSlidesQuery();
@@ -83,7 +84,7 @@ const HeroCarousel = () => {
 
             <div className="hidden md:block relative h-full aspect-square transition-all duration-700 delay-300">
                <img 
-                 src={slide.image} 
+                 src={getFullImageUrl(slide.image)} 
                  className="h-full w-full object-contain drop-shadow-2xl transform hover:scale-105 transition-transform" 
                  alt={slide.title} 
                />

@@ -14,6 +14,7 @@ import {
   useCancelOrderMutation,
 } from '../redux/slices/ordersApiSlice';
 import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt, FaClock, FaUser, FaArrowRight, FaArrowLeft, FaTimes } from 'react-icons/fa';
+import { getFullImageUrl } from '../utils/imageUtils';
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
@@ -195,7 +196,7 @@ const OrderPage = () => {
                        <div key={index} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                           <div className="flex items-center gap-4">
                              <div className="w-12 h-12 bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/10 rounded-lg p-1">
-                                <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain" />
+                                <img src={getFullImageUrl(item.image)} alt={item.name} className="max-w-full max-h-full object-contain" />
                              </div>
                              <div>
                                 <Link to={`/product/${item.product}`} className="text-[12px] font-black text-slate-800 dark:text-emerald-400 hover:underline line-clamp-1">{item.name}</Link>

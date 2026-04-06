@@ -8,6 +8,7 @@ import {
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { FaArrowLeft, FaCloudUploadAlt, FaSave } from 'react-icons/fa';
+import { getFullImageUrl } from '../../utils/imageUtils';
 
 const ProductEdit = () => {
   const { id: productId } = useParams();
@@ -168,6 +169,11 @@ const ProductEdit = () => {
                          <input type="file" className="hidden" onChange={uploadFileHandler} />
                       </label>
                    </div>
+                   {image && (
+                      <div className="w-20 h-20 bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/10 rounded-xl p-2 mb-2">
+                         <img src={getFullImageUrl(image)} alt="preview" className="w-full h-full object-contain" />
+                      </div>
+                   )}
                    {loadingUpload && <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest animate-pulse mt-1">Uploading...</p>}
                 </div>
 

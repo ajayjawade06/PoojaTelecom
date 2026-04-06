@@ -11,6 +11,7 @@ import { useUploadProductImageMutation } from '../../redux/slices/productsApiSli
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 import { toast } from 'react-toastify';
+import { getFullImageUrl } from '../../utils/imageUtils';
 import {
   FaArrowLeft,
   FaPlus,
@@ -315,7 +316,7 @@ const CarouselManager = () => {
                     {formData.image && (
                       <div className="mt-3 w-full h-36 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden">
                         <img
-                          src={formData.image}
+                          src={getFullImageUrl(formData.image)}
                           alt="Preview"
                           className="w-full h-full object-contain"
                         />
@@ -458,7 +459,7 @@ const CarouselManager = () => {
                   {/* Image Thumbnail */}
                   <div className="w-20 h-14 bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10 rounded-xl overflow-hidden shrink-0">
                     <img
-                      src={slide.image}
+                      src={getFullImageUrl(slide.image)}
                       alt={slide.title}
                       className="w-full h-full object-cover"
                     />

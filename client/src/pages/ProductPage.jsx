@@ -7,6 +7,7 @@ import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { FaUserCircle, FaStar, FaShoppingCart, FaArrowLeft, FaComments, FaShieldAlt, FaTruck, FaClock, FaShareAlt } from 'react-icons/fa';
+import { getFullImageUrl } from '../utils/imageUtils';
 
 const ProductPage = () => {
   const { id: productId } = useParams();
@@ -106,7 +107,7 @@ const ProductPage = () => {
                 {/* Subtle inner glow for product gallery */}
                 <div className="absolute inset-0 bg-radial-gradient from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                 <img 
-                  src={product.image} 
+                  src={getFullImageUrl(product.image)} 
                   alt={product.name} 
                   className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal group-hover:scale-[1.05] transition-transform duration-700 z-10 relative" 
                 />
