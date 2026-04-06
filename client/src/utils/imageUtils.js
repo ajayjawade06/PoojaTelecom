@@ -30,7 +30,12 @@ export const getFullImageUrl = (imagePath) => {
   if (path.startsWith('image-')) {
     formattedPath = `api/upload/image/${path}`;
   } 
-  // Case 2: Wrong relative path (e.g., 'upload/image/image-123.jpg')
+  // Case 2: Legacy local path (e.g., 'uploads/image-123.jpg')
+  else if (path.startsWith('uploads/image-')) {
+    const filename = path.replace('uploads/', '');
+    formattedPath = `api/upload/image/${filename}`;
+  }
+  // Case 3: Partial GridFS path (e.g., 'upload/image/image-123.jpg')
   else if (path.startsWith('upload/image/')) {
     formattedPath = `api/${path}`;
   }
