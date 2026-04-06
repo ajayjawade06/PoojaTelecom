@@ -218,10 +218,16 @@ const ProfilePage = () => {
                                      <td className="p-4 text-[11px] font-bold text-slate-400">{order.createdAt.substring(0, 10)}</td>
                                      <td className="p-4 text-[11px] font-black text-slate-900 dark:text-white">₹{order.totalPrice.toLocaleString('en-IN')}</td>
                                      <td className="p-4">
-                                        {order.isPaid ? (
-                                           <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded uppercase tracking-widest">Paid</span>
+                                        {order.isCancelled ? (
+                                           <span className="text-[9px] font-black text-rose-500 bg-rose-500/10 px-2 py-1 rounded uppercase tracking-widest border border-rose-500/20">Cancelled</span>
+                                        ) : order.isDelivered ? (
+                                           <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded uppercase tracking-widest border border-emerald-500/20">Delivered</span>
+                                        ) : order.isShipped ? (
+                                           <span className="text-[9px] font-black text-amber-500 bg-amber-500/10 px-2 py-1 rounded uppercase tracking-widest border border-amber-500/20">Shipped</span>
+                                        ) : order.isPaid ? (
+                                           <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded uppercase tracking-widest border border-emerald-500/20">Paid</span>
                                         ) : (
-                                           <span className="text-[9px] font-black text-rose-500 bg-rose-500/10 px-2 py-1 rounded uppercase tracking-widest">Unpaid</span>
+                                           <span className="text-[9px] font-black text-rose-500 bg-rose-500/10 px-2 py-1 rounded uppercase tracking-widest border border-rose-500/20">Unpaid</span>
                                         )}
                                      </td>
                                      <td className="p-4 text-right">
