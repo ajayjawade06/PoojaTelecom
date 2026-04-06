@@ -1,12 +1,10 @@
+import 'dotenv/config';
 import path from 'path';
 import express from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import connectDB from './utils/db.js';
-
-dotenv.config();
 
 // Connect to MongoDB
 // Uncomment below when MONGO_URI is set properly
@@ -19,6 +17,7 @@ const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
       'http://localhost:5173',
+      'http://localhost:5174',
       'http://localhost:3000',
       'https://pooja-telecom.vercel.app',
       'https://pooja-telecom-git-main-ajayjawade06s-projects.vercel.app',
