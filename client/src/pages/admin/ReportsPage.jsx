@@ -174,7 +174,7 @@ const ReportsPage = () => {
               <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-white/5 px-2 py-1 rounded">Daily Sales</span>
             </div>
             <div className="h-72 w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <AreaChart data={salesData?.sales}>
                   <defs>
                     <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
@@ -198,7 +198,7 @@ const ReportsPage = () => {
           <div className="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8 shadow-sm">
             <h3 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-8 text-center">In-Stock Distribution</h3>
             <div className="h-64 flex justify-center items-center">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <PieChart>
                   <Pie
                     data={inventoryData?.categoryDistribution}
@@ -225,7 +225,7 @@ const ReportsPage = () => {
           <div className="lg:col-span-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8 shadow-sm">
             <h3 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-8">Category Revenue</h3>
             <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <BarChart data={salesData?.categorySales}>
                   <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} />
                   <XAxis dataKey="_id" tick={{ fontSize: 9, fontWeight: 700 }} />
@@ -241,7 +241,7 @@ const ReportsPage = () => {
           <div className="lg:col-span-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8 shadow-sm">
             <h3 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-8">User Growth Trend</h3>
             <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <AreaChart data={userData?.userStats}>
                   <XAxis dataKey="_id" tick={{ fontSize: 9, fontWeight: 700 }} />
                   <YAxis tick={{ fontSize: 9, fontWeight: 700 }} />
@@ -258,7 +258,7 @@ const ReportsPage = () => {
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8">
               <h3 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-6">Order Fulfilment</h3>
               <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                   <PieChart>
                     <Pie
                       data={salesData?.orderStatus}

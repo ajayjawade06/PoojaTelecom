@@ -19,6 +19,7 @@ const ProductEdit = () => {
   const [category, setCategory] = useState('');
   const [countInStock, setCountInStock] = useState(0);
   const [description, setDescription] = useState('');
+  const [costPrice, setCostPrice] = useState(0);
 
   const { data: product, isLoading, error } = useGetProductDetailsQuery(productId);
   const [updateProduct, { isLoading: loadingUpdate }] = useUpdateProductMutation();
@@ -35,15 +36,18 @@ const ProductEdit = () => {
       setCategory(product.category);
       setCountInStock(product.countInStock);
       setDescription(product.description);
+      setCostPrice(product.costPrice || 0);
     }
   }, [product]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      await updateProduct({ productId, name, price, image, brand, category, description, countInStock }).unwrap();
+      await updateProduct({ productId, name, price, costPrice, image, brand, category, description, countInStock }).unwrap();
       navigate('/admin/productlist');
-    } catch (err) {}
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
   };
 
   const uploadFileHandler = async (e) => {
@@ -87,6 +91,15 @@ const ProductEdit = () => {
                         className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
                         value={price}
                         onChange={e => setPrice(e.target.value)}
+                      />
+                   </div>
+                   <div className="space-y-1.5">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Cost Price (₹)</label>
+                      <input 
+                        type="number" 
+                        className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white text-emerald-500"
+                        value={costPrice}
+                        onChange={e => setCostPrice(e.target.value)}
                       />
                    </div>
                    <div className="space-y-1.5">

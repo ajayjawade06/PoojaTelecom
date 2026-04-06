@@ -8,7 +8,7 @@ import User from '../models/userModel.js';
 // @access  Private/Admin
 const getSalesReport = asyncHandler(async (req, res) => {
   const sales = await Order.aggregate([
-    { $match: { isPaid: true } },
+    { $match: { isPaid: true, excludeFromStats: { $ne: true }, isCancelled: { $ne: true } } },
     {
       $group: {
         _id: { $dateToString: { format: "%Y-%m-%d", date: "$paidAt" } },
@@ -24,7 +24,7 @@ const getSalesReport = asyncHandler(async (req, res) => {
   const totalRevenue = sales.reduce((acc, curr) => acc + curr.totalSales, 0);
 
   const categorySales = await Order.aggregate([
-    { $match: { isPaid: true } },
+    { $match: { isPaid: true, excludeFromStats: { $ne: true }, isCancelled: { $ne: true } } },
     { $unwind: "$orderItems" },
     {
       $lookup: {
@@ -45,6 +45,7 @@ const getSalesReport = asyncHandler(async (req, res) => {
   ]);
 
   const orderStatus = await Order.aggregate([
+    { $match: { excludeFromStats: { $ne: true }, isCancelled: { $ne: true } } },
     {
       $group: {
         _id: { $cond: [{ $eq: ["$isDelivered", true] }, "Delivered", { $cond: [{ $eq: ["$isShipped", true] }, "Shipped", "Pending"] }] },
@@ -82,7 +83,7 @@ const getInventoryReport = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getUserReport = asyncHandler(async (req, res) => {
   const totalUsers = await User.countDocuments({});
-  const activeUsers = await Order.distinct('user', { isPaid: true });
+  const activeUsers = await Order.distinct('user', { isPaid: true, excludeFromStats: { $ne: true }, isCancelled: { $ne: true } });
   
   const userStats = await User.aggregate([
     {

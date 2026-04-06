@@ -59,6 +59,24 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
       }),
     }),
+    deleteOrder: builder.mutation({
+      query: (orderId) => ({
+        url: `${ORDERS_URL}/${orderId}`,
+        method: 'DELETE',
+      }),
+    }),
+    excludeOrder: builder.mutation({
+      query: (orderId) => ({
+        url: `${ORDERS_URL}/${orderId}/exclude`,
+        method: 'PUT',
+      }),
+    }),
+    cancelOrder: builder.mutation({
+      query: (orderId) => ({
+        url: `${ORDERS_URL}/${orderId}/cancel`,
+        method: 'PUT',
+      }),
+    }),
   }),
 });
 
@@ -72,4 +90,7 @@ export const {
   useGetOrdersQuery,
   useDeliverOrderMutation,
   useShipOrderMutation,
+  useDeleteOrderMutation,
+  useExcludeOrderMutation,
+  useCancelOrderMutation,
 } = ordersApiSlice;

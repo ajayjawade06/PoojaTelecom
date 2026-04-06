@@ -219,6 +219,77 @@ const getOrders = asyncHandler(async (req, res) => {
   res.json(orders);
 });
 
+// @desc    Delete order
+// @route   DELETE /api/orders/:id
+// @access  Private/Admin
+const deleteOrder = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    await Order.deleteOne({ _id: order._id });
+    res.json({ message: 'Order removed' });
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+});
+
+// @desc    Toggle order exclusion from stats
+// @route   PUT /api/orders/:id/exclude
+// @access  Private/Admin
+const updateOrderExclusion = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    order.excludeFromStats = !order.excludeFromStats;
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+});
+
+// @desc    Cancel order
+// @route   PUT /api/orders/:id/cancel
+// @access  Private
+const cancelOrder = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    if (order.isDelivered) {
+      res.status(400);
+      throw new Error('Order already delivered and cannot be cancelled');
+    }
+
+    if (order.isCancelled) {
+      res.status(400);
+      throw new Error('Order is already cancelled');
+    }
+
+    order.isCancelled = true;
+    order.cancelledAt = Date.now();
+
+    // Restore stock and soldCount if order was paid
+    if (order.isPaid) {
+      for (const item of order.orderItems) {
+        const product = await Product.findById(item.product);
+        if (product) {
+          product.countInStock += item.qty;
+          product.soldCount = Math.max(0, (product.soldCount || 0) - item.qty);
+          await product.save();
+        }
+      }
+    }
+
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+});
+
 export {
   addOrderItems,
   getOrderById,
@@ -228,4 +299,7 @@ export {
   getMyOrders,
   getOrders,
   createRazorpayOrder,
+  deleteOrder,
+  updateOrderExclusion,
+  cancelOrder,
 };

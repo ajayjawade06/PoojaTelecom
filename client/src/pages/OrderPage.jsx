@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
@@ -11,11 +11,13 @@ import {
   useGetRazorpayClientIdQuery,
   useDeliverOrderMutation,
   useShipOrderMutation,
+  useCancelOrderMutation,
 } from '../redux/slices/ordersApiSlice';
 import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt, FaClock, FaUser, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
+  const navigate = useNavigate();
   const [razorpayLoading, setRazorpayLoading] = useState(false);
   const [showCardForm, setShowCardForm] = useState(false);
   const [cardDetails, setCardDetails] = useState({
@@ -36,6 +38,7 @@ const OrderPage = () => {
   const [createRazorpayOrder] = useCreateRazorpayOrderMutation();
   const [deliverOrder, { isLoading: loadingDeliver }] = useDeliverOrderMutation();
   const [shipOrder, { isLoading: loadingShip }] = useShipOrderMutation();
+  const [cancelOrder, { isLoading: loadingCancel }] = useCancelOrderMutation();
   
   const { data: razorpayConfig } = useGetRazorpayClientIdQuery();
   const { userInfo } = useSelector((state) => state.auth);
@@ -46,6 +49,18 @@ const OrderPage = () => {
 
   const deliverOrderHandler = async () => {
     try { await deliverOrder(orderId).unwrap(); refetch(); } catch (err) {}
+  };
+  
+  const cancelOrderHandler = async () => {
+    if (window.confirm('Are you sure you want to cancel this order?')) {
+      try {
+        await cancelOrder(orderId).unwrap();
+        refetch();
+        toast.success('Order cancelled successfully');
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
+      }
+    }
   };
 
   const steps = [
@@ -124,8 +139,8 @@ const OrderPage = () => {
                  </p>
               </div>
            </div>
-           <div className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${order.isDelivered ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
-              {order.isDelivered ? 'Order Delivered' : order.isShipped ? 'In Transit' : order.isPaid ? 'Payment Received' : 'Pending Payment'}
+           <div className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${order.isCancelled ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : order.isDelivered ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
+              {order.isCancelled ? `Cancelled on ${new Date(order.cancelledAt).toLocaleDateString()}` : order.isDelivered ? 'Order Delivered' : order.isShipped ? 'In Transit' : order.isPaid ? 'Payment Received' : 'Pending Payment'}
            </div>
         </div>
 
@@ -160,8 +175,8 @@ const OrderPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 rounded-[24px] p-8 shadow-lg hover:shadow-emerald-500/5 transition-all">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><FaUser size={10} /> Customer Details</h3>
-                    <p className="text-[13px] font-black text-slate-800 dark:text-white leading-tight mb-1">{order.user.name}</p>
-                    <p className="text-[11px] font-bold text-slate-500 truncate">{order.user.email}</p>
+                    <p className="text-[13px] font-black text-slate-800 dark:text-white leading-tight mb-1">{order.user?.name || 'Deleted User'}</p>
+                    <p className="text-[11px] font-bold text-slate-500 truncate">{order.user?.email || 'N/A'}</p>
                  </div>
                  <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 rounded-[24px] p-8 shadow-lg hover:shadow-emerald-500/5 transition-all">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2"><FaMapMarkerAlt size={10} /> Shipping Address</h3>
@@ -218,7 +233,7 @@ const OrderPage = () => {
                  </div>
 
                  {/* Payment Action Buffer */}
-                 {!order.isPaid && userInfo._id === order.user._id && !showCardForm && (
+                 {!order.isPaid && userInfo._id === order.user?._id && !showCardForm && !order.isCancelled && (
                     <button 
                       onClick={paymentHandler} 
                       disabled={razorpayLoading}
@@ -226,6 +241,17 @@ const OrderPage = () => {
                     >
                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-500"></div>
                        {razorpayLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin relative z-10"></div> : <span className="relative z-10 flex items-center gap-3"><FaShieldAlt size={16}/> Pay Now</span>}
+                    </button>
+                 )}
+
+                 {/* Cancel Order Action */}
+                 {!order.isCancelled && !order.isDelivered && userInfo._id === order.user?._id && (
+                    <button 
+                      onClick={cancelOrderHandler} 
+                      disabled={loadingCancel}
+                      className="w-full h-12 bg-white/5 border border-rose-500/20 hover:bg-rose-500/5 text-rose-500 font-black rounded-xl text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 mt-4 relative z-10"
+                    >
+                       <FaTimes size={12}/> {loadingCancel ? 'Processing...' : 'Cancel Order'}
                     </button>
                  )}
 

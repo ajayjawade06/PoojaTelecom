@@ -102,7 +102,7 @@ const Dashboard = () => {
                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-white/5 px-2 py-1 rounded">Last 7 Days</span>
                </div>
               <div className="h-64 w-full">
-                 <ResponsiveContainer width="100%" height="100%">
+                 <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                     <AreaChart data={metrics.revenueData}>
                        <defs>
                           <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
@@ -126,7 +126,7 @@ const Dashboard = () => {
             <div className="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8 shadow-sm text-center">
                <h2 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-8 border-b border-slate-50 dark:border-white/5 pb-4">Order Status</h2>
               <div className="h-48 flex items-center justify-center relative">
-                 <ResponsiveContainer width="100%" height="100%">
+                 <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                     <PieChart>
                        <Pie 
                          data={metrics.orderStatusData} 
