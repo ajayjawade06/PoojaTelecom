@@ -66,21 +66,28 @@ router.post('/', upload.single('image'), (req, res) => {
 // @route   GET /api/upload/image/:filename
 router.get('/image/:filename', async (req, res) => {
   try {
+    if (!gridfsBucket) {
+      return res.status(503).json({ err: 'GridFS Bucket not initialized yet. Please try again in a few seconds.' });
+    }
+
     const file = await gridfsBucket.find({ filename: req.params.filename }).toArray();
     
     if (!file || file.length === 0) {
+      console.error(`Image not found: ${req.params.filename}`);
       return res.status(404).json({ err: 'No file exists' });
     }
 
-    // Check if image
-    if (file[0].contentType === 'image/jpeg' || file[0].contentType === 'image/png' || file[0].contentType === 'image/webp') {
+    // Check if image - more permissive check
+    if (file[0].contentType && file[0].contentType.startsWith('image/')) {
       // Read output to browser
       const readstream = gridfsBucket.openDownloadStreamByName(req.params.filename);
       readstream.pipe(res);
     } else {
+      console.warn(`File is not an image: ${req.params.filename} (Type: ${file[0].contentType})`);
       res.status(404).json({ err: 'Not an image' });
     }
   } catch (err) {
+    console.error('Error fetching image:', err);
     res.status(500).json({ err: 'Server error' });
   }
 });
