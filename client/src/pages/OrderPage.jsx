@@ -13,7 +13,7 @@ import {
   useShipOrderMutation,
   useCancelOrderMutation,
 } from '../redux/slices/ordersApiSlice';
-import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt, FaClock, FaUser, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
+import { FaCheckCircle, FaTruck, FaBoxOpen, FaCreditCard, FaMapMarkerAlt, FaLock, FaShieldAlt, FaClock, FaUser, FaArrowRight, FaArrowLeft, FaTimes } from 'react-icons/fa';
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
