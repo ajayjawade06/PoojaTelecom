@@ -52,13 +52,24 @@ const upload = multer({ storage, fileFilter });
 
 // @desc    Upload image to MongoDB
 // @route   POST /api/upload
-router.post('/', upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send({ message: 'No file uploaded' });
-  }
-  res.status(200).send({
-    message: 'Image uploaded successfully to MongoDB',
-    image: `/api/upload/image/${req.file.filename}`,
+router.post('/', (req, res, next) => {
+  console.log('Upload request received...');
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error('Multer/Upload Error:', err);
+      return res.status(400).send({ message: err.message || 'Upload failed' });
+    }
+    
+    if (!req.file) {
+      console.warn('No file in request after multer processing');
+      return res.status(400).send({ message: 'No file uploaded' });
+    }
+
+    console.log(`File uploaded successfully: ${req.file.filename}`);
+    res.status(200).send({
+      message: 'Image uploaded successfully to MongoDB',
+      image: `/api/upload/image/${req.file.filename}`,
+    });
   });
 });
 
