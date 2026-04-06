@@ -60,7 +60,10 @@ const ProductEdit = () => {
     try {
       const res = await uploadProductImage(formData).unwrap();
       setImage(res.image);
-    } catch (err) {}
+      toast.success('Image uploaded successfully');
+    } catch (err) {
+      toast.error(err?.data?.message || err.error || 'Failed to upload image. Please check your Cloudinary configuration.');
+    }
   };
 
   return (
