@@ -147,14 +147,15 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-slate-100 dark:border-white/5 pt-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-[10px] font-medium text-slate-400">
-            © {currentYear} Pooja Telecom. All rights reserved.
+        {/* Copyright & Credits */}
+        <div className="border-t border-slate-100 dark:border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+            © 2026 Pooja Telecom. All rights reserved.
           </p>
-          <span className="text-[10px] font-medium text-slate-400">
-            Developed by <span className="text-slate-900 dark:text-white font-bold">Lipa</span>
-          </span>
+          <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+            <span>Developed by</span>
+            <span className="text-blue-500 dark:text-blue-400 hover:text-blue-600 transition-colors cursor-default">Lipa</span>
+          </div>
         </div>
       </div>
     </footer>
