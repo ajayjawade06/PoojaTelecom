@@ -25,6 +25,7 @@ const orderSchema = new mongoose.Schema(
       city: { type: String, required: true },
       postalCode: { type: String, required: true },
       country: { type: String, required: true },
+      phone: { type: String },
     },
     paymentMethod: {
       type: String,
@@ -93,6 +94,27 @@ const orderSchema = new mongoose.Schema(
       default: false,
     },
     cancelledAt: {
+      type: Date,
+    },
+    isReturnRequested: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    returnReason: {
+      type: String,
+    },
+    returnStatus: {
+      type: String,
+      enum: ['None', 'Pending', 'Approved', 'Rejected', 'Refunded'],
+      default: 'None',
+    },
+    isRefunded: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    refundedAt: {
       type: Date,
     },
   },

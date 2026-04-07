@@ -96,6 +96,7 @@ const createProduct = asyncHandler(async (req, res) => {
     price: 0,
     user: req.user._id,
     image: '/images/sample.jpg',
+    images: [],
     brand: 'New Brand',
     category: 'New Category',
     countInStock: 0,
@@ -113,7 +114,7 @@ const createProduct = asyncHandler(async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 const updateProduct = asyncHandler(async (req, res) => {
-  const { name, price, costPrice, description, image, brand, category, countInStock, isPublished } =
+  const { name, price, costPrice, description, image, images, brand, category, countInStock, isPublished } =
     req.body;
 
   const product = await Product.findById(req.params.id);
@@ -123,6 +124,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     product.price = price;
     product.description = description;
     product.image = image;
+    product.images = images || [];
     product.brand = brand;
     product.category = category;
     product.countInStock = countInStock;
@@ -156,7 +158,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 // @route   POST /api/products/:id/reviews
 // @access  Private
 const createProductReview = asyncHandler(async (req, res) => {
-  const { rating, comment } = req.body;
+  const { rating, comment, reviewImage } = req.body;
 
   const product = await Product.findById(req.params.id);
 
@@ -174,6 +176,7 @@ const createProductReview = asyncHandler(async (req, res) => {
       name: req.user.name,
       rating: Number(rating),
       comment,
+      reviewImage,
       user: req.user._id,
     };
 

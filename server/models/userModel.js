@@ -6,6 +6,7 @@ const addressSchema = new mongoose.Schema({
   city: { type: String, required: true },
   postalCode: { type: String, required: true },
   country: { type: String, required: true },
+  phoneNumber: { type: String },
 }, { _id: false });
 
 const userSchema = new mongoose.Schema(
@@ -22,6 +23,9 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    phoneNumber: {
+      type: String,
     },
     isAdmin: {
       type: Boolean,

@@ -5,6 +5,7 @@ const reviewSchema = new mongoose.Schema(
     name: { type: String, required: true },
     rating: { type: Number, required: true },
     comment: { type: String, required: false },
+    reviewImage: { type: String, required: false },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -30,6 +31,10 @@ const productSchema = new mongoose.Schema(
     image: {
       type: String,
       required: true,
+    },
+    images: {
+      type: [String],
+      default: [],
     },
     brand: {
       type: String,

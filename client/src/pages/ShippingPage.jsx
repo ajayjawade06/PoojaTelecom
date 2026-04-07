@@ -7,6 +7,7 @@ import { saveShippingAddress } from '../redux/slices/cartSlice';
 import { setCredentials } from '../redux/slices/authSlice';
 import { useProfileMutation } from '../redux/slices/usersApiSlice';
 import { FaMapMarkerAlt, FaHistory, FaCheckCircle, FaArrowRight, FaCrosshairs, FaArrowLeft } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const ShippingPage = () => {
   const cart = useSelector((state) => state.cart);
@@ -17,6 +18,7 @@ const ShippingPage = () => {
   const [city, setCity] = useState(shippingAddress?.city || '');
   const [postalCode, setPostalCode] = useState(shippingAddress?.postalCode || '');
   const [country, setCountry] = useState(shippingAddress?.country || '');
+  const [phone, setPhone] = useState(shippingAddress?.phone || '');
   const [geoLoading, setGeoLoading] = useState(false);
 
   const dispatch = useDispatch();
@@ -26,20 +28,21 @@ const ShippingPage = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    dispatch(saveShippingAddress({ address, city, postalCode, country }));
+    dispatch(saveShippingAddress({ address, city, postalCode, country, phone }));
     
     if (userInfo) {
-       try {
-         const updatedUser = await updateProfile({
-           _id: userInfo._id,
-           name: userInfo.name,
-           email: userInfo.email,
-           address: { address, city, postalCode, country }
-         }).unwrap();
-         dispatch(setCredentials({ ...updatedUser }));
-       } catch (err) {
-         console.warn('Could not save address to profile:', err);
-       }
+      try {
+        const updatedUser = await updateProfile({
+          _id: userInfo._id,
+          name: userInfo.name,
+          email: userInfo.email,
+          phoneNumber: phone,
+          address: { address, city, postalCode, country, phoneNumber: phone }
+        }).unwrap();
+        dispatch(setCredentials({ ...updatedUser }));
+      } catch (err) {
+        console.warn('Could not save address to profile:', err);
+      }
     }
     navigate('/placeorder');
   };
@@ -49,6 +52,7 @@ const ShippingPage = () => {
     setCity(saved.city);
     setPostalCode(saved.postalCode);
     setCountry(saved.country);
+    if (saved.phoneNumber) setPhone(saved.phoneNumber);
   };
 
   const getLocationHandler = () => {
@@ -80,116 +84,147 @@ const ShippingPage = () => {
   };
 
   return (
-    <div className="pt-28 pb-20 animate-fade-in bg-white dark:bg-slate-950 min-h-screen relative overflow-hidden z-0">
-      {/* Background Ambience */}
-      <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
-
-      <div className="max-w-xl mx-auto px-6 relative z-10">
-        <CheckoutSteps step1 step2 />
-        
-        <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-2xl rounded-[32px] border border-slate-200/50 dark:border-white/10 p-10 shadow-2xl transition-all duration-500 hover:shadow-emerald-500/5">
+    <div className="pt-24 pb-16 bg-[#f5f5f7] dark:bg-black min-h-screen relative z-0">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+      <CheckoutSteps step1 step2 />
+      
+      <motion.div 
+        initial="hidden" animate="visible" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } }}
+        className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-12"
+      >
+        {/* Left Column: Form */}
+        <motion.div variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { type: 'spring' } } }} className="lg:col-span-7 bg-white dark:bg-[#1c1c1e] rounded-[32px] border border-slate-100 dark:border-white/5 p-8 shadow-sm transition-all duration-200">
           <div className="flex items-center justify-between mb-8">
-             <div className="flex items-center gap-4">
-                <button 
-                  onClick={() => navigate('/cart')}
-                  className="p-2.5 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white rounded-full hover:scale-110 active:scale-90 transition-all shadow-sm"
-                >
-                   <FaArrowLeft size={12} />
-                </button>
-                <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-                  <FaMapMarkerAlt className="text-emerald-500" size={16} /> Shipping
-                </h1>
-             </div>
-             <button 
-               onClick={getLocationHandler}
-               disabled={geoLoading}
-               className="text-[10px] font-black uppercase tracking-widest text-emerald-500 hover:text-emerald-600 transition-colors flex items-center gap-1.5"
-             >
-               <FaCrosshairs size={10} /> {geoLoading ? 'Detecting...' : 'Autofill'}
-             </button>
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => navigate('/cart')}
+                className="p-2.5 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white rounded-full transition-all shadow-sm"
+              >
+                <FaArrowLeft size={12} />
+              </button>
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+                <FaMapMarkerAlt className="text-blue-500" size={18} /> Shipping Detail
+              </h1>
+            </div>
+            <button 
+              onClick={getLocationHandler}
+              disabled={geoLoading}
+              className="text-[10px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-600 transition-colors flex items-center gap-1.5"
+            >
+              <FaCrosshairs size={10} /> {geoLoading ? 'Detecting...' : 'Autofill'}
+            </button>
           </div>
 
-          <form onSubmit={submitHandler} className="space-y-4">
+          <form onSubmit={submitHandler} className="space-y-5">
             <div className="space-y-1.5">
-               <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Address</label>
-               <input 
-                 type="text" 
-                 placeholder="Locality, Building" 
-                 className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
-                 value={address}
-                 onChange={e => setAddress(e.target.value)}
-                 required
-               />
+              <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Address</label>
+              <input 
+                type="text" 
+                placeholder="Locality, Building" 
+                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3.5 px-5 rounded-2xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white"
+                value={address}
+                onChange={e => setAddress(e.target.value)}
+                required
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-               <div className="space-y-1.5">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">City</label>
-                  <input 
-                    type="text" 
-                    placeholder="Mumbai" 
-                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
-                    value={city}
-                    onChange={e => setCity(e.target.value)}
-                    required
-                  />
-               </div>
-               <div className="space-y-1.5">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Postal Code</label>
-                  <input 
-                    type="text" 
-                    placeholder="400001" 
-                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
-                    value={postalCode}
-                    onChange={e => setPostalCode(e.target.value)}
-                    required
-                  />
-               </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">City</label>
+                <input 
+                  type="text" 
+                  placeholder="Mumbai" 
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3.5 px-5 rounded-2xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white"
+                  value={city}
+                  onChange={e => setCity(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Postal Code</label>
+                <input 
+                  type="text" 
+                  placeholder="400001" 
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3.5 px-5 rounded-2xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white"
+                  value={postalCode}
+                  onChange={e => setPostalCode(e.target.value)}
+                  required
+                />
+              </div>
             </div>
 
             <div className="space-y-1.5">
-               <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Country</label>
-               <input 
-                 type="text" 
-                 placeholder="India" 
-                 className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-emerald-500/30 dark:text-white"
-                 value={country}
-                 onChange={e => setCountry(e.target.value)}
-                 required
-               />
+              <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Country</label>
+              <input 
+                type="text" 
+                placeholder="India" 
+                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3.5 px-5 rounded-2xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white"
+                value={country}
+                onChange={e => setCountry(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
+              <input 
+                type="text" 
+                placeholder="0987654321" 
+                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3.5 px-5 rounded-2xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white"
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                required
+              />
             </div>
 
             <button 
               type="submit"
-              className="w-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 h-14 rounded-2xl font-black text-[12px] uppercase tracking-widest shadow-xl hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 mt-8 relative overflow-hidden group/btn"
+              className="w-full bg-blue-500 text-white font-black h-14 rounded-full text-[12px] uppercase tracking-widest shadow-md shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 mt-10 hover:bg-blue-600"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 translate-x-[-100%] group-hover/btn:translate-x-0 transition-transform duration-500"></div>
-              <span className="relative z-10 flex items-center gap-3">Continue to Review <FaArrowRight size={10} /></span>
+              <span className="relative z-10 flex items-center gap-2">Continue to Payment <FaArrowRight size={12} /></span>
             </button>
           </form>
+        </motion.div>
 
-          {userInfo?.addresses?.length > 0 && (
-            <div className="mt-8 pt-8 border-t border-slate-100 dark:border-white/5">
-               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-1">Select Saved Address</p>
-               <div className="space-y-2">
+        {/* Right Column: Saved Addresses */}
+        <motion.div variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { type: 'spring' } } }} className="lg:col-span-5 h-full">
+          <div className="bg-slate-50 dark:bg-white/5 rounded-[32px] border border-slate-200/50 dark:border-white/5 p-8 shadow-inner h-full flex flex-col">
+            {userInfo?.addresses?.length > 0 ? (
+              <div>
+                <div className="flex items-center gap-3 mb-8">
+                  <FaHistory className="text-slate-400" size={16}/>
+                  <h2 className="text-[13px] font-black uppercase tracking-[0.2em] text-slate-800 dark:text-white">Saved Addresses</h2>
+                </div>
+                <div className="space-y-4">
                   {userInfo.addresses.map((addr, i) => (
                     <button 
                       key={i}
                       onClick={() => autofillSavedAddress(addr)}
-                      className="w-full bg-slate-50 dark:bg-white/5 p-3 rounded-xl border border-slate-200 dark:border-white/10 hover:border-emerald-500/30 flex items-center justify-between text-left group transition-all"
+                      className="w-full bg-white dark:bg-[#1c1c1e] p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 hover:border-blue-500 focus:border-blue-500 flex items-center justify-between text-left group transition-all shadow-sm hover:shadow-md"
                     >
-                       <div>
-                          <p className="text-[12px] font-bold text-slate-900 dark:text-white truncate max-w-[200px]">{addr.address}</p>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{addr.city}, {addr.postalCode}</p>
-                       </div>
-                       <FaHistory className="text-slate-300 group-hover:text-emerald-500 transition-colors" size={10}/>
+                      <div>
+                        <p className="text-[13px] font-bold text-slate-900 dark:text-white truncate max-w-[220px] leading-tight">{addr.address}</p>
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">{addr.city}, {addr.postalCode}</p>
+                        <p className="text-[10px] font-bold text-slate-500 mt-1">{addr.country}</p>
+                      </div>
+                      <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-black/30 flex items-center justify-center text-slate-300 group-hover:text-blue-500 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 transition-colors">
+                        <FaArrowRight size={10}/>
+                      </div>
                     </button>
                   ))}
-               </div>
-            </div>
-          )}
-        </div>
-      </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center flex-grow text-center opacity-60">
+                <FaMapMarkerAlt className="text-slate-300 mb-4" size={32} />
+                <p className="text-[12px] font-black uppercase tracking-widest text-slate-400">No Saved Addresses</p>
+                <p className="text-[13px] font-medium text-slate-500 mt-2 max-w-[200px]">Fill out the form to save your first shipping address automatically.</p>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </motion.div>
+    </div>
     </div>
   );
 };

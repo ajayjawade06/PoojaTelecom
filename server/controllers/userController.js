@@ -38,7 +38,7 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, phoneNumber } = req.body;
 
   // Server-side strict email validation
   if (!isValidEmail(email)) {
@@ -79,6 +79,7 @@ const registerUser = asyncHandler(async (req, res) => {
       name,
       email,
       password,
+      phoneNumber,
       isVerified: false,
       verificationCode: otp,
       verificationCodeExpiry: expiry,
@@ -228,6 +229,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
+    user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
 
     if (req.body.password) {
       user.password = req.body.password;

@@ -3,6 +3,15 @@ import Order from '../models/orderModel.js';
 import Product from '../models/productModel.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
+import User from '../models/userModel.js';
+import { 
+  sendOrderConfirmationEmail, 
+  sendOrderSms,
+  sendOrderShippedEmail,
+  sendOrderDeliveredEmail,
+  sendOrderRefundedEmail,
+  sendStatusUpdateSms
+} from '../utils/emailService.js';
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -115,6 +124,17 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
         }
       }
       
+      // Send notifications
+      const user = await User.findById(order.user);
+      if (user) {
+        sendOrderConfirmationEmail(updatedOrder, user);
+        if (updatedOrder.shippingAddress.phone) {
+          sendOrderSms(updatedOrder, updatedOrder.shippingAddress.phone);
+        } else if (user.phoneNumber) {
+          sendOrderSms(updatedOrder, user.phoneNumber);
+        }
+      }
+      
       return res.json(updatedOrder);
     }
     
@@ -154,6 +174,17 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
         }
       }
 
+      // Send notifications
+      const user = await User.findById(order.user);
+      if (user) {
+        sendOrderConfirmationEmail(updatedOrder, user);
+        if (updatedOrder.shippingAddress.phone) {
+          sendOrderSms(updatedOrder, updatedOrder.shippingAddress.phone);
+        } else if (user.phoneNumber) {
+          sendOrderSms(updatedOrder, user.phoneNumber);
+        }
+      }
+
       res.json(updatedOrder);
     } else {
       res.status(400);
@@ -177,6 +208,15 @@ const updateOrderToShipped = asyncHandler(async (req, res) => {
 
     const updatedOrder = await order.save();
 
+    // Send notifications
+    const user = await User.findById(order.user);
+    if (user) {
+      sendOrderShippedEmail(updatedOrder, user);
+      if (updatedOrder.shippingAddress.phone || user.phoneNumber) {
+        sendStatusUpdateSms(updatedOrder, updatedOrder.shippingAddress.phone || user.phoneNumber, 'shipped');
+      }
+    }
+
     res.json(updatedOrder);
   } else {
     res.status(404);
@@ -195,6 +235,15 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
     order.deliveredAt = Date.now();
 
     const updatedOrder = await order.save();
+
+    // Send notifications
+    const user = await User.findById(order.user);
+    if (user) {
+      sendOrderDeliveredEmail(updatedOrder, user);
+      if (updatedOrder.shippingAddress.phone || user.phoneNumber) {
+        sendStatusUpdateSms(updatedOrder, updatedOrder.shippingAddress.phone || user.phoneNumber, 'delivered');
+      }
+    }
 
     res.json(updatedOrder);
   } else {
@@ -290,6 +339,92 @@ const cancelOrder = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Request a return for a delivered order
+// @route   PUT /api/orders/:id/return
+// @access  Private
+const requestReturnOrder = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    if (!order.isDelivered) {
+      res.status(400);
+      throw new Error('Order must be delivered before requesting a return');
+    }
+
+    if (order.isReturnRequested) {
+      res.status(400);
+      throw new Error('Return has already been requested for this order');
+    }
+
+    const { returnReason } = req.body;
+
+    order.isReturnRequested = true;
+    order.returnReason = returnReason || 'Not specified';
+    order.returnStatus = 'Pending';
+
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+});
+
+// @desc    Process a return request (approve/reject/refund)
+// @route   PUT /api/orders/:id/process-return
+// @access  Private/Admin
+const processReturnOrder = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    const { action } = req.body; // 'approve', 'reject', 'refund'
+
+    if (action === 'approve') {
+      order.returnStatus = 'Approved';
+    } else if (action === 'reject') {
+      order.returnStatus = 'Rejected';
+      order.isReturnRequested = false; 
+    } else if (action === 'refund') {
+      if (order.returnStatus !== 'Approved') {
+         res.status(400);
+         throw new Error('Return must be approved before refunding');
+      }
+      
+      order.returnStatus = 'Refunded';
+      order.isRefunded = true;
+      order.refundedAt = Date.now();
+
+      // Restore stock and adjust sold count upon successful return/refund
+      for (const item of order.orderItems) {
+        const product = await Product.findById(item.product);
+        if (product) {
+          product.countInStock += item.qty;
+          product.soldCount = Math.max(0, (product.soldCount || 0) - item.qty);
+          await product.save();
+        }
+      }
+
+      // Send notifications
+      const user = await User.findById(order.user);
+      if (user) {
+        sendOrderRefundedEmail(order, user);
+        if (order.shippingAddress.phone || user.phoneNumber) {
+          sendStatusUpdateSms(order, order.shippingAddress.phone || user.phoneNumber, 'refunded');
+        }
+      }
+    } else {
+      res.status(400);
+      throw new Error('Invalid action');
+    }
+
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+});
+
 export {
   addOrderItems,
   getOrderById,
@@ -302,4 +437,6 @@ export {
   deleteOrder,
   updateOrderExclusion,
   cancelOrder,
+  requestReturnOrder,
+  processReturnOrder,
 };

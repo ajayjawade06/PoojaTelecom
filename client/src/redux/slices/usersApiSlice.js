@@ -2,102 +2,102 @@ import { apiSlice } from './apiSlice';
 const USERS_URL = '/api/users';
 
 export const userApiSlice = apiSlice.injectEndpoints({
-  endpoints: (builder) => ({
-    login: builder.mutation({
-      query: (data) => ({
-        url: `${USERS_URL}/login`,
-        method: 'POST',
-        body: data,
-      }),
-    }),
-    register: builder.mutation({
-      query: (data) => ({
-        url: `${USERS_URL}`,
-        method: 'POST',
-        body: data,
-      }),
-    }),
-    logout: builder.mutation({
-      query: () => ({
-        url: `${USERS_URL}/logout`,
-        method: 'POST',
-      }),
-    }),
-    profile: builder.mutation({
-      query: (data) => ({
-        url: `${USERS_URL}/profile`,
-        method: 'PUT',
-        body: data,
-      }),
-    }),
-    deleteProfile: builder.mutation({
-      query: () => ({
-        url: `${USERS_URL}/profile`,
-        method: 'DELETE',
-      }),
-    }),
-    getUsers: builder.query({
-      query: () => ({
-        url: USERS_URL,
-      }),
-      providesTags: ['User'],
-      keepUnusedDataFor: 5,
-    }),
-    deleteUser: builder.mutation({
-      query: (userId) => ({
-        url: `${USERS_URL}/${userId}`,
-        method: 'DELETE',
-      }),
-    }),
-    verifyEmail: builder.mutation({
-      query: (data) => ({
-        url: `${USERS_URL}/verify-email`,
-        method: 'POST',
-        body: data,
-      }),
-    }),
-    resendVerification: builder.mutation({
-      query: (data) => ({
-        url: `${USERS_URL}/resend-verification`,
-        method: 'POST',
-        body: data,
-      }),
-    }),
-    forgotPassword: builder.mutation({
-      query: (data) => ({
-        url: `${USERS_URL}/forgot-password`,
-        method: 'POST',
-        body: data,
-      }),
-    }),
-    resetPassword: builder.mutation({
-      query: (data) => ({
-        url: `${USERS_URL}/reset-password`,
-        method: 'POST',
-        body: data,
-      }),
-    }),
-    updateUserStatus: builder.mutation({
-      query: (userId) => ({
-        url: `${USERS_URL}/${userId}/status`,
-        method: 'PUT',
-      }),
-      invalidatesTags: ['User'],
-    }),
-  }),
+ endpoints: (builder) => ({
+ login: builder.mutation({
+ query: (data) => ({
+ url: `${USERS_URL}/login`,
+ method: 'POST',
+ body: data,
+ }),
+ }),
+ register: builder.mutation({
+ query: (data) => ({
+ url: `${USERS_URL}`,
+ method: 'POST',
+ body: data,
+ }),
+ }),
+ logout: builder.mutation({
+ query: () => ({
+ url: `${USERS_URL}/logout`,
+ method: 'POST',
+ }),
+ }),
+ profile: builder.mutation({
+ query: (data) => ({
+ url: `${USERS_URL}/profile`,
+ method: 'PUT',
+ body: data,
+ }),
+ }),
+ deleteProfile: builder.mutation({
+ query: () => ({
+ url: `${USERS_URL}/profile`,
+ method: 'DELETE',
+ }),
+ }),
+ getUsers: builder.query({
+ query: () => ({
+ url: USERS_URL,
+ }),
+ providesTags: ['User'],
+ keepUnusedDataFor: 5,
+ }),
+ deleteUser: builder.mutation({
+ query: (userId) => ({
+ url: `${USERS_URL}/${userId}`,
+ method: 'DELETE',
+ }),
+ }),
+ verifyEmail: builder.mutation({
+ query: (data) => ({
+ url: `${USERS_URL}/verify-email`,
+ method: 'POST',
+ body: data,
+ }),
+ }),
+ resendVerification: builder.mutation({
+ query: (data) => ({
+ url: `${USERS_URL}/resend-verification`,
+ method: 'POST',
+ body: data,
+ }),
+ }),
+ forgotPassword: builder.mutation({
+ query: (data) => ({
+ url: `${USERS_URL}/forgot-password`,
+ method: 'POST',
+ body: data,
+ }),
+ }),
+ resetPassword: builder.mutation({
+ query: (data) => ({
+ url: `${USERS_URL}/reset-password`,
+ method: 'POST',
+ body: data,
+ }),
+ }),
+ updateUserStatus: builder.mutation({
+ query: (userId) => ({
+ url: `${USERS_URL}/${userId}/status`,
+ method: 'PUT',
+ }),
+ invalidatesTags: ['User'],
+ }),
+ }),
 });
 
 export const {
-  useLoginMutation,
-  useLogoutMutation,
-  useRegisterMutation,
-  useProfileMutation,
-  useDeleteProfileMutation,
-  useGetUsersQuery,
-  useDeleteUserMutation,
-  useVerifyEmailMutation,
-  useResendVerificationMutation,
-  useForgotPasswordMutation,
-  useResetPasswordMutation,
-  useUpdateUserStatusMutation,
+ useLoginMutation,
+ useLogoutMutation,
+ useRegisterMutation,
+ useProfileMutation,
+ useDeleteProfileMutation,
+ useGetUsersQuery,
+ useDeleteUserMutation,
+ useVerifyEmailMutation,
+ useResendVerificationMutation,
+ useForgotPasswordMutation,
+ useResetPasswordMutation,
+ useUpdateUserStatusMutation,
 } = userApiSlice;

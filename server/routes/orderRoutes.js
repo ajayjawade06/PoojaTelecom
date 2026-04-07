@@ -11,6 +11,8 @@ import {
   deleteOrder,
   updateOrderExclusion,
   cancelOrder,
+  requestReturnOrder,
+  processReturnOrder,
 } from '../controllers/orderController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -28,5 +30,7 @@ router.route('/:id/shipped').put(protect, admin, updateOrderToShipped);
 router.route('/:id/deliver').put(protect, admin, updateOrderToDelivered);
 router.route('/:id/exclude').put(protect, admin, updateOrderExclusion);
 router.route('/:id/cancel').put(protect, cancelOrder);
+router.route('/:id/return').put(protect, requestReturnOrder);
+router.route('/:id/process-return').put(protect, admin, processReturnOrder);
 
 export default router;
