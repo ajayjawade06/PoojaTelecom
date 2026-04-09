@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { FaComments, FaTimes, FaRegSmile, FaHeadset, FaPaperPlane, FaQuestionCircle, FaTruck, FaMobileAlt, FaPercent } from 'react-icons/fa';
+import { FaComments, FaTimes, FaRegSmile, FaHeadset, FaPaperPlane, FaQuestionCircle, FaTruck, FaMobileAlt, FaPercent, FaTrashAlt } from 'react-icons/fa';
 import io from 'socket.io-client';
-import { useGetChatHistoryQuery } from '../redux/slices/chatApiSlice';
-
-let socket;
+import { useGetChatHistoryQuery, useDeleteChatHistoryMutation } from '../redux/slices/chatApiSlice';
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +13,9 @@ const ChatWidget = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
+  const socketRef = useRef(null);
+
+  const [deleteHistory] = useDeleteChatHistoryMutation();
 
   // Initialize Identity
   useEffect(() => {
@@ -55,21 +56,24 @@ const ChatWidget = () => {
   // Socket Connection
   useEffect(() => {
     if (chatId) {
-      const socketUrl = process.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:5000';
-      socket = io(socketUrl);
+      // FIX: Use import.meta.env.PROD for Vite/Live site detection
+      const socketUrl = import.meta.env.PROD ? window.location.origin : 'http://localhost:5000';
+      socketRef.current = io(socketUrl);
       
-      socket.emit('join_chat', chatId);
+      socketRef.current.emit('join_chat', chatId);
 
-      socket.on('receive_message', (newMessage) => {
+      socketRef.current.on('receive_message', (newMessage) => {
         setMessages((prev) => {
-          // Prevent duplicates
-          if (prev.find(m => m._id === newMessage._id || (m.tempId && m.tempId === newMessage.tempId))) return prev;
+          // Prevent duplicates using _id or tempId
+          if (prev.find(m => (m._id && m._id === newMessage._id) || (m.tempId && m.tempId === newMessage.tempId))) return prev;
           return [...prev, newMessage];
         });
       });
 
       return () => {
-        socket.disconnect();
+        if (socketRef.current) {
+          socketRef.current.disconnect();
+        }
       };
     }
   }, [chatId]);
@@ -88,6 +92,31 @@ const ChatWidget = () => {
     }
   }, [isOpen, chatId, refetch]);
 
+  const clearChat = async () => {
+    if (window.confirm('Start a new conversation? This will clear your current chat view.')) {
+      try {
+        if (!userInfo) {
+          // For guests, reset ID to start totally fresh
+          const newGuestId = 'guest_' + Math.random().toString(36).substring(2, 15);
+          localStorage.setItem('guestChatId', newGuestId);
+          setChatId(newGuestId);
+        } else {
+          // For logged in users, clear history on server
+          await deleteHistory(chatId).unwrap();
+        }
+        
+        setMessages([{ 
+          _id: 'welcome', 
+          text: userInfo ? `Hi ${userInfo.name}! 👋 How can I assist you today?` : "Hi! 👋 Welcome to Pooja Telecom. How can I help you today?", 
+          sender: 'admin', 
+          createdAt: new Date().toISOString() 
+        }]);
+      } catch (err) {
+        console.error('Failed to clear chat:', err);
+      }
+    }
+  };
+
   const quickReplies = [
     { text: "Latest iPhone Price", icon: <FaMobileAlt /> },
     { text: "Track My Order", icon: <FaTruck /> },
@@ -99,15 +128,31 @@ const ChatWidget = () => {
     const messageText = typeof text === 'string' ? text : input;
     if (!messageText.trim() || !chatId) return;
 
+    const tempId = Date.now().toString();
+    
+    // Optimistic Update
+    const optimisticMsg = {
+      _id: tempId,
+      tempId: tempId,
+      text: messageText,
+      sender: 'user',
+      createdAt: new Date().toISOString()
+    };
+    
+    setMessages(prev => [...prev, optimisticMsg]);
+    setInput('');
+
     const newMsg = {
       userId: chatId,
       userName: userName,
       text: messageText,
-      sender: 'user'
+      sender: 'user',
+      tempId: tempId
     };
 
-    setInput('');
-    socket.emit('send_message', newMsg);
+    if (socketRef.current) {
+        socketRef.current.emit('send_message', newMsg);
+    }
   };
 
   return (
@@ -129,15 +174,20 @@ const ChatWidget = () => {
               </div>
             </div>
           </div>
-          <button onClick={() => setIsOpen(false)} className="hover:bg-white/10 p-2 rounded-xl transition-all">
-            <FaTimes size={10} className="text-slate-400 hover:text-white" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button onClick={clearChat} title="New Conversation" className="hover:bg-white/10 p-2 rounded-xl transition-all group">
+              <FaTrashAlt size={10} className="text-slate-400 group-hover:text-rose-400" />
+            </button>
+            <button onClick={() => setIsOpen(false)} className="hover:bg-white/10 p-2 rounded-xl transition-all">
+              <FaTimes size={10} className="text-slate-400 hover:text-white" />
+            </button>
+          </div>
         </div>
 
         {/* Messages Content */}
         <div className="h-[280px] overflow-y-auto p-4 bg-slate-50/30 dark:bg-slate-900/40 flex flex-col gap-4 custom-scrollbar">
           {messages.map((m) => (
-            <div key={m._id} className={`max-w-[85%] flex flex-col ${m.sender === 'user' ? 'ml-auto items-end' : 'items-start'}`}>
+            <div key={m._id || m.tempId} className={`max-w-[85%] flex flex-col ${m.sender === 'user' ? 'ml-auto items-end' : 'items-start'}`}>
               <div className={`p-3 rounded-2xl text-[11px] font-medium shadow-sm leading-relaxed ${m.sender === 'user' ? 'bg-blue-500 text-white rounded-br-none' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-bl-none border border-slate-100 dark:border-white/5'}`}>
                 {m.text}
               </div>

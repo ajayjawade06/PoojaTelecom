@@ -126,8 +126,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('send_message', async (data) => {
-    const { userId, text, sender, userName } = data;
+    const { userId, text, sender, userName, tempId } = data;
     try {
+      if (!userId || !text) return;
+
       let botReplyText = null;
       let botMessageAdded = false;
 
@@ -160,17 +162,22 @@ io.on('connection', (socket) => {
         { new: true, upsert: true }
       );
 
-      // Emit the human's message
-      if (botMessageAdded) {
-         io.to(userId).emit('receive_message', updatedChat.messages[updatedChat.messages.length - 2]);
+      // Emit the messages
+      if (botMessageAdded && updatedChat.messages.length >= 2) {
+         const userMsg = updatedChat.messages[updatedChat.messages.length - 2].toObject();
+         const botMsg = updatedChat.messages[updatedChat.messages.length - 1].toObject();
+         
+         // Attach tempId to user message so client can de-duplicate
+         io.to(userId).emit('receive_message', { ...userMsg, tempId });
          
          // Delay bot emit
          setTimeout(() => {
-            io.to(userId).emit('receive_message', updatedChat.messages[updatedChat.messages.length - 1]);
+            io.to(userId).emit('receive_message', botMsg);
             io.to('admin_room').emit('chat_updated', updatedChat);
          }, 1000);
-      } else {
-         io.to(userId).emit('receive_message', updatedChat.messages[updatedChat.messages.length - 1]);
+      } else if (updatedChat.messages.length >= 1) {
+         const lastMsg = updatedChat.messages[updatedChat.messages.length - 1].toObject();
+         io.to(userId).emit('receive_message', { ...lastMsg, tempId: sender === 'user' ? tempId : undefined });
          io.to('admin_room').emit('chat_updated', updatedChat);
       }
     } catch (err) {

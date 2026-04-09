@@ -3,8 +3,6 @@ import { useGetAllChatsQuery, useMarkChatReadAdminMutation } from '../../redux/s
 import io from 'socket.io-client';
 import { FaPaperPlane, FaUserCircle, FaCircle, FaInfoCircle } from 'react-icons/fa';
 
-let socket;
-
 const SupportChatAdmin = () => {
     const { data: allChats, isLoading, refetch } = useGetAllChatsQuery();
     const [markRead] = useMarkChatReadAdminMutation();
@@ -12,6 +10,7 @@ const SupportChatAdmin = () => {
     const [input, setInput] = useState('');
     const [localChats, setLocalChats] = useState([]);
     const messagesEndRef = useRef(null);
+    const socketRef = useRef(null);
 
     // Initialize local state
     useEffect(() => {
@@ -20,11 +19,12 @@ const SupportChatAdmin = () => {
 
     // Socket Connection
     useEffect(() => {
-        const socketUrl = process.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:5000';
-        socket = io(socketUrl);
-        socket.emit('admin_join');
+        // FIX: Use import.meta.env.PROD for Vite/Live site detection
+        const socketUrl = import.meta.env.PROD ? window.location.origin : 'http://localhost:5000';
+        socketRef.current = io(socketUrl);
+        socketRef.current.emit('admin_join');
 
-        socket.on('chat_updated', (updatedChat) => {
+        socketRef.current.on('chat_updated', (updatedChat) => {
             setLocalChats(prev => {
                 const exists = prev.find(c => c.userId === updatedChat.userId);
                 let newList;
@@ -48,7 +48,11 @@ const SupportChatAdmin = () => {
             });
         });
 
-        return () => socket.disconnect();
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+            }
+        };
     }, []);
 
     // Auto-scroll Down
@@ -58,7 +62,9 @@ const SupportChatAdmin = () => {
 
     const handleSelectChat = async (chat) => {
         setActiveChat(chat);
-        socket.emit('join_chat', chat.userId);
+        if (socketRef.current) {
+            socketRef.current.emit('join_chat', chat.userId);
+        }
         
         if (chat.unreadAdmin > 0) {
             await markRead(chat.userId);
@@ -78,7 +84,9 @@ const SupportChatAdmin = () => {
         };
 
         // Emit
-        socket.emit('send_message', newMsg);
+        if (socketRef.current) {
+            socketRef.current.emit('send_message', newMsg);
+        }
         setInput('');
     };
 

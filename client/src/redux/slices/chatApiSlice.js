@@ -16,6 +16,12 @@ export const chatApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
       }),
     }),
+    deleteChatHistory: builder.mutation({
+      query: (userId) => ({
+        url: `/api/chat/${userId}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
@@ -23,4 +29,5 @@ export const {
   useGetChatHistoryQuery,
   useGetAllChatsQuery,
   useMarkChatReadAdminMutation,
+  useDeleteChatHistoryMutation,
 } = chatApiSlice;

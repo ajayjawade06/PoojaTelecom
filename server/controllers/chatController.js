@@ -48,3 +48,23 @@ export const markChatReadAdmin = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// @desc    Clear user's chat history
+// @route   DELETE /api/chat/:userId
+// @access  Public
+export const deleteChatHistory = async (req, res) => {
+  try {
+    const chat = await SupportChat.findOne({ userId: req.params.userId });
+    if (chat) {
+      chat.messages = [];
+      chat.status = 'Open';
+      chat.unreadAdmin = 0;
+      chat.unreadUser = 0;
+      await chat.save();
+      res.json({ message: 'Chat history cleared' });
+    } else {
+      res.status(401).json({ message: 'Chat not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
