@@ -197,23 +197,35 @@ const OrderPage = () => {
           </div>
         </motion.div>
 
-        {/* Minimal Progress Map */}
-        <motion.div variants={itemVariants} className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl p-10 rounded-[32px] border border-slate-200/50 dark:border-white/10 mb-10 shadow-xl overflow-x-auto relative">
-          <div className="flex justify-between items-start min-w-[600px] relative px-[5%]">
-            <div className="absolute top-3 left-[8%] right-[8%] h-[1px] bg-slate-100 dark:bg-white/5"></div>
+        {/* Modern Order Stepper */}
+        <motion.div variants={itemVariants} className="mb-12 relative p-6">
+          <div className="flex justify-between items-start min-w-[630px] relative px-[2%]">
+            {/* Background Track */}
+            <div className="absolute top-[20px] left-[10%] right-[10%] h-[2px] bg-slate-100 dark:bg-white/5 rounded-full"></div>
+            {/* Active Progress */}
             <div 
-              className="absolute top-3 left-[8%] h-[1px] bg-blue-500 transition-all duration-1000 shadow-[0_0_10px_rgba(16,185,129,0.5)]" 
-              style={{ width: `${progressRatio * 0.84}%` }} 
+              className="absolute top-[20px] left-[10%] h-[2px] bg-blue-500 transition-all duration-1000 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]" 
+              style={{ width: `${progressRatio * 0.8}%` }} 
             ></div>
             
             {steps.map((step, idx) => (
-              <div key={idx} className="flex flex-col items-center gap-4 z-10 flex-1">
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 border ${step.done ? (step.name === 'Rejected' ? 'bg-rose-500 text-white border-rose-500 shadow-rose-500/20' : 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20') : 'bg-slate-50 dark:bg-slate-800 text-slate-300 border-slate-100 dark:border-white/5'}`}>
+              <div key={idx} className="flex flex-col items-center gap-4 z-10 flex-1 relative">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 border-4 ${step.done ? (step.name === 'Rejected' ? 'bg-rose-500 text-white border-white dark:border-slate-800 shadow-[0_0_20px_rgba(244,63,94,0.3)]' : 'bg-blue-500 text-white border-white dark:border-slate-800 shadow-[0_0_20px_rgba(59,130,246,0.3)] scale-110') : 'bg-slate-50 dark:bg-slate-800 text-slate-300 border-white dark:border-slate-800 shadow-sm'}`}>
                   {step.icon}
                 </div>
-                <div className="text-center">
-                  <p className={`text-[10px] uppercase tracking-widest font-black ${step.done ? (step.name === 'Rejected' ? 'text-rose-500' : 'text-slate-900 dark:text-white') : 'text-slate-400'}`}>{step.name}</p>
-                  {step.done && step.time && <p className={`text-[8px] font-bold uppercase tracking-widest mt-1 opacity-60 ${step.name === 'Rejected' ? 'text-rose-500' : 'text-blue-500'}`}>{new Date(step.time).toLocaleDateString()}</p>}
+                <div className="text-center group">
+                  <p className={`text-[9px] uppercase font-black tracking-[0.2em] mb-1.5 transition-colors ${step.done ? (step.name === 'Rejected' ? 'text-rose-500' : 'text-slate-900 dark:text-white') : 'text-slate-400'}`}>
+                    {step.name}
+                  </p>
+                  {step.done && step.time && (
+                    <motion.p 
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 0.6, y: 0 }}
+                      className={`text-[8px] font-bold uppercase tracking-widest ${step.name === 'Rejected' ? 'text-rose-500' : 'text-blue-500'}`}
+                    >
+                      {new Date(step.time).toLocaleDateString()}
+                    </motion.p>
+                  )}
                 </div>
               </div>
             ))}
@@ -260,14 +272,57 @@ const OrderPage = () => {
                 ))}
               </div>
             </motion.div>
+
+            {/* Order Timeline / Audit Trail */}
+            {order.timeline && order.timeline.length > 0 && (
+              <motion.div variants={itemVariants} className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 rounded-[24px] p-8 shadow-lg transition-all">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 border-b border-slate-100 dark:border-white/10 pb-4 flex items-center gap-2"><FaClock size={10} className="text-blue-500"/> Order Timeline</h3>
+                <div className="relative pl-6">
+                  {/* Vertical line */}
+                  <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-slate-100 dark:bg-white/5"></div>
+                  <div className="space-y-6">
+                    {order.timeline.map((event, idx) => {
+                      const isLast = idx === order.timeline.length - 1;
+                      const eventColors = {
+                        'Order Placed': 'bg-blue-500',
+                        'Payment Confirmed': 'bg-emerald-500',
+                        'Shipped': 'bg-purple-500',
+                        'Delivered': 'bg-emerald-500',
+                        'Cancelled': 'bg-rose-500',
+                        'Return Requested': 'bg-amber-500',
+                        'Return Approved': 'bg-blue-500',
+                        'Refunded': 'bg-indigo-500',
+                      };
+                      const dotColor = eventColors[event.event] || 'bg-slate-400';
+                      return (
+                        <div key={idx} className="relative flex items-start gap-4">
+                          <div className={`absolute -left-6 top-1 w-4 h-4 rounded-full border-2 border-white dark:border-slate-900 ${dotColor} shadow-sm ${isLast ? 'ring-4 ring-blue-500/10' : ''}`}></div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-4 flex-wrap">
+                              <p className="text-[12px] font-black text-slate-900 dark:text-white">{event.event}</p>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest shrink-0">
+                                {new Date(event.timestamp).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                            {event.description && (
+                              <p className="text-[11px] font-medium text-slate-500 mt-0.5">{event.description}</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
 
           {/* Totals & Actions Sticky Column */}
           <motion.div variants={itemVariants} className="lg:col-span-4 lg:sticky lg:top-28 h-fit">
-            <div className="bg-slate-950 dark:bg-white rounded-[32px] p-10 text-white dark:text-slate-950 shadow-2xl relative overflow-hidden">
-              <div className="absolute top-[-50px] right-[-50px] w-40 h-40 bg-blue-500/20 rounded-full blur-[40px] pointer-events-none"></div>
+            <div className="bg-white dark:bg-[#1c1c1e] rounded-[32px] p-10 text-slate-900 dark:text-white border border-slate-100 dark:border-white/5 shadow-xl relative overflow-hidden">
+              <div className="absolute top-[-50px] right-[-50px] w-40 h-40 bg-blue-500/10 rounded-full blur-[40px] pointer-events-none"></div>
               
-              <h2 className="text-[11px] font-black uppercase tracking-[0.2em] mb-8 border-b border-white/10 dark:border-slate-100 pb-4 relative z-10">Order Summary</h2>
+              <h2 className="text-[11px] font-black uppercase tracking-[0.2em] mb-8 border-b border-slate-100 dark:border-white/10 pb-4 relative z-10">Order Summary</h2>
               
               <div className="space-y-4 mb-8 relative z-10">
                 <div className="flex justify-between items-baseline opacity-60">
@@ -280,7 +335,7 @@ const OrderPage = () => {
                 </div>
               </div>
 
-              <div className="border-t border-white/10 dark:border-slate-100 pt-8 mb-10 flex justify-between items-center relative z-10">
+              <div className="border-t border-slate-100 dark:border-white/10 pt-8 mb-10 flex justify-between items-center relative z-10">
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Total</span>
                 <span className="text-4xl font-black tracking-tighter">₹{order.totalPrice.toLocaleString('en-IN')}</span>
               </div>
@@ -420,13 +475,13 @@ const OrderPage = () => {
 
         {/* Dedicated Admin Return Review Panel */}
         {userInfo?.isAdmin && order.isReturnRequested && (
-          <motion.div variants={itemVariants} className="mt-8 bg-slate-950 dark:bg-slate-900 rounded-[32px] p-10 border border-amber-500/20 shadow-2xl relative overflow-hidden">
+          <motion.div variants={itemVariants} className="mt-8 bg-white dark:bg-[#1c1c1e] rounded-[32px] p-10 border border-slate-100 dark:border-white/5 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[60px] pointer-events-none"></div>
             
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
               <div>
                 <h2 className="text-sm font-black uppercase tracking-widest text-amber-500 mb-2 flex items-center gap-2"><FaUndo/> Admin Return Review</h2>
-                <p className="text-sm text-white dark:text-white">Customer stated: <span className="font-bold">"{order.returnReason}"</span></p>
+                <p className="text-sm text-slate-800 dark:text-white">Customer stated: <span className="font-bold">"{order.returnReason}"</span></p>
                 <p className="text-[11px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Current Status: {order.returnStatus}</p>
               </div>
               

@@ -28,7 +28,9 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import UserReviewsPage from './pages/admin/UserReviewsPage';
 import CarouselManager from './pages/admin/CarouselManager';
+import SupportChatAdmin from './pages/admin/SupportChatAdmin';
 import TrackOrderPage from './pages/TrackOrderPage';
+import AdminOmnibar from './components/admin/AdminOmnibar';
 import RefundPolicyPage from './pages/RefundPolicyPage';
 import WarrantyPolicyPage from './pages/WarrantyPolicyPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
@@ -76,12 +78,14 @@ const App = () => {
  <Route path="/admin/reports" element={<ReportsPage />} />
  <Route path="/admin/user/:id/reviews" element={<UserReviewsPage />} />
  <Route path="/admin/carousel" element={<CarouselManager />} />
+ <Route path="/admin/support-chat" element={<SupportChatAdmin />} />
  </Route>
  </Routes>
  </main>
  <Footer />
- <SideCart />
+    <SideCart />
 	<BackToTop />
+	<AdminOmnibar />
  <ToastContainer 
  position="top-center" 
  autoClose={3000} 

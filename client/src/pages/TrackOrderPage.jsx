@@ -42,33 +42,33 @@ const TrackOrderPage = () => {
     return (
       <div className="space-y-6">
         {/* Status Highlight Card */}
-        <motion.div variants={itemVariants} className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-100 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden relative">
+        <motion.div variants={itemVariants} className="rounded-3xl p-6 overflow-hidden relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${status.color}`}>
-                  <StatusIcon size={10} />
+                <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2 ${status.color}`}>
+                  <StatusIcon size={9} />
                   {status.label}
                 </span>
-                <p className="text-[12px] font-bold text-slate-400">#{(order._id || '').slice(-8).toUpperCase()}</p>
+                <p className="text-[11px] font-bold text-slate-400">#{(order._id || '').slice(-8).toUpperCase()}</p>
               </div>
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
                 {order.isDelivered ? 'Your order has been delivered!' : order.isCancelled ? 'Order was cancelled' : 'On its way to you'}
               </h2>
             </div>
             
             <div className="flex flex-col items-end">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Estimated Arrival</p>
-              <p className="text-xl font-black text-blue-500">
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Estimated Arrival</p>
+              <p className="text-lg font-black text-blue-500">
                 {order.isDelivered ? 'Delivered' : order.isCancelled ? 'N/A' : '3-5 Business Days'}
               </p>
             </div>
           </div>
 
           {/* Progress Timeline */}
-          <div className="mt-12 relative h-1 bg-slate-100 dark:bg-white/5 rounded-full">
+          <div className="mt-10 relative h-[2px] bg-slate-100 dark:bg-white/5 rounded-full">
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${status.progress}%` }}
@@ -79,13 +79,13 @@ const TrackOrderPage = () => {
             <div className="absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-0">
               {steps.map((step, idx) => (
                 <div key={idx} className="flex flex-col items-center group">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-4 border-white dark:border-slate-900 transition-all duration-300 ${step.done ? (order.isCancelled && idx >= 2 ? 'bg-rose-500 text-white' : 'bg-blue-500 text-white shadow-lg') : 'bg-slate-100 dark:bg-white/10 text-slate-400'}`}>
-                    {step.icon}
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center border-4 border-white dark:border-slate-900 transition-all duration-300 ${step.done ? (order.isCancelled && idx >= 2 ? 'bg-rose-500 text-white' : 'bg-blue-500 text-white shadow-lg') : 'bg-slate-100 dark:bg-white/10 text-slate-400'}`}>
+                    {idx === 0 ? <FaBoxOpen size={10}/> : idx === 1 ? <FaRupeeSign size={10}/> : idx === 2 ? <FaShippingFast size={10}/> : <FaCheckCircle size={10}/>}
                   </div>
-                  <div className="mt-4 text-center">
-                    <p className={`text-[10px] font-black uppercase tracking-widest ${step.done ? (order.isCancelled && idx >= 2 ? 'text-rose-500' : 'text-slate-900 dark:text-white') : 'text-slate-400'}`}>{step.name}</p>
+                  <div className="mt-3 text-center">
+                    <p className={`text-[9px] font-black uppercase tracking-widest ${step.done ? (order.isCancelled && idx >= 2 ? 'text-rose-500' : 'text-slate-900 dark:text-white') : 'text-slate-400'}`}>{step.name}</p>
                     {step.done && step.time && (
-                      <p className="text-[8px] font-bold text-slate-400 mt-1 uppercase">{new Date(step.time).toLocaleDateString()}</p>
+                      <p className="text-[7px] font-bold text-slate-400 mt-1 uppercase">{new Date(step.time).toLocaleDateString()}</p>
                     )}
                   </div>
                 </div>
@@ -129,16 +129,16 @@ const TrackOrderPage = () => {
           </motion.div>
 
           {/* Action Card */}
-          <motion.div variants={itemVariants} className="bg-slate-900 rounded-2xl p-8 flex flex-col justify-center text-center text-white relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20"></div>
+          <motion.div variants={itemVariants} className="bg-white dark:bg-[#1c1c1e] rounded-2xl p-8 flex flex-col justify-center text-center text-slate-900 dark:text-white border border-slate-100 dark:border-white/5 relative overflow-hidden shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-purple-600/5 dark:from-blue-600/20 dark:to-purple-600/20"></div>
             <div className="relative z-10">
               <h3 className="text-xl font-black tracking-tight mb-2">Need Help?</h3>
-              <p className="text-[11px] text-slate-300 font-medium leading-relaxed mb-6">If you have any questions regarding your delivery or order status, our premium support team is here for you.</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-300 font-medium leading-relaxed mb-6">If you have any questions regarding your delivery or order status, our premium support team is here for you.</p>
               <div className="flex flex-col gap-2">
-                <Link to="/profile" className="w-full bg-white text-slate-900 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 transition-colors">
-                  Go to full order history
+                <Link to="/profile" className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors">
+                   view full order history
                 </Link>
-                <div className="text-[9px] font-black uppercase tracking-widest text-slate-500 mt-4 flex items-center justify-center gap-2">
+                <div className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-4 flex items-center justify-center gap-2">
                   <FaTruck /> Pooja Telecom Elite Support
                 </div>
               </div>

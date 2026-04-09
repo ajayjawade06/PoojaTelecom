@@ -63,12 +63,13 @@ const Dashboard = () => {
  <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Admin Dashboard</h1>
  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Pooja Telecom Stats</p>
  </div>
- <div className="flex gap-2">
- <Link to="/admin/reports" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-500/10">Reports</Link>
- <Link to="/admin/userlist" className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-500/10">Users</Link>
- <Link to="/admin/productlist" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg">Products</Link>
- <Link to="/admin/orderlist" className="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-500/10">Orders</Link>
- <Link to="/admin/carousel" className="bg-violet-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-violet-500/10">Carousel</Link>
+ <div className="flex gap-2 flex-wrap">
+ <Link to="/admin/reports" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-500/10 hover:-translate-y-0.5">Reports</Link>
+ <Link to="/admin/support-chat" className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/10 hover:-translate-y-0.5">Support Chat</Link>
+ <Link to="/admin/userlist" className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-500/10 hover:-translate-y-0.5">Users</Link>
+ <Link to="/admin/productlist" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg hover:-translate-y-0.5">Products</Link>
+ <Link to="/admin/orderlist" className="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-500/10 hover:-translate-y-0.5">Orders</Link>
+ <Link to="/admin/carousel" className="bg-violet-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-violet-500/10 hover:-translate-y-0.5">Carousel</Link>
  </div>
  </div>
 

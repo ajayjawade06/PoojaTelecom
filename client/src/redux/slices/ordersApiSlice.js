@@ -97,6 +97,14 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
  body: { action },
  }),
  }),
+ bulkUpdateOrders: builder.mutation({
+ query: (data) => ({
+ url: `${ORDERS_URL}/bulk-update`,
+ method: 'PUT',
+ body: data,
+ }),
+ invalidatesTags: ['Order'],
+ }),
  }),
 });
 
@@ -116,4 +124,5 @@ export const {
  useCancelOrderMutation,
  useRequestReturnOrderMutation,
  useProcessReturnOrderMutation,
+ useBulkUpdateOrdersMutation,
 } = ordersApiSlice;

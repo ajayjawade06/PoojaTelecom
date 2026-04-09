@@ -416,3 +416,92 @@ export const sendStatusUpdateSms = async (order, phoneNumber, status) => {
     console.error(`Status update SMS error (${status}):`, error.message);
   }
 };
+
+export const sendReturnApprovedEmail = async (order, user) => {
+  const apiKey = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.EMAIL_USER || 'lipashaikh005@gmail.com';
+
+  const orderItemsHtml = order.orderItems.map(item => `
+    <tr>
+      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
+        <div style="font-weight: bold; color: #374151;">${item.name}</div>
+        <div style="font-size: 12px; color: #6b7280;">Qty: ${item.qty}</div>
+      </td>
+      <td style="padding: 12px; text-align: right; border-bottom: 1px solid #e5e7eb; color: #374151;">
+        ₹${item.price.toLocaleString()}
+      </td>
+    </tr>
+  `).join('');
+
+  const emailData = {
+    sender: { name: 'Pooja Telecom', email: senderEmail },
+    to: [{ email: user.email, name: user.name }],
+    subject: `Return Approved - #${order._id.toString().slice(-6).toUpperCase()}`,
+    htmlContent: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 40px; text-align: center; color: white;">
+        <h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.025em;">Return Approved ✓</h1>
+        <p style="margin: 10px 0 0; opacity: 0.9; font-size: 16px;">Your return request has been accepted by our team.</p>
+      </div>
+      
+      <div style="padding: 32px;">
+        <p style="color: #374151; font-size: 16px;">Hi <strong>${user.name}</strong>,</p>
+        <p style="color: #6b7280; line-height: 1.6;">We've reviewed and <strong style="color: #059669;">approved</strong> your return request for order <strong>#${order._id.toString().slice(-6).toUpperCase()}</strong>. Here are the details:</p>
+
+        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 20px; margin: 24px 0;">
+          <p style="margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #92400e;">Return Reason</p>
+          <p style="margin: 0; font-size: 16px; font-weight: bold; color: #78350f;">${order.returnReason || 'Not specified'}</p>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+          <thead>
+            <tr>
+              <th style="text-align: left; padding: 12px; font-size: 12px; text-transform: uppercase; color: #9ca3af; border-bottom: 1px solid #e5e7eb;">Items Being Returned</th>
+              <th style="text-align: right; padding: 12px; font-size: 12px; text-transform: uppercase; color: #9ca3af; border-bottom: 1px solid #e5e7eb;">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orderItemsHtml}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td style="padding: 12px; font-weight: bold; color: #1f2937;">Refund Amount</td>
+              <td style="padding: 12px; text-align: right; font-size: 20px; font-weight: 900; color: #059669;">₹${order.totalPrice.toLocaleString()}</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+          <h3 style="margin: 0 0 8px; font-size: 14px; color: #065f46;">What Happens Next?</h3>
+          <ol style="margin: 0; padding-left: 20px; color: #047857; font-size: 13px; line-height: 1.8;">
+            <li>Our team will process your refund shortly.</li>
+            <li>The refund of <strong>₹${order.totalPrice.toLocaleString()}</strong> will be credited to your original payment method.</li>
+            <li>Please allow <strong>5-7 business days</strong> for the amount to reflect in your account.</li>
+          </ol>
+        </div>
+
+        <div style="text-align: center;">
+          <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/track-order/${order._id}" style="display: inline-block; background: #1f2937; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px;">View Return Status</a>
+        </div>
+      </div>
+
+      <div style="background: #f3f4f6; padding: 24px; text-align: center;">
+        <p style="margin: 0; color: #9ca3af; font-size: 12px;">Need help? Reply to this email or contact our support team.</p>
+        <p style="margin: 8px 0 0; color: #9ca3af; font-size: 12px;">&copy; ${new Date().getFullYear()} Pooja Telecom. All rights reserved.</p>
+      </div>
+    </div>
+    `,
+  };
+
+  try {
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'accept': 'application/json', 'api-key': apiKey, 'content-type': 'application/json' },
+      body: JSON.stringify(emailData),
+    });
+    const data = await response.json();
+    console.log('Return approved email sent:', data.messageId);
+  } catch (error) {
+    console.error('Return approved email error:', error.message);
+  }
+};

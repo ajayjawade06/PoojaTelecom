@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useProfileMutation, useDeleteProfileMutation } from '../redux/slices/usersApiSlice';
@@ -6,7 +6,7 @@ import { useGetMyOrdersQuery } from '../redux/slices/ordersApiSlice';
 import { setCredentials, logout } from '../redux/slices/authSlice';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { FaUser, FaShoppingBag, FaMapMarkerAlt, FaShieldAlt, FaChevronRight, FaCheckCircle, FaTruck, FaClock, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { FaUser, FaShoppingBag, FaMapMarkerAlt, FaShieldAlt, FaChevronRight, FaCheckCircle, FaTruck, FaClock, FaTrashAlt, FaExclamationTriangle, FaSortAmountDown } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } };
@@ -19,6 +19,7 @@ const ProfilePage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState(null);
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
@@ -26,6 +27,15 @@ const ProfilePage = () => {
   const [updateProfile, { isLoading: loadingUpdate, error: errorUpdate, isSuccess }] = useProfileMutation();
   const [deleteProfile, { isLoading: loadingDelete }] = useDeleteProfileMutation();
   const { data: orders, isLoading: loadingOrders, error: errorOrders } = useGetMyOrdersQuery();
+
+  const sortedOrders = useMemo(() => {
+    if (!orders) return [];
+    return [...orders].sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+    });
+  }, [orders, sortOrder]);
 
   const deleteHandler = async () => {
     if (window.confirm('Are you absolutely sure? This will permanently delete your account and all associated data. This action cannot be undone.')) {
@@ -170,7 +180,7 @@ const ProfilePage = () => {
                 </motion.form>
 
                 {/* Danger Zone */}
-                {!userInfo.isAdmin && (
+                {!userInfo?.isAdmin && (
                   <motion.div variants={itemVariants} className="mt-12 pt-8 border-t border-slate-100 dark:border-white/5">
                     <div className="bg-rose-50 dark:bg-rose-500/5 border border-rose-100 dark:border-rose-500/10 rounded-[24px] p-8 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative group">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-rose-500/10 transition-colors"></div>
@@ -205,7 +215,16 @@ const ProfilePage = () => {
 
             {activeTab === 'orders' && (
               <motion.div initial="hidden" animate="visible" variants={containerVariants}>
-                <motion.h2 variants={itemVariants} className="text-xl font-black text-slate-900 dark:text-white mb-8 tracking-tight">Order History</motion.h2>
+                <div className="flex items-center justify-between mb-8">
+                  <motion.h2 variants={itemVariants} className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Order History</motion.h2>
+                  <button 
+                    onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
+                  >
+                    <FaSortAmountDown size={12} className={`transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} />
+                    {sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}
+                  </button>
+                </div>
                 {loadingOrders ? <Loader /> : errorOrders ? <Message variant="red">{errorOrders?.data?.message}</Message> : (
                   <motion.div variants={itemVariants} className="rounded-[24px] border border-slate-200/50 dark:border-white/10 overflow-hidden bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl shadow-lg">
                     <table className="w-full text-left">
@@ -219,7 +238,7 @@ const ProfilePage = () => {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                        {orders.map(order => (
+                        {sortedOrders.map(order => (
                           <tr key={order._id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                             <td className="p-4 text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-tight">#{order._id.slice(-8)}</td>
                             <td className="p-4 text-[11px] font-bold text-slate-400">{order.createdAt.substring(0, 10)}</td>
@@ -253,7 +272,7 @@ const ProfilePage = () => {
               <motion.div initial="hidden" animate="visible" variants={containerVariants} className=" max-w-2xl">
                 <motion.h2 variants={itemVariants} className="text-xl font-black text-slate-900 dark:text-white mb-8 tracking-tight">My Addresses</motion.h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {userInfo.addresses?.map((addr, i) => (
+                  {userInfo?.addresses?.map((addr, i) => (
                     <motion.div variants={itemVariants} key={i} className="p-6 rounded-[24px] border border-slate-200/50 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl shadow-lg flex flex-col gap-2 transition-all">
                       <span className="text-[9px] font-black bg-blue-500 text-white w-fit px-2 py-0.5 rounded shadow-sm">Address #{i+1}</span>
                       <p className="text-[12px] font-bold text-slate-900 dark:text-white leading-tight mt-2">{addr.address}</p>
@@ -261,7 +280,7 @@ const ProfilePage = () => {
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{addr.country}</p>
                     </motion.div>
                   ))}
-                  {(!userInfo.addresses || userInfo.addresses.length === 0) && (
+                  {(!userInfo?.addresses || userInfo?.addresses.length === 0) && (
                     <motion.div variants={itemVariants} className="col-span-full py-12 text-center bg-white/50 dark:bg-white/5 rounded-[24px] border border-dashed border-slate-200/50 dark:border-white/10 backdrop-blur-xl">
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No addresses saved</p>
                     </motion.div>

@@ -10,7 +10,8 @@ import {
   sendOrderShippedEmail,
   sendOrderDeliveredEmail,
   sendOrderRefundedEmail,
-  sendStatusUpdateSms
+  sendStatusUpdateSms,
+  sendReturnApprovedEmail
 } from '../utils/emailService.js';
 
 // @desc    Create new order
@@ -412,6 +413,12 @@ const processReturnOrder = asyncHandler(async (req, res) => {
 
     if (action === 'approve') {
       order.returnStatus = 'Approved';
+
+      // Send return approved notification email
+      const user = await User.findById(order.user);
+      if (user) {
+        sendReturnApprovedEmail(order, user);
+      }
     } else if (action === 'reject') {
       order.returnStatus = 'Rejected';
       order.isReturnRequested = false; 
@@ -456,6 +463,40 @@ const processReturnOrder = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Bulk update orders
+// @route   PUT /api/orders/bulk-update
+// @access  Private/Admin
+const bulkUpdateOrders = asyncHandler(async (req, res) => {
+  const { orderIds, action } = req.body;
+
+  if (!orderIds || !Array.isArray(orderIds) || orderIds.length === 0) {
+    res.status(400);
+    throw new Error('No orders selected');
+  }
+
+  const updates = {};
+  if (action === 'shipped') {
+    updates.isShipped = true;
+    updates.shippedAt = Date.now();
+  } else if (action === 'delivered') {
+    updates.isDelivered = true;
+    updates.deliveredAt = Date.now();
+  } else {
+    res.status(400);
+    throw new Error('Invalid bulk action');
+  }
+
+  await Order.updateMany(
+    { _id: { $in: orderIds } },
+    { $set: updates }
+  );
+
+  // Note: Bulk email dispatching omitted here to prevent SMTP rate limiting. 
+  // Should ideally be offloaded to a background queue (e.g. BullMQ).
+  
+  res.json({ message: `${orderIds.length} orders successfully marked as ${action}` });
+});
+
 export {
   addOrderItems,
   getOrderById,
@@ -471,4 +512,5 @@ export {
   requestReturnOrder,
   processReturnOrder,
   getOrderStatus,
+  bulkUpdateOrders,
 };
