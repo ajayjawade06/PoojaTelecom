@@ -100,7 +100,7 @@ const ProductCard = ({ product }) => {
           <span className="text-[11px] font-semibold text-slate-500 tracking-wide uppercase">{product.brand}</span>
           <div className="flex items-center gap-1 text-slate-500">
             <FaStar className="text-slate-800 dark:text-slate-300" size={10} />
-            <span className="text-[12px] font-semibold">{product.rating}</span>
+            <span className="text-[12px] font-semibold">{Number(product.rating || 0).toFixed(1)}</span>
             <span className="text-[10px] text-slate-400">({product.numReviews})</span>
           </div>
         </div>

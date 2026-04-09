@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FaTimes, FaFilter, FaStar, FaBox } from 'react-icons/fa';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 const FilterSidebar = ({ filters, setFilters, categories, brands, isLoadingFilters, isFetching, isOpen, onClose }) => {
   const [localMin, setLocalMin] = useState(filters.minPrice || 0);
@@ -41,7 +43,7 @@ const FilterSidebar = ({ filters, setFilters, categories, brands, isLoadingFilte
     }
   };
 
-  const SidebarContent = () => (
+  const sidebarContent = (
     <div className="flex flex-col gap-5 h-full">
       <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-white/10">
         <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-1.5">
@@ -153,44 +155,27 @@ const FilterSidebar = ({ filters, setFilters, categories, brands, isLoadingFilte
               </div>
             </div>
 
-            {/* Visual Slider Track */}
-            <div className="relative h-6 flex items-center">
-              {/* Track Background */}
-              <div className="absolute left-0 right-0 h-[5px] bg-slate-200 dark:bg-white/10 rounded-full"></div>
-              {/* Active Range Fill */}
-              <div 
-                className="absolute h-[5px] bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all duration-100"
-                style={{ left: `${minPercent}%`, right: `${100 - maxPercent}%` }}
-              ></div>
-              {/* Min Thumb */}
-              <input
-                type="range"
-                min="0"
-                max="500000"
-                step="500"
-                value={localMin}
-                onChange={(e) => {
-                  const val = Math.min(Number(e.target.value), Number(localMax) - 500);
-                  setLocalMin(val);
+            {/* Visual Slider Track using rc-slider wrapper for Tailwind integration */}
+            <div className="px-2 pt-2 pb-1 relative">
+              <Slider
+                range
+                min={0}
+                max={500000}
+                step={500}
+                value={[Number(localMin), Number(localMax)]}
+                onChange={(val) => {
+                  setLocalMin(val[0]);
+                  setLocalMax(val[1]);
                 }}
-                onMouseUp={applyPriceFilter}
-                onTouchEnd={applyPriceFilter}
-                className="dual-range-thumb absolute w-full appearance-none bg-transparent pointer-events-none z-10"
-              />
-              {/* Max Thumb */}
-              <input
-                type="range"
-                min="0"
-                max="500000"
-                step="500"
-                value={localMax}
-                onChange={(e) => {
-                  const val = Math.max(Number(e.target.value), Number(localMin) + 500);
-                  setLocalMax(val);
+                onChangeComplete={(val) => {
+                  setFilters({ ...filters, minPrice: val[0], maxPrice: val[1] });
                 }}
-                onMouseUp={applyPriceFilter}
-                onTouchEnd={applyPriceFilter}
-                className="dual-range-thumb absolute w-full appearance-none bg-transparent pointer-events-none z-20"
+                trackStyle={[{ backgroundColor: '#3b82f6', height: 5 }]}
+                handleStyle={[
+                  { borderColor: '#3b82f6', height: 16, width: 16, marginTop: -5, backgroundColor: '#fff', opacity: 1, boxShadow: '0 2px 4px rgba(0,0,0,0.1)', cursor: 'grab' },
+                  { borderColor: '#3b82f6', height: 16, width: 16, marginTop: -5, backgroundColor: '#fff', opacity: 1, boxShadow: '0 2px 4px rgba(0,0,0,0.1)', cursor: 'grab' }
+                ]}
+                railStyle={{ backgroundColor: '#e2e8f0', height: 5 }}
               />
             </div>
           </div>
@@ -254,12 +239,12 @@ const FilterSidebar = ({ filters, setFilters, categories, brands, isLoadingFilte
         <button onClick={onClose} className="absolute top-6 right-6 text-slate-400 hover:text-rose-500 transition-colors">
           <FaTimes size={20} />
         </button>
-        <SidebarContent />
+        {sidebarContent}
       </div>
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:block w-[240px] flex-shrink-0 bg-white dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-100 dark:border-white/5 shadow-lg shadow-slate-200/50 dark:shadow-none h-fit sticky top-28">
-        <SidebarContent />
+        {sidebarContent}
       </div>
     </>
   );
