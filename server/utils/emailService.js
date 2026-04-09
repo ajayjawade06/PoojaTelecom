@@ -174,7 +174,7 @@ export const sendOrderConfirmationEmail = async (order, user) => {
 
         <div style="text-align: center;">
           <p style="color: #6b7280; font-size: 14px; margin-bottom: 24px;">We'll send another update when your order ships!</p>
-          <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/order/${order._id}" style="display: inline-block; background: #2563eb; color: white; padding: 14px 28px; border-radius: 9999px; text-decoration: none; font-weight: bold; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);">Track Your Order</a>
+          <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/track-order/${order._id}" style="display: inline-block; background: #2563eb; color: white; padding: 14px 28px; border-radius: 9999px; text-decoration: none; font-weight: bold; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);">Track Your Order</a>
         </div>
       </div>
 
@@ -212,7 +212,7 @@ export const sendOrderSms = async (order, phoneNumber) => {
   const smsData = {
     sender: 'POOJATEL', // Use registered Sender ID if available
     recipient: phoneNumber,
-    content: `Hi! Your order #${order._id.toString().slice(-6).toUpperCase()} from Pooja Telecom for ₹${order.totalPrice.toLocaleString()} has been placed successfully! Tracking: ${process.env.CLIENT_URL || 'http://localhost:3000'}/order/${order._id}`,
+    content: `Hi! Your order #${order._id.toString().slice(-6).toUpperCase()} from Pooja Telecom for ₹${order.totalPrice.toLocaleString()} has been placed successfully! Tracking: ${process.env.CLIENT_URL || 'http://localhost:3000'}/track-order/${order._id}`,
     type: 'transactional'
   };
 
@@ -268,7 +268,7 @@ export const sendOrderShippedEmail = async (order, user) => {
           </p>
         </div>
         <div style="text-align: center;">
-          <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/order/${order._id}" style="display: inline-block; background: #111827; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px;">Track Delivery Status</a>
+          <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/track-order/${order._id}" style="display: inline-block; background: #111827; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px;">Track Delivery Status</a>
         </div>
       </div>
       <div style="background: #f3f4f6; padding: 24px; text-align: center;">
@@ -308,7 +308,7 @@ export const sendOrderDeliveredEmail = async (order, user) => {
       <div style="padding: 32px; text-align: center;">
         <p style="color: #374151; font-size: 16px; margin-bottom: 24px;">Your order <strong>#${order._id.toString().slice(-6).toUpperCase()}</strong> has been successfully delivered.</p>
         <div style="margin-bottom: 32px;">
-          <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/order/${order._id}" style="display: inline-block; background: #059669; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px;">View Order Details</a>
+          <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/track-order/${order._id}" style="display: inline-block; background: #059669; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px;">View Order Details</a>
         </div>
         <p style="color: #6b7280; font-size: 14px;">If you have any issues with your delivery, please contact our support team immediately.</p>
       </div>
@@ -353,7 +353,7 @@ export const sendOrderRefundedEmail = async (order, user) => {
           </p>
         </div>
         <div style="text-align: center;">
-          <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/order/${order._id}" style="display: inline-block; color: #2563eb; font-weight: bold; text-decoration: none; font-size: 14px;">View Updated Order Status</a>
+          <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/track-order/${order._id}" style="display: inline-block; color: #2563eb; font-weight: bold; text-decoration: none; font-size: 14px;">View Updated Order Status</a>
         </div>
       </div>
       <div style="background: #f3f4f6; padding: 24px; text-align: center;">
@@ -382,7 +382,7 @@ export const sendStatusUpdateSms = async (order, phoneNumber, status) => {
 
   let content = '';
   const orderId = order._id.toString().slice(-6).toUpperCase();
-  const trackUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/order/${order._id}`;
+  const trackUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/track-order/${order._id}`;
 
   switch (status) {
     case 'shipped':

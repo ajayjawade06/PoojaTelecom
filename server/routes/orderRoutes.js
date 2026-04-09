@@ -13,6 +13,7 @@ import {
   cancelOrder,
   requestReturnOrder,
   processReturnOrder,
+  getOrderStatus,
 } from '../controllers/orderController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -24,6 +25,7 @@ router
   .route('/:id')
   .get(protect, getOrderById)
   .delete(protect, admin, deleteOrder);
+router.route('/:id/status').get(getOrderStatus);
 router.route('/:id/razorpay').post(protect, createRazorpayOrder);
 router.route('/:id/pay').put(protect, updateOrderToPaid);
 router.route('/:id/shipped').put(protect, admin, updateOrderToShipped);

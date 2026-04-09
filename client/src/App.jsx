@@ -54,7 +54,7 @@ const App = () => {
  <Route path="/forgot-password" element={<div className="-mt-24"><ForgotPasswordPage /></div>} />
  <Route path="/reset-password" element={<div className="-mt-24"><ResetPasswordPage /></div>} />
  <Route path="/verify-email" element={<VerifyEmailPage />} />
- <Route path="/track-order" element={<TrackOrderPage />} />
+ <Route path="/track-order/:id?" element={<TrackOrderPage />} />
  <Route path="/refund-policy" element={<RefundPolicyPage />} />
  <Route path="/warranty-policy" element={<WarrantyPolicyPage />} />
  <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />

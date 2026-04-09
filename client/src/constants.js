@@ -6,3 +6,4 @@ export const RAZORPAY_URL = '/api/config/razorpay';
 export const UPLOAD_URL = '/api/upload';
 export const REPORTS_URL = '/api/reports';
 export const CAROUSEL_URL = '/api/carousel';
+export const SUBSCRIBERS_URL = '/api/subscribers';

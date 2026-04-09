@@ -52,6 +52,37 @@ const addOrderItems = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get order status by ID (Public)
+// @route   GET /api/orders/:id/status
+// @access  Public
+const getOrderStatus = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    res.json({
+      _id: order._id,
+      orderItems: order.orderItems,
+      isPaid: order.isPaid,
+      paidAt: order.paidAt,
+      isShipped: order.isShipped,
+      shippedAt: order.shippedAt,
+      isDelivered: order.isDelivered,
+      deliveredAt: order.deliveredAt,
+      isCancelled: order.isCancelled,
+      cancelledAt: order.cancelledAt,
+      isReturnRequested: order.isReturnRequested,
+      returnStatus: order.returnStatus,
+      isRefunded: order.isRefunded,
+      refundedAt: order.refundedAt,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+    });
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+});
+
 // @desc    Get order by ID
 // @route   GET /api/orders/:id
 // @access  Private
@@ -439,4 +470,5 @@ export {
   cancelOrder,
   requestReturnOrder,
   processReturnOrder,
+  getOrderStatus,
 };

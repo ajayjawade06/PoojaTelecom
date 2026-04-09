@@ -16,6 +16,12 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
  }),
  keepUnusedDataFor: 5,
  }),
+ getOrderStatus: builder.query({
+ query: (id) => ({
+ url: `${ORDERS_URL}/${id}/status`,
+ }),
+ keepUnusedDataFor: 5,
+ }),
  payOrder: builder.mutation({
  query: ({ orderId, details }) => ({
  url: `${ORDERS_URL}/${orderId}/pay`,
@@ -97,6 +103,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 export const {
  useCreateOrderMutation,
  useGetOrderDetailsQuery,
+ useGetOrderStatusQuery,
  usePayOrderMutation,
  useCreateRazorpayOrderMutation,
  useGetRazorpayClientIdQuery,

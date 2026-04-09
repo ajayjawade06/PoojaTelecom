@@ -9,6 +9,8 @@ import ChatWidget from '../components/ChatWidget';
 import FilterSidebar from '../components/FilterSidebar';
 import SortDropdown from '../components/SortDropdown';
 import { FaTruck, FaShieldAlt, FaHeadset, FaUndo, FaArrowRight, FaFilter, FaTimes, FaStar } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { useSubscribeMutation } from '../redux/slices/subscribersApiSlice';
 
 const HomePage = () => {
   const { keyword } = useParams();
@@ -30,6 +32,9 @@ const HomePage = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [allProducts, setAllProducts] = useState([]);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+
+  const [subscribe, { isLoading: isSubscribing }] = useSubscribeMutation();
 
   // Fetch filters options
   const { data: filterOptions, isLoading: isLoadingFilters } = useGetCategoriesAndBrandsQuery();
@@ -77,6 +82,21 @@ const HomePage = () => {
   const handleViewMore = () => {
     if (productsData && page < productsData.pages) {
       setPage(prev => prev + 1);
+    }
+  };
+
+  const subscribeHandler = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail) {
+      toast.error('Please enter an email address');
+      return;
+    }
+    try {
+      const res = await subscribe({ email: newsletterEmail }).unwrap();
+      toast.success(res.message || 'Subscribed successfully!');
+      setNewsletterEmail('');
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
     }
   };
 
@@ -301,14 +321,21 @@ const HomePage = () => {
             <p className="text-slate-500 text-[14px] font-medium mb-8">
               Zero spam. Early access. Private offers.
             </p>
-            <form className="flex gap-2 p-1.5 bg-white dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-full shadow-sm">
+            <form onSubmit={subscribeHandler} className="flex gap-2 p-1.5 bg-white dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-full shadow-sm">
               <input 
                 type="email" 
                 placeholder="Enter your email" 
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 className="flex-grow bg-transparent px-5 py-2.5 text-slate-900 dark:text-white outline-none font-medium text-[13px]"
+                required
               />
-              <button type="button" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold px-8 py-2.5 rounded-full hover:opacity-90 transition-all text-[13px]">
-                Subscribe
+              <button 
+                type="submit" 
+                disabled={isSubscribing}
+                className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold px-8 py-2.5 rounded-full hover:opacity-90 transition-all text-[13px] disabled:opacity-50"
+              >
+                {isSubscribing ? '...' : 'Subscribe'}
               </button>
             </form>
           </div>
