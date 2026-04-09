@@ -170,9 +170,14 @@ io.on('connection', (socket) => {
          // Attach tempId to user message so client can de-duplicate
          io.to(userId).emit('receive_message', { ...userMsg, tempId });
          
+         // Notify admin immediately of the human message
+         io.to('admin_room').emit('chat_updated', updatedChat);
+         
          // Delay bot emit
          setTimeout(() => {
             io.to(userId).emit('receive_message', botMsg);
+            
+            // Re-emit chat_updated for admin to show bot response in history
             io.to('admin_room').emit('chat_updated', updatedChat);
          }, 1000);
       } else if (updatedChat.messages.length >= 1) {

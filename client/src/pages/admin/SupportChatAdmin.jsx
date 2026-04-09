@@ -48,6 +48,22 @@ const SupportChatAdmin = () => {
             });
         });
 
+        socketRef.current.on('receive_message', (newMessage) => {
+            setActiveChat(current => {
+                if (current && current.userId === newMessage.userId) {
+                    // Prevent duplicates
+                    if (current.messages.find(m => (m._id && m._id === newMessage._id) || (m.tempId && m.tempId === newMessage.tempId))) {
+                        return current;
+                    }
+                    return {
+                        ...current,
+                        messages: [...current.messages, newMessage]
+                    };
+                }
+                return current;
+            });
+        });
+
         return () => {
             if (socketRef.current) {
                 socketRef.current.disconnect();
@@ -76,12 +92,22 @@ const SupportChatAdmin = () => {
     const handleSend = () => {
         if (!input.trim() || !activeChat) return;
 
+        const tempId = Date.now().toString();
+
         const newMsg = {
            userId: activeChat.userId,
            userName: 'Admin',
            text: input,
-           sender: 'admin'
+           sender: 'admin',
+           tempId: tempId,
+           createdAt: new Date().toISOString()
         };
+
+        // Optimistic Update
+        setActiveChat(prev => ({
+            ...prev,
+            messages: [...prev.messages, { ...newMsg, _id: tempId }]
+        }));
 
         // Emit
         if (socketRef.current) {
@@ -161,7 +187,7 @@ const SupportChatAdmin = () => {
                             {/* Messages */}
                             <div className="flex-grow overflow-y-auto p-6 flex flex-col gap-4 custom-scrollbar">
                                 {activeChat.messages.map((m) => (
-                                    <div key={m._id} className={`max-w-[70%] flex flex-col ${m.sender === 'admin' ? 'ml-auto items-end' : 'items-start'}`}>
+                                    <div key={m._id || m.tempId} className={`max-w-[70%] flex flex-col ${m.sender === 'admin' ? 'ml-auto items-end' : 'items-start'}`}>
                                         <div className={`p-4 rounded-3xl text-[13px] font-medium shadow-sm leading-relaxed ${m.sender === 'admin' ? 'bg-blue-500 text-white rounded-br-none' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-bl-none border border-slate-100 dark:border-white/5'}`}>
                                             {m.text}
                                         </div>
