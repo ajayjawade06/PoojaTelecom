@@ -51,10 +51,13 @@ const SupportChatAdmin = () => {
         socketRef.current.on('receive_message', (newMessage) => {
             setActiveChat(current => {
                 if (current && current.userId === newMessage.userId) {
-                    // Prevent duplicates
-                    if (current.messages.find(m => (m._id && m._id === newMessage._id) || (m.tempId && m.tempId === newMessage.tempId))) {
-                        return current;
-                    }
+                    // Prevent duplicates using tempId or DB _id
+                    const isDuplicate = current.messages.some(m => 
+                        (newMessage.tempId && m.tempId === newMessage.tempId) || 
+                        (newMessage._id && m._id === newMessage._id)
+                    );
+                    if (isDuplicate) return current;
+
                     return {
                         ...current,
                         messages: [...current.messages, newMessage]
@@ -74,7 +77,7 @@ const SupportChatAdmin = () => {
     // Auto-scroll Down
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [activeChat]);
+    }, [activeChat?.messages]);
 
     const handleSelectChat = async (chat) => {
         setActiveChat(chat);
@@ -94,7 +97,8 @@ const SupportChatAdmin = () => {
 
         const tempId = Date.now().toString();
 
-        const newMsg = {
+        const optimisticMsg = {
+           _id: tempId,
            userId: activeChat.userId,
            userName: 'Admin',
            text: input,
@@ -106,12 +110,18 @@ const SupportChatAdmin = () => {
         // Optimistic Update
         setActiveChat(prev => ({
             ...prev,
-            messages: [...prev.messages, { ...newMsg, _id: tempId }]
+            messages: [...prev.messages, optimisticMsg]
         }));
 
         // Emit
         if (socketRef.current) {
-            socketRef.current.emit('send_message', newMsg);
+            socketRef.current.emit('send_message', {
+                userId: optimisticMsg.userId,
+                userName: optimisticMsg.userName,
+                text: optimisticMsg.text,
+                sender: optimisticMsg.sender,
+                tempId: optimisticMsg.tempId
+            });
         }
         setInput('');
     };

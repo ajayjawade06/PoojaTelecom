@@ -167,22 +167,22 @@ io.on('connection', (socket) => {
          const userMsg = updatedChat.messages[updatedChat.messages.length - 2].toObject();
          const botMsg = updatedChat.messages[updatedChat.messages.length - 1].toObject();
          
-         // Attach tempId to user message so client can de-duplicate
-         io.to(userId).emit('receive_message', { ...userMsg, tempId });
+         // Attach tempId and userId to user message so client can de-duplicate and identify the chat
+         io.to(userId).emit('receive_message', { ...userMsg, tempId, userId });
          
          // Notify admin immediately of the human message
          io.to('admin_room').emit('chat_updated', updatedChat);
          
          // Delay bot emit
          setTimeout(() => {
-            io.to(userId).emit('receive_message', botMsg);
+            io.to(userId).emit('receive_message', { ...botMsg, userId });
             
             // Re-emit chat_updated for admin to show bot response in history
             io.to('admin_room').emit('chat_updated', updatedChat);
          }, 1000);
       } else if (updatedChat.messages.length >= 1) {
          const lastMsg = updatedChat.messages[updatedChat.messages.length - 1].toObject();
-         io.to(userId).emit('receive_message', { ...lastMsg, tempId: sender === 'user' ? tempId : undefined });
+         io.to(userId).emit('receive_message', { ...lastMsg, tempId: sender === 'user' ? tempId : undefined, userId });
          io.to('admin_room').emit('chat_updated', updatedChat);
       }
     } catch (err) {
