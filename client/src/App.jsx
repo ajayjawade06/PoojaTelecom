@@ -35,7 +35,7 @@ import RefundPolicyPage from './pages/RefundPolicyPage';
 import WarrantyPolicyPage from './pages/WarrantyPolicyPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
-
+import ChatWidget from './components/ChatWidget';
 const App = () => {
  return (
  <ThemeProvider>
@@ -86,6 +86,7 @@ const App = () => {
     <SideCart />
 	<BackToTop />
 	<AdminOmnibar />
+	<ChatWidget />
  <ToastContainer 
  position="top-center" 
  autoClose={3000} 
