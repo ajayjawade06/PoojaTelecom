@@ -18,7 +18,14 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 const ReportsPage = () => {
- const { data: salesData, isLoading: loadingSales, error: salesError } = useGetSalesReportQuery();
+ const [startDate, setStartDate] = useState('');
+ const [endDate, setEndDate] = useState('');
+ const queryObj = useMemo(() => {
+   if (startDate && endDate) return { start: startDate, end: endDate };
+   return {};
+ }, [startDate, endDate]);
+
+ const { data: salesData, isLoading: loadingSales, error: salesError, refetch: refetchSales } = useGetSalesReportQuery(queryObj);
  const { data: inventoryData, isLoading: loadingInventory, error: inventoryError } = useGetInventoryReportQuery();
  const { data: userData, isLoading: loadingUsers, error: userError } = useGetUserReportQuery();
 
@@ -130,6 +137,22 @@ const ReportsPage = () => {
  <FaFilePdf size={12} /> Detailed PDF
  </button>
  </div>
+ </div>
+
+ {/* Date Filters */}
+ <div className="flex items-center gap-4 mb-6 p-4 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5 w-fit">
+   <div className="flex flex-col gap-1">
+     <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Start Date</label>
+     <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded px-2 py-1 text-xs font-bold dark:text-white outline-none focus:border-blue-500" />
+   </div>
+   <div className="flex flex-col gap-1">
+     <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">End Date</label>
+     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded px-2 py-1 text-xs font-bold dark:text-white outline-none focus:border-blue-500" />
+   </div>
+   <button onClick={() => refetchSales()} className="mt-4 bg-blue-500 text-white px-4 py-1.5 rounded text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors">Filter</button>
+   {(startDate || endDate) && (
+     <button onClick={() => { setStartDate(''); setEndDate(''); }} className="mt-4 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-4 py-1.5 rounded text-[10px] font-black uppercase tracking-widest hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">Clear</button>
+   )}
  </div>
 
  {/* Top Cards */}

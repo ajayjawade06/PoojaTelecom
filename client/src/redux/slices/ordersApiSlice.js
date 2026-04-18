@@ -105,6 +105,12 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
  }),
  invalidatesTags: ['Order'],
  }),
+ getUserOrdersAdmin: builder.query({
+ query: (userId) => ({
+ url: `${ORDERS_URL}/user/${userId}`,
+ }),
+ keepUnusedDataFor: 5,
+ }),
  }),
 });
 
@@ -125,4 +131,5 @@ export const {
  useRequestReturnOrderMutation,
  useProcessReturnOrderMutation,
  useBulkUpdateOrdersMutation,
+ useGetUserOrdersAdminQuery,
 } = ordersApiSlice;
