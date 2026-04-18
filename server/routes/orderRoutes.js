@@ -15,6 +15,7 @@ import {
   processReturnOrder,
   getOrderStatus,
   bulkUpdateOrders,
+  getUserOrdersAdmin,
 } from '../controllers/orderController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
