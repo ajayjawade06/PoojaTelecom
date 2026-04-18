@@ -1,15 +1,20 @@
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useGetUsersQuery, useDeleteUserMutation, useUpdateUserStatusMutation } from '../../../src/redux/slices/usersApiSlice';
-import { FaTrash, FaCheck, FaTimes, FaEdit, FaUsers, FaArrowLeft, FaBan, FaCheckCircle, FaCommentAlt } from 'react-icons/fa';
+import { FaTrash, FaCheck, FaTimes, FaEdit, FaUsers, FaArrowLeft, FaBan, FaCheckCircle, FaCommentAlt, FaHistory } from 'react-icons/fa';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
+import { useGetUserOrdersAdminQuery } from '../../../src/redux/slices/ordersApiSlice';
+import { useState } from 'react';
 
 const UserList = () => {
  const { data: users, refetch, isLoading, error } = useGetUsersQuery();
  const [deleteUser, { isLoading: loadingDelete }] = useDeleteUserMutation();
  const [updateUserStatus, { isLoading: loadingStatus }] = useUpdateUserStatusMutation();
  const { userInfo } = useSelector((state) => state.auth);
+
+ const [selectedUserId, setSelectedUserId] = useState(null);
+ const { data: userOrders, isLoading: loadingOrders } = useGetUserOrdersAdminQuery(selectedUserId, { skip: !selectedUserId });
 
  const toggleStatusHandler = async (id) => {
  try {
@@ -86,6 +91,14 @@ const UserList = () => {
  <td className="p-4 text-right">
  <div className="flex items-center justify-end gap-2">
  <button 
+ onClick={() => setSelectedUserId(user._id)}
+ className="p-2 text-slate-400 hover:text-emerald-500 transition-all font-black text-sm"
+ title="View Orders History"
+ >
+ <FaHistory size={12} />
+ </button>
+
+ <button 
  onClick={() => navigate(`/admin/user/${user._id}/reviews`)}
  className="p-2 text-slate-400 hover:text-blue-500 transition-all"
  title="View Reviews"
@@ -116,6 +129,44 @@ const UserList = () => {
  </table>
  </div>
  )}
+ </div>
+
+ {selectedUserId && (
+ <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+   <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden border border-slate-200 dark:border-white/5 shadow-2xl">
+     <div className="p-6 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+       <div>
+         <h2 className="text-lg font-black text-slate-900 dark:text-white">Order History</h2>
+         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">ID: {selectedUserId}</p>
+       </div>
+       <button onClick={() => setSelectedUserId(null)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+         <FaTimes size={16} />
+       </button>
+     </div>
+     <div className="p-6 overflow-y-auto flex-1">
+       {loadingOrders ? <Loader /> : userOrders && userOrders.length > 0 ? (
+         <div className="space-y-4">
+           {userOrders.map(order => (
+             <div key={order._id} className="border border-slate-200 dark:border-white/10 rounded-xl p-4 flex justify-between items-center bg-slate-50 dark:bg-white/5">
+               <div>
+                 <p className="text-[11px] font-black text-slate-900 dark:text-white">#{order._id.substring(0, 8)}</p>
+                 <p className="text-[9px] font-bold text-slate-500">{new Date(order.createdAt).toLocaleDateString()}</p>
+               </div>
+               <div className="text-right">
+                 <p className="text-[12px] font-black text-blue-500">₹{order.totalPrice.toLocaleString('en-IN')}</p>
+                 <p className="text-[9px] font-black uppercase text-slate-400">{order.isDelivered ? 'Delivered' : order.isShipped ? 'Shipped' : order.isPaid ? 'Paid' : 'Pending'}</p>
+               </div>
+             </div>
+           ))}
+         </div>
+       ) : (
+         <p className="text-center text-slate-500 py-8 text-xs font-bold uppercase tracking-widest">No order records found.</p>
+       )}
+     </div>
+   </div>
+ </div>
+ )}
+ 
  </div>
  </div>
  );

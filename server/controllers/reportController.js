@@ -7,8 +7,21 @@ import User from '../models/userModel.js';
 // @route   GET /api/reports/sales
 // @access  Private/Admin
 const getSalesReport = asyncHandler(async (req, res) => {
+  const { start, end } = req.query;
+  const matchObj = { isPaid: true, excludeFromStats: { $ne: true }, isCancelled: { $ne: true } };
+  const allMatchObj = { excludeFromStats: { $ne: true } };
+  
+  if (start && end) {
+    const startDate = new Date(start);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(end);
+    endDate.setHours(23, 59, 59, 999);
+    matchObj.paidAt = { $gte: startDate, $lte: endDate };
+    allMatchObj.createdAt = { $gte: startDate, $lte: endDate };
+  }
+
   const sales = await Order.aggregate([
-    { $match: { isPaid: true, excludeFromStats: { $ne: true }, isCancelled: { $ne: true } } },
+    { $match: matchObj },
     {
       $group: {
         _id: { $dateToString: { format: "%Y-%m-%d", date: "$paidAt" } },
@@ -19,12 +32,14 @@ const getSalesReport = asyncHandler(async (req, res) => {
     { $sort: { _id: 1 } },
   ]);
 
+  // Optionally filter top products based on recent orders if we wanted strictly date bound product data 
+  // but to keep it simple and accurate for overall, we'll keep it total.
   const topProducts = await Product.find({}).sort({ soldCount: -1 }).limit(5).select('name soldCount price image');
 
   const totalRevenue = sales.reduce((acc, curr) => acc + curr.totalSales, 0);
 
   const categorySales = await Order.aggregate([
-    { $match: { isPaid: true, excludeFromStats: { $ne: true }, isCancelled: { $ne: true } } },
+    { $match: matchObj },
     { $unwind: "$orderItems" },
     {
       $lookup: {
@@ -45,10 +60,10 @@ const getSalesReport = asyncHandler(async (req, res) => {
   ]);
 
   const orderStatus = await Order.aggregate([
-    { $match: { excludeFromStats: { $ne: true }, isCancelled: { $ne: true } } },
+    { $match: allMatchObj },
     {
       $group: {
-        _id: { $cond: [{ $eq: ["$isDelivered", true] }, "Delivered", { $cond: [{ $eq: ["$isShipped", true] }, "Shipped", "Pending"] }] },
+        _id: { $cond: [{ $eq: ["$isDelivered", true] }, "Delivered", { $cond: [{ $eq: ["$isShipped", true] }, "Shipped", { $cond: [{ $eq: ["$isCancelled", true] }, "Cancelled", "Pending"] }] }] },
         count: { $sum: 1 }
       }
     }

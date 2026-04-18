@@ -4,12 +4,36 @@ import { useGetOrdersQuery } from '../../../src/redux/slices/ordersApiSlice';
 import { useGetUsersQuery } from '../../../src/redux/slices/usersApiSlice';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import { FaUsers, FaBoxOpen, FaChartLine, FaArrowUp, FaArrowDown, FaCrown, FaCheckCircle, FaClock } from 'react-icons/fa';
+import { FaUsers, FaBoxOpen, FaChartLine, FaArrowUp, FaArrowDown, FaCrown, FaCheckCircle, FaClock, FaPercent, FaSave } from 'react-icons/fa';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { useGetConfigQuery, useUpdateConfigMutation } from '../../../src/redux/slices/configApiSlice';
 
 const Dashboard = () => {
  const { data: orders, isLoading: loadingOrders, error: errorOrders } = useGetOrdersQuery();
  const { data: users, isLoading: loadingUsers, error: errorUsers } = useGetUsersQuery();
+
+ const { data: config, refetch: refetchConfig } = useGetConfigQuery();
+ const [updateConfig, { isLoading: updatingConfig }] = useUpdateConfigMutation();
+ 
+ const [festivalName, setFestivalName] = useState('');
+ const [discountPercentage, setDiscountPercentage] = useState(0);
+
+ useMemo(() => {
+ if (config) {
+   setFestivalName(config.festivalName || '');
+   setDiscountPercentage(config.discountPercentage || 0);
+ }
+ }, [config]);
+
+ const handleSaveConfig = async () => {
+   try {
+     await updateConfig({ festivalName, discountPercentage }).unwrap();
+     alert('Global settings updated successfully');
+     refetchConfig();
+   } catch (err) {
+     alert('Failed to update config');
+   }
+ };
 
  const metrics = useMemo(() => {
  if (!orders || !users) return null;
@@ -156,6 +180,48 @@ const Dashboard = () => {
  </div>
  ))}
  </div>
+ </div>
+ </div>
+
+ {/* Global Settings Container */}
+ <div className="lg:col-span-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-8 shadow-sm">
+ <div className="flex items-center justify-between mb-8">
+ <h2 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-2">
+ <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>
+ Global Festive Discount
+ </h2>
+ </div>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+   <div className="space-y-1.5">
+     <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Festival Name</label>
+     <input 
+       type="text" 
+       placeholder="e.g. Diwali"
+       className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white"
+       value={festivalName}
+       onChange={e => setFestivalName(e.target.value)}
+     />
+   </div>
+   <div className="space-y-1.5">
+     <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Discount Percentage (%)</label>
+     <div className="flex gap-4">
+       <input 
+         type="number" 
+         min="0"
+         max="100"
+         className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white"
+         value={discountPercentage}
+         onChange={e => setDiscountPercentage(Number(e.target.value))}
+       />
+       <button 
+         onClick={handleSaveConfig}
+         disabled={updatingConfig}
+         className="bg-emerald-500 text-white px-6 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-colors flex items-center gap-2 shrink-0 disabled:opacity-50"
+       >
+         <FaSave size={14} /> {updatingConfig ? 'Saving...' : 'Save'}
+       </button>
+     </div>
+   </div>
  </div>
  </div>
 

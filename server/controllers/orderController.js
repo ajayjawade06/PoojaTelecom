@@ -300,6 +300,14 @@ const getOrders = asyncHandler(async (req, res) => {
   res.json(orders);
 });
 
+// @desc    Get user orders admin
+// @route   GET /api/orders/user/:id
+// @access  Private/Admin
+const getUserOrdersAdmin = asyncHandler(async (req, res) => {
+  const orders = await Order.find({ user: req.params.id }).sort({ createdAt: -1 });
+  res.json(orders);
+});
+
 // @desc    Delete order
 // @route   DELETE /api/orders/:id
 // @access  Private/Admin
@@ -513,4 +521,5 @@ export {
   processReturnOrder,
   getOrderStatus,
   bulkUpdateOrders,
+  getUserOrdersAdmin,
 };

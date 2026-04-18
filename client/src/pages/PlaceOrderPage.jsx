@@ -6,8 +6,9 @@ import CheckoutSteps from '../components/CheckoutSteps';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { useCreateOrderMutation } from '../redux/slices/ordersApiSlice';
+import { useGetConfigQuery } from '../redux/slices/configApiSlice';
 import { clearCartItems, savePaymentMethod } from '../redux/slices/cartSlice';
-import { FaMapMarkerAlt, FaShieldAlt, FaLock, FaCreditCard, FaArrowRight, FaBox, FaPencilAlt, FaArrowLeft } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaShieldAlt, FaLock, FaCreditCard, FaArrowRight, FaBox, FaPencilAlt, FaArrowLeft, FaPercentage } from 'react-icons/fa';
 
 const PlaceOrderPage = () => {
  const navigate = useNavigate();
@@ -15,6 +16,12 @@ const PlaceOrderPage = () => {
  const cart = useSelector((state) => state.cart);
 
  const [createOrder, { isLoading, error }] = useCreateOrderMutation();
+ const { data: config } = useGetConfigQuery();
+
+ const finalItemsPrice = config?.discountPercentage 
+   ? cart.itemsPrice - (cart.itemsPrice * config.discountPercentage / 100) 
+   : cart.itemsPrice;
+ const finalTotalPrice = Number(finalItemsPrice) + Number(cart.shippingPrice) + Number(cart.taxPrice || 0);
 
  useEffect(() => {
  if (!cart.shippingAddress?.address) {
@@ -28,10 +35,10 @@ const PlaceOrderPage = () => {
  orderItems: cart.cartItems,
  shippingAddress: cart.shippingAddress,
  paymentMethod: cart.paymentMethod || 'Razorpay',
- itemsPrice: cart.itemsPrice,
+ itemsPrice: finalItemsPrice,
  shippingPrice: cart.shippingPrice,
  taxPrice: cart.taxPrice,
- totalPrice: cart.totalPrice,
+ totalPrice: finalTotalPrice,
  }).unwrap();
  dispatch(clearCartItems());
  navigate(`/order/${res._id}`);
@@ -141,8 +148,23 @@ const PlaceOrderPage = () => {
  <div className="space-y-4 mb-6 relative z-10">
  <div className="flex justify-between items-baseline">
  <span className="text-[13px] font-medium text-slate-500">Products</span>
- <span className="text-[14px] font-semibold text-slate-900 dark:text-white">₹{cart.itemsPrice.toLocaleString('en-IN')}</span>
+          <span className="text-[14px] font-semibold text-slate-900 dark:text-white">
+            {config?.discountPercentage > 0 ? (
+               <div className="flex flex-col items-end">
+                 <span className="line-through text-slate-400 text-xs text-red-500">₹{cart.itemsPrice.toLocaleString('en-IN')}</span>
+                 <span className="text-emerald-500">₹{finalItemsPrice.toLocaleString('en-IN')}</span>
+               </div>
+            ) : (
+               <span>₹{cart.itemsPrice.toLocaleString('en-IN')}</span>
+            )}
+          </span>
  </div>
+ {config?.discountPercentage > 0 && (
+   <div className="flex justify-between items-center bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20 mb-2 mt-2">
+     <span className="text-[11px] font-black uppercase text-emerald-600 flex items-center gap-1.5"><FaPercentage size={10} /> {config.festivalName} Offer</span>
+     <span className="text-[11px] font-black uppercase text-emerald-600">-{config.discountPercentage}%</span>
+   </div>
+ )}
  <div className="flex justify-between items-baseline">
  <span className="text-[13px] font-medium text-slate-500">Shipping</span>
  <span className="text-[14px] font-semibold text-slate-900 dark:text-white">{cart.shippingPrice == 0 ? 'FREE' : `₹${cart.shippingPrice}`}</span>
@@ -155,7 +177,7 @@ const PlaceOrderPage = () => {
 
  <div className="border-t border-slate-100 dark:border-white/5 pt-6 mb-8 flex justify-between items-center relative z-10">
  <span className="text-[14px] font-semibold text-slate-900 dark:text-white">Total</span>
- <span className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">₹{cart.totalPrice.toLocaleString('en-IN')}</span>
+ <span className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">₹{finalTotalPrice.toLocaleString('en-IN')}</span>
  </div>
 
  {error && <div className="mb-6"><Message variant="red">{error?.data?.message || 'Placement error'}</Message></div>}

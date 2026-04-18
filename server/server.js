@@ -56,6 +56,7 @@ import uploadRoutes from './routes/uploadRoutes.js';
 import carouselRoutes from './routes/carouselRoutes.js';
 import subscriberRoutes from './routes/subscriberRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import configRoutes from './routes/configRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 // Basic Route for testing
@@ -102,6 +103,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/carousel', carouselRoutes);
 app.use('/api/subscribers', subscriberRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/config', configRoutes);
 
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
