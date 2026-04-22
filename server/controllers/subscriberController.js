@@ -1,5 +1,6 @@
 import asyncHandler from '../middleware/asyncHandler.js';
 import Subscriber from '../models/subscriberModel.js';
+import { sendSubscriptionEmail } from '../utils/emailService.js';
 
 // @desc    Register a new subscriber
 // @route   POST /api/subscribers
@@ -24,6 +25,9 @@ const subscribeUser = asyncHandler(async (req, res) => {
   });
 
   if (subscriber) {
+    // Send subscription confirmation email
+    sendSubscriptionEmail(email);
+
     res.status(201).json({
       success: true,
       message: 'Subscribed successfully',

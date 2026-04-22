@@ -505,3 +505,71 @@ export const sendReturnApprovedEmail = async (order, user) => {
     console.error('Return approved email error:', error.message);
   }
 };
+
+export const sendSubscriptionEmail = async (email) => {
+  const apiKey = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.EMAIL_USER || 'lipashaikh005@gmail.com';
+
+  const emailData = {
+    sender: { name: 'Pooja Telecom', email: senderEmail },
+    to: [{ email }],
+    subject: 'Welcome to Pooja Telecom - You are Subscribed!',
+    htmlContent: `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);">
+      <div style="background: linear-gradient(135deg, #0f172a, #2563eb); padding: 50px 40px; text-align: center; color: white;">
+        <h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.025em;">You're In! 🚀</h1>
+        <p style="margin: 15px 0 0; opacity: 0.9; font-size: 18px; font-weight: 500;">Welcome to the Pooja Telecom Inner Circle</p>
+      </div>
+      
+      <div style="padding: 40px;">
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+          Thanks for subscribing to our newsletter! You've just joined a community of tech enthusiasts who get the first look at exclusive drops, private offers, and the latest tech trends.
+        </p>
+
+        <div style="background: #f8fafc; border-radius: 16px; padding: 24px; margin-bottom: 32px; border: 1px solid #e2e8f0;">
+          <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 0.05em;">What's next for you?</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #475569; font-size: 14px; line-height: 1.8;">
+            <li>Early access to <strong>Exclusive Tech Drops</strong></li>
+            <li>Members-only <strong>Private Discounts</strong></li>
+            <li>Hand-picked tech news and trends</li>
+            <li>VIP notifications for restocks</li>
+          </ul>
+        </div>
+
+        <div style="text-align: center;">
+          <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}" style="display: inline-block; background: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 15px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);">Explore Our Shop</a>
+        </div>
+      </div>
+
+      <div style="background: #f1f5f9; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+        <p style="margin: 0; color: #64748b; font-size: 12px; line-height: 1.5;">
+          You are receiving this because you subscribed to the Pooja Telecom newsletter.<br>
+          If you didn't mean to do this, you can unsubscribe at any time.
+        </p>
+        <p style="margin: 15px 0 0; color: #94a3b8; font-size: 12px; font-weight: 600;">
+          &copy; ${new Date().getFullYear()} Pooja Telecom. All rights reserved.
+        </p>
+      </div>
+    </div>
+    `,
+  };
+
+  try {
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': apiKey,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(emailData),
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Failed to send subscription email');
+    console.log('Subscription confirmation email sent:', data.messageId);
+    return data;
+  } catch (error) {
+    console.error('Subscription email error:', error.message);
+  }
+};
