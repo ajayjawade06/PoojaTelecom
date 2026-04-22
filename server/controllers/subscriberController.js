@@ -26,7 +26,7 @@ const subscribeUser = asyncHandler(async (req, res) => {
 
   if (subscriber) {
     // Send subscription confirmation email
-    sendSubscriptionEmail(email);
+    await sendSubscriptionEmail(email);
 
     res.status(201).json({
       success: true,

@@ -512,7 +512,7 @@ export const sendSubscriptionEmail = async (email) => {
 
   const emailData = {
     sender: { name: 'Pooja Telecom', email: senderEmail },
-    to: [{ email }],
+    to: [{ email, name: email.split('@')[0] }],
     subject: 'Welcome to Pooja Telecom - You are Subscribed!',
     htmlContent: `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);">
