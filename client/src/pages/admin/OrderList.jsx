@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
     useGetOrdersQuery, 
@@ -6,7 +6,7 @@ import {
     useExcludeOrderMutation,
     useBulkUpdateOrdersMutation 
 } from '../../redux/slices/ordersApiSlice';
-import { FaArrowLeft, FaTrash, FaChartBar, FaSortAmountDown, FaExclamationCircle, FaCheckCircle, FaTruck, FaBoxOpen } from 'react-icons/fa';
+import { FaArrowLeft, FaTrash, FaChartBar, FaSortAmountDown, FaExclamationCircle, FaCheckCircle, FaTruck, FaBoxOpen, FaUserAlt, FaTimes, FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
@@ -21,10 +21,48 @@ const OrderList = () => {
     const [activeTab, setActiveTab] = useState('All');
     const [selectedOrders, setSelectedOrders] = useState([]);
     const [sortOrder, setSortOrder] = useState('desc'); // newest first
+    const [selectedUserId, setSelectedUserId] = useState('');
+    const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+    const [userSearch, setUserSearch] = useState('');
+    const userDropdownRef = useRef(null);
 
     useEffect(() => {
         setSelectedOrders([]);
     }, [activeTab]);
+
+    // Close user dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (userDropdownRef.current && !userDropdownRef.current.contains(e.target)) {
+                setUserDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Extract unique users from orders
+    const uniqueUsers = useMemo(() => {
+        if (!orders) return [];
+        const userMap = new Map();
+        orders.forEach(o => {
+            if (o.user && o.user._id) {
+                userMap.set(o.user._id, o.user.name || 'Unknown');
+            }
+        });
+        return Array.from(userMap, ([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name));
+    }, [orders]);
+
+    const filteredUserList = useMemo(() => {
+        if (!userSearch.trim()) return uniqueUsers;
+        return uniqueUsers.filter(u => u.name.toLowerCase().includes(userSearch.toLowerCase()));
+    }, [uniqueUsers, userSearch]);
+
+    const selectedUserName = useMemo(() => {
+        if (!selectedUserId) return '';
+        const found = uniqueUsers.find(u => u.id === selectedUserId);
+        return found ? found.name : '';
+    }, [selectedUserId, uniqueUsers]);
 
     const deleteHandler = async (id) => {
         if (window.confirm('Are you sure you want to delete this order?')) {
@@ -60,19 +98,21 @@ const OrderList = () => {
         }
     };
 
-    // Derived Categorized Orders
+    // Derived Categorized Orders (with user filter applied)
     const processedOrders = useMemo(() => {
         if (!orders) return { All: [], PendingPayment: [], ToShip: [], InTransit: [], Returns: [], Completed: [] };
         
+        const base = selectedUserId ? orders.filter(o => o.user?._id === selectedUserId) : [...orders];
+
         return {
-            All: [...orders],
-            PendingPayment: orders.filter(o => !o.isPaid && !o.isCancelled && !o.isDelivered),
-            ToShip: orders.filter(o => o.isPaid && !o.isShipped && !o.isCancelled && !o.isRefunded && !o.isReturnRequested),
-            InTransit: orders.filter(o => o.isShipped && !o.isDelivered && !o.isReturnRequested && !o.isCancelled && !o.isRefunded),
-            Returns: orders.filter(o => o.isReturnRequested && !o.isRefunded),
-            Completed: orders.filter(o => o.isDelivered || o.isRefunded || o.isCancelled)
+            All: [...base],
+            PendingPayment: base.filter(o => !o.isPaid && !o.isCancelled && !o.isDelivered),
+            ToShip: base.filter(o => o.isPaid && !o.isShipped && !o.isCancelled && !o.isRefunded && !o.isReturnRequested),
+            InTransit: base.filter(o => o.isShipped && !o.isDelivered && !o.isReturnRequested && !o.isCancelled && !o.isRefunded),
+            Returns: base.filter(o => o.isReturnRequested && !o.isRefunded),
+            Completed: base.filter(o => o.isDelivered || o.isRefunded || o.isCancelled)
         };
-    }, [orders]);
+    }, [orders, selectedUserId]);
 
     const sortedFilteredOrders = useMemo(() => {
         const filtered = processedOrders[activeTab.replace(' ', '')] || processedOrders.All;
@@ -120,14 +160,108 @@ const OrderList = () => {
                             <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">Streamline your fulfillments</p>
                         </div>
                     </div>
-                    <button 
-                        onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
-                    >
-                        <FaSortAmountDown size={12} className={`transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} />
-                        {sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}
-                    </button>
+                    <div className="flex items-center gap-3">
+                        {/* User Filter Dropdown */}
+                        <div className="relative" ref={userDropdownRef}>
+                            <button 
+                                onClick={() => setUserDropdownOpen(prev => !prev)}
+                                className={`flex items-center gap-2 px-4 py-2.5 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                                    selectedUserId 
+                                        ? 'bg-blue-50 dark:bg-blue-500/10 border-blue-300 dark:border-blue-500/30 text-blue-600 dark:text-blue-400' 
+                                        : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
+                                }`}
+                            >
+                                <FaUserAlt size={11} />
+                                {selectedUserId ? selectedUserName : 'All Users'}
+                                {selectedUserId && (
+                                    <span 
+                                        onClick={(e) => { e.stopPropagation(); setSelectedUserId(''); setUserSearch(''); }}
+                                        className="ml-1 w-4 h-4 flex items-center justify-center rounded-full bg-blue-200 dark:bg-blue-500/30 hover:bg-red-400 hover:text-white transition-colors cursor-pointer"
+                                    >
+                                        <FaTimes size={8} />
+                                    </span>
+                                )}
+                            </button>
+                            {userDropdownOpen && (
+                                <div className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                                    <div className="p-3 border-b border-slate-100 dark:border-white/5">
+                                        <div className="relative">
+                                            <FaSearch size={10} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                            <input 
+                                                type="text" 
+                                                placeholder="Search users..." 
+                                                value={userSearch} 
+                                                onChange={(e) => setUserSearch(e.target.value)}
+                                                className="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-lg text-xs font-bold dark:text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                                                autoFocus
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="max-h-60 overflow-y-auto">
+                                        <button 
+                                            onClick={() => { setSelectedUserId(''); setUserDropdownOpen(false); setUserSearch(''); }}
+                                            className={`w-full text-left px-4 py-2.5 text-[11px] font-bold transition-colors flex items-center gap-2 ${
+                                                !selectedUserId ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'
+                                            }`}
+                                        >
+                                            <FaUserAlt size={10} className="opacity-40" />
+                                            All Users
+                                            <span className="ml-auto text-[9px] font-black text-slate-400 bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded">{orders?.length || 0}</span>
+                                        </button>
+                                        {filteredUserList.map(user => {
+                                            const userOrderCount = orders?.filter(o => o.user?._id === user.id).length || 0;
+                                            return (
+                                                <button 
+                                                    key={user.id}
+                                                    onClick={() => { setSelectedUserId(user.id); setUserDropdownOpen(false); setUserSearch(''); }}
+                                                    className={`w-full text-left px-4 py-2.5 text-[11px] font-bold transition-colors flex items-center gap-2 ${
+                                                        selectedUserId === user.id ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'
+                                                    }`}
+                                                >
+                                                    <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 text-[9px] font-black flex-shrink-0">
+                                                        {user.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <span className="truncate">{user.name}</span>
+                                                    <span className="ml-auto text-[9px] font-black text-slate-400 bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded flex-shrink-0">{userOrderCount}</span>
+                                                </button>
+                                            );
+                                        })}
+                                        {filteredUserList.length === 0 && (
+                                            <div className="px-4 py-6 text-center text-[11px] font-bold text-slate-400">No users found</div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        {/* Sort Button */}
+                        <button 
+                            onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+                            className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
+                        >
+                            <FaSortAmountDown size={12} className={`transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} />
+                            {sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}
+                        </button>
+                    </div>
                 </div>
+
+                {/* Active User Filter Badge */}
+                {selectedUserId && (
+                    <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl w-fit">
+                        <FaUserAlt size={10} className="text-blue-500" />
+                        <span className="text-[11px] font-black text-blue-700 dark:text-blue-300">
+                            Showing orders for: <span className="text-blue-500">{selectedUserName}</span>
+                        </span>
+                        <span className="text-[9px] font-black text-blue-500 bg-blue-100 dark:bg-blue-500/20 px-2 py-0.5 rounded-md">
+                            {processedOrders.All.length} orders
+                        </span>
+                        <button 
+                            onClick={() => setSelectedUserId('')}
+                            className="ml-1 text-blue-400 hover:text-red-500 transition-colors"
+                        >
+                            <FaTimes size={10} />
+                        </button>
+                    </div>
+                )}
 
                 {isLoading ? <Loader /> : error ? <Message variant="red">Sync Error</Message> : (
                     <>
