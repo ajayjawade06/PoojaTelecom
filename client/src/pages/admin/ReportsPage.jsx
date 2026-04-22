@@ -31,6 +31,11 @@ const ReportsPage = () => {
 
  const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
 
+ const dateLabel = startDate && endDate ? `${startDate}_to_${endDate}` : 'all_time';
+ const dateLabelDisplay = startDate && endDate
+   ? `${new Date(startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} — ${new Date(endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}`
+   : 'All Time';
+
  const exportCSV = (data, filename) => {
  if (!data || !data.length) return;
  const headers = Object.keys(data[0]).join(',');
@@ -39,7 +44,7 @@ const ReportsPage = () => {
  const encodedUri = encodeURI(csvContent);
  const link = document.createElement("a");
  link.setAttribute("href", encodedUri);
- link.setAttribute("download", `${filename}.csv`);
+ link.setAttribute("download", `${filename}_${dateLabel}.csv`);
  document.body.appendChild(link);
  link.click();
  document.body.removeChild(link);
@@ -54,9 +59,13 @@ const ReportsPage = () => {
  doc.setFontSize(10);
  doc.setTextColor(100);
  doc.text(`Report Generated On: ${new Date().toLocaleString()}`, 14, 30);
+ doc.setFontSize(11);
+ doc.setTextColor(59, 130, 246);
+ doc.text(`Date Range: ${dateLabelDisplay}`, 14, 37);
 
  // Summary Table
  const summary = [
+ ["Date Range", dateLabelDisplay],
  ["Gross Revenue", `Rs. ${salesData?.totalRevenue?.toLocaleString('en-IN')}`],
  ["Total Inventory Items", inventoryData?.totalProducts],
  ["Total Registered Users", userData?.totalUsers],
@@ -66,7 +75,7 @@ const ReportsPage = () => {
  ];
 
  autoTable(doc, {
- startY: 40,
+ startY: 45,
  head: [["Metric","Value"]],
  body: summary,
  theme: 'grid',
@@ -99,7 +108,7 @@ const ReportsPage = () => {
  });
  }
 
- doc.save(`pooja_telecom_report_${new Date().getTime()}.pdf`);
+ doc.save(`pooja_telecom_report_${dateLabel}.pdf`);
  };
 
  if (loadingSales || loadingInventory || loadingUsers) return <Loader />;
@@ -110,7 +119,7 @@ const ReportsPage = () => {
  <div className="main-container max-w-7xl mx-auto px-4">
 
  {/* Header */}
- <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 border-b border-slate-100 dark:border-white/5 pb-6">
+ <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-slate-100 dark:border-white/5 pb-6">
  <div className="flex items-center gap-4">
  <button
  onClick={() => window.history.back()}
@@ -123,36 +132,45 @@ const ReportsPage = () => {
  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Production Insights for Pooja Telecom</p>
  </div>
  </div>
- <div className="flex gap-2">
- <button
- onClick={() => exportCSV(salesData?.sales, 'sales_report')}
- className="bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all flex items-center gap-2 border border-slate-200 dark:border-white/10"
- >
- <FaFileCsv size={12} /> CSV
- </button>
- <button
- onClick={exportPDF}
- className="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center gap-2"
- >
- <FaFilePdf size={12} /> Detailed PDF
- </button>
- </div>
  </div>
 
- {/* Date Filters */}
- <div className="flex items-center gap-4 mb-6 p-4 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5 w-fit">
-   <div className="flex flex-col gap-1">
-     <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Start Date</label>
-     <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded px-2 py-1 text-xs font-bold dark:text-white outline-none focus:border-blue-500" />
+ {/* Date Filter + Download Bar */}
+ <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 p-5 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5">
+   <div className="flex flex-wrap items-end gap-4">
+     <div className="flex flex-col gap-1">
+       <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Start Date</label>
+       <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-lg px-3 py-2 text-xs font-bold dark:text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" />
+     </div>
+     <div className="flex flex-col gap-1">
+       <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">End Date</label>
+       <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-lg px-3 py-2 text-xs font-bold dark:text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" />
+     </div>
+     <button onClick={() => refetchSales()} className="bg-blue-500 text-white px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors flex items-center gap-2 shadow-lg shadow-blue-500/20">
+       <FaCalendarAlt size={10} /> Apply Filter
+     </button>
+     {(startDate || endDate) && (
+       <button onClick={() => { setStartDate(''); setEndDate(''); }} className="bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">Clear</button>
+     )}
    </div>
-   <div className="flex flex-col gap-1">
-     <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">End Date</label>
-     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded px-2 py-1 text-xs font-bold dark:text-white outline-none focus:border-blue-500" />
+   <div className="flex items-center gap-2">
+     {(startDate && endDate) && (
+       <span className="text-[9px] font-black text-blue-500 bg-blue-500/10 px-3 py-2 rounded-lg border border-blue-500/20 hidden md:inline-block">
+         {dateLabelDisplay}
+       </span>
+     )}
+     <button
+     onClick={() => exportCSV(salesData?.sales, 'sales_report')}
+     className="bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-white/10 transition-all flex items-center gap-2 border border-slate-200 dark:border-white/10"
+     >
+     <FaFileCsv size={12} /> CSV
+     </button>
+     <button
+     onClick={exportPDF}
+     className="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2 hover:bg-blue-600"
+     >
+     <FaFilePdf size={12} /> PDF Report
+     </button>
    </div>
-   <button onClick={() => refetchSales()} className="mt-4 bg-blue-500 text-white px-4 py-1.5 rounded text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors">Filter</button>
-   {(startDate || endDate) && (
-     <button onClick={() => { setStartDate(''); setEndDate(''); }} className="mt-4 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-4 py-1.5 rounded text-[10px] font-black uppercase tracking-widest hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">Clear</button>
-   )}
  </div>
 
  {/* Top Cards */}
