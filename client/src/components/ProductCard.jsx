@@ -58,6 +58,12 @@ const ProductCard = ({ product }) => {
               Premium
             </span>
           )}
+
+          {product.festivalName && (
+            <span className="bg-gradient-to-r from-pink-500 to-purple-500 text-white text-[9px] font-black px-2.5 py-1 rounded-full shadow-md shadow-pink-500/30 uppercase tracking-widest mt-1 flex items-center gap-1">
+              <FaFire size={8} /> {product.festivalName}
+            </span>
+          )}
         </div>
         <Link to={`/product/${product._id}`} className="block w-full h-full">
           <img 
@@ -115,10 +121,15 @@ const ProductCard = ({ product }) => {
           <span className="text-[15px] font-bold text-slate-900 dark:text-white tracking-tight">
             ₹{product.price.toLocaleString('en-IN')}
           </span>
-          {product.price > 10000 && (
-            <span className="text-[12px] text-slate-400 line-through font-medium">
-              ₹{(product.price * 1.25).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-            </span>
+          {product.mrp > product.price && (
+            <>
+              <span className="text-[12px] text-slate-400 line-through font-medium">
+                ₹{product.mrp.toLocaleString('en-IN')}
+              </span>
+              <span className="text-[10px] font-black text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded">
+                {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
+              </span>
+            </>
           )}
         </div>
       </div>

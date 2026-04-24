@@ -8,7 +8,7 @@ import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import ProductPageSkeleton from '../components/ProductPageSkeleton';
-import { FaUserCircle, FaStar, FaShoppingCart, FaArrowLeft, FaComments, FaShieldAlt, FaTruck, FaClock, FaShareAlt, FaSearchPlus, FaChevronLeft, FaChevronRight, FaTimes, FaCamera } from 'react-icons/fa';
+import { FaUserCircle, FaStar, FaShoppingCart, FaArrowLeft, FaComments, FaShieldAlt, FaTruck, FaClock, FaShareAlt, FaSearchPlus, FaChevronLeft, FaChevronRight, FaTimes, FaCamera, FaFire } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { getFullImageUrl } from '../utils/imageUtils';
 
@@ -243,11 +243,23 @@ const ProductPage = () => {
  </div>
 
  <div className="space-y-4">
+ {product.festivalName && (
+ <span className="bg-gradient-to-r from-pink-500 to-purple-500 text-white text-[11px] font-black px-3 py-1.5 rounded-full shadow-md shadow-pink-500/30 uppercase tracking-widest flex items-center gap-2 w-fit mb-2">
+ <FaFire size={10} /> {product.festivalName}
+ </span>
+ )}
  <div className="flex items-baseline gap-3">
  <span className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
  ₹{product.price.toLocaleString('en-IN')}
  </span>
- <span className="text-base font-medium text-slate-400 line-through">₹{(product.price * 1.3).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+ {product.mrp > product.price && (
+ <>
+ <span className="text-base font-medium text-slate-400 line-through">₹{product.mrp.toLocaleString('en-IN')}</span>
+ <span className="text-[12px] font-black text-green-500 bg-green-500/10 px-2 py-1 rounded">
+ {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
+ </span>
+ </>
+ )}
  </div>
  
  <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md inline-block ${product.countInStock > 0 ? 'bg-blue-500/10 text-blue-600' : 'bg-rose-500/10 text-rose-500'}`}>

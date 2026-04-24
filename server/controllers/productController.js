@@ -94,6 +94,8 @@ const createProduct = asyncHandler(async (req, res) => {
   const product = new Product({
     name: 'New Draft Product',
     price: 0,
+    mrp: 0,
+    festivalName: '',
     user: req.user._id,
     image: '/images/sample.jpg',
     images: [],
@@ -114,7 +116,7 @@ const createProduct = asyncHandler(async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 const updateProduct = asyncHandler(async (req, res) => {
-  const { name, price, costPrice, description, image, images, brand, category, countInStock, isPublished } =
+  const { name, price, mrp, festivalName, costPrice, description, image, images, brand, category, countInStock, isPublished } =
     req.body;
 
   const product = await Product.findById(req.params.id);
@@ -122,6 +124,8 @@ const updateProduct = asyncHandler(async (req, res) => {
   if (product) {
     product.name = name;
     product.price = price;
+    product.mrp = mrp;
+    product.festivalName = festivalName;
     product.description = description;
     product.image = image;
     product.images = images || [];

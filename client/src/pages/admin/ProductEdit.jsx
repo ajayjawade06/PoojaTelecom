@@ -16,6 +16,8 @@ const ProductEdit = () => {
 
  const [name, setName] = useState('');
  const [price, setPrice] = useState(0);
+ const [mrp, setMrp] = useState(0);
+ const [festivalName, setFestivalName] = useState('');
  const [image, setImage] = useState('');
  const [images, setImages] = useState([]);
  const [brand, setBrand] = useState('');
@@ -35,6 +37,8 @@ const ProductEdit = () => {
  if (product) {
  setName(product.name);
  setPrice(product.price);
+ setMrp(product.mrp || 0);
+ setFestivalName(product.festivalName || '');
  setImage(product.image);
  setImages(product.images || []);
  setBrand(product.brand);
@@ -49,7 +53,7 @@ const ProductEdit = () => {
  const submitHandler = async (e) => {
  e.preventDefault();
  try {
- await updateProduct({ productId, name, price, costPrice, image, images, brand, category, description, countInStock, isPublished }).unwrap();
+ await updateProduct({ productId, name, price, mrp, festivalName, costPrice, image, images, brand, category, description, countInStock, isPublished }).unwrap();
  navigate('/admin/productlist');
  } catch (err) {
  toast.error(err?.data?.message || err.error);
@@ -132,16 +136,25 @@ const ProductEdit = () => {
  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Price (₹)</label>
  <input 
  type="number" 
- className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white"
+ className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white text-blue-500"
  value={price}
  onChange={e => setPrice(e.target.value)}
+ />
+ </div>
+ <div className="space-y-1.5">
+ <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">MRP (₹)</label>
+ <input 
+ type="number" 
+ className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-red-500/30 dark:text-white line-through decoration-red-500"
+ value={mrp}
+ onChange={e => setMrp(e.target.value)}
  />
  </div>
  <div className="space-y-1.5">
  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Cost Price (₹)</label>
  <input 
  type="number" 
- className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white text-blue-500"
+ className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white"
  value={costPrice}
  onChange={e => setCostPrice(e.target.value)}
  />
@@ -164,6 +177,17 @@ const ProductEdit = () => {
  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-blue-500/30 dark:text-white"
  value={brand}
  onChange={e => setBrand(e.target.value)}
+ />
+ </div>
+
+ <div className="space-y-1.5">
+ <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Festival Offer Badge (Optional)</label>
+ <input 
+ type="text" 
+ placeholder="e.g. Diwali Dhamaka"
+ className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 py-3 px-4 rounded-xl text-xs font-bold outline-none focus:border-amber-500/30 dark:text-white"
+ value={festivalName}
+ onChange={e => setFestivalName(e.target.value)}
  />
  </div>
 
