@@ -17,6 +17,14 @@ A production-ready, highly scalable MERN stack web application for Pooja Telecom
 ### 1. Environment Variables
 Create a `.env` file in the `/server` directory and populate it according to `/server/.env.example`.
 
+### Demo Storefront Data
+After connecting the server to a development database and creating an admin account, run:
+```bash
+cd server
+npm run data:demo
+```
+This adds any missing sample products and up to three homepage carousel slides. It is safe to run more than once and does not delete or overwrite existing products or slides. Use a development database; demo product content should not be treated as live inventory.
+
 ### 2. Install Dependencies
 ```bash
 # Install backend dependencies
