@@ -1,3 +1,5 @@
+import nodemailer from 'nodemailer';
+
 const getBrevoEmailConfig = () => {
   const apiKey = process.env.BREVO_API_KEY;
   const senderEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER;
@@ -13,14 +15,76 @@ const getBrevoEmailConfig = () => {
   return { apiKey, senderEmail };
 };
 
-export const sendVerificationEmail = async (toEmail, name, code) => {
-  const { apiKey, senderEmail } = getBrevoEmailConfig();
+const sendOtpEmail = async ({ toEmail, name, subject, htmlContent }) => {
+  const smtpSettings = [
+    process.env.SMTP_HOST,
+    process.env.SMTP_USER,
+    process.env.SMTP_PASS,
+  ];
 
-  const emailData = {
-    sender: { name: 'Pooja Telecom', email: senderEmail },
-    to: [{ email: toEmail, name }],
-    subject: `Your Verification Code: ${code}`,
-    htmlContent: `
+  if (smtpSettings.some(Boolean)) {
+    if (smtpSettings.some((setting) => !setting)) {
+      throw new Error('SMTP_HOST, SMTP_USER, and SMTP_PASS must all be configured.');
+    }
+
+    const port = Number(process.env.SMTP_PORT || 587);
+    if (!Number.isInteger(port) || port < 1 || port > 65535) {
+      throw new Error('SMTP_PORT must be a valid port number.');
+    }
+
+    const senderEmail = process.env.EMAIL_FROM || process.env.SMTP_USER;
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port,
+      secure: port === 465,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    const result = await transporter.sendMail({
+      from: { name: 'Pooja Telecom', address: senderEmail },
+      to: [{ name, address: toEmail }],
+      subject,
+      html: htmlContent,
+    });
+
+    if (result.rejected.length > 0 || result.accepted.length === 0) {
+      throw new Error('SMTP server did not accept the verification email recipient.');
+    }
+
+    console.log('OTP email sent successfully via SMTP.');
+    return result;
+  }
+
+  const { apiKey, senderEmail } = getBrevoEmailConfig();
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'api-key': apiKey,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      sender: { name: 'Pooja Telecom', email: senderEmail },
+      to: [{ email: toEmail, name }],
+      subject,
+      htmlContent,
+    }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || 'Failed to send email via Brevo.');
+  }
+
+  console.log('OTP email sent successfully via Brevo API.');
+  return data;
+};
+
+export const sendVerificationEmail = async (toEmail, name, code) => {
+  const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 520px; margin: auto; background: #f9fafb; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
       <div style="background: linear-gradient(135deg, #1e293b, #065f46); padding: 32px; text-align: center;">
         <h1 style="color: white; font-size: 24px; margin: 0;">Pooja Telecom</h1>
@@ -40,43 +104,23 @@ export const sendVerificationEmail = async (toEmail, name, code) => {
         <p style="color: #9ca3af; font-size: 12px; margin: 0;">&copy; ${new Date().getFullYear()} Pooja Telecom. All rights reserved.</p>
       </div>
     </div>
-    `,
-  };
+    `;
 
   try {
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'api-key': apiKey,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(emailData),
+    return await sendOtpEmail({
+      toEmail,
+      name,
+      subject: `Your Verification Code: ${code}`,
+      htmlContent,
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error('Brevo API Error Details:', JSON.stringify(data, null, 2));
-      throw new Error(data.message || 'Failed to send transactional email via Brevo');
-    }
-
-    console.log('Verification email sent successfully:', data.messageId);
-    return data;
   } catch (error) {
-    console.error('Email send error:', error.message);
+    console.error('Verification email send failed:', error.message);
     throw error;
   }
 };
 
 export const sendResetPasswordEmail = async (toEmail, name, code) => {
-  const { apiKey, senderEmail } = getBrevoEmailConfig();
-
-  const emailData = {
-    sender: { name: 'Pooja Telecom', email: senderEmail },
-    to: [{ email: toEmail, name }],
-    subject: `Password Reset Code: ${code}`,
-    htmlContent: `
+  const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 520px; margin: auto; background: #f9fafb; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
       <div style="background: linear-gradient(135deg, #1e293b, #065f46); padding: 32px; text-align: center;">
         <h1 style="color: white; font-size: 24px; margin: 0;">Pooja Telecom</h1>
@@ -95,31 +139,17 @@ export const sendResetPasswordEmail = async (toEmail, name, code) => {
         <p style="color: #9ca3af; font-size: 12px; margin: 0;">&copy; ${new Date().getFullYear()} Pooja Telecom. All rights reserved.</p>
       </div>
     </div>
-    `,
-  };
+    `;
 
   try {
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'api-key': apiKey,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(emailData),
+    return await sendOtpEmail({
+      toEmail,
+      name,
+      subject: `Password Reset Code: ${code}`,
+      htmlContent,
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error('Brevo API Error Details:', JSON.stringify(data, null, 2));
-      throw new Error(data.message || 'Failed to send transactional email via Brevo');
-    }
-
-    console.log('Reset password email sent successfully:', data.messageId);
-    return data;
   } catch (error) {
-    console.error('Email send error:', error.message);
+    console.error('Password reset email send failed:', error.message);
     throw error;
   }
 };
