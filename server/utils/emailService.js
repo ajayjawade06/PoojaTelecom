@@ -16,6 +16,37 @@ const getBrevoEmailConfig = () => {
 };
 
 const sendOtpEmail = async ({ toEmail, name, subject, htmlContent }) => {
+  if (process.env.BREVO_API_KEY) {
+    const senderEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+    if (!senderEmail) {
+      throw new Error('EMAIL_FROM is required when BREVO_API_KEY is configured.');
+    }
+
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'api-key': process.env.BREVO_API_KEY,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        sender: { name: 'Pooja Telecom', email: senderEmail },
+        to: [{ email: toEmail, name }],
+        subject,
+        htmlContent,
+      }),
+      signal: AbortSignal.timeout(15000),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to send email via Brevo.');
+    }
+
+    console.log('OTP email sent successfully via Brevo API.');
+    return data;
+  }
+
   const smtpSettings = [
     process.env.SMTP_HOST,
     process.env.SMTP_USER,
@@ -41,6 +72,9 @@ const sendOtpEmail = async ({ toEmail, name, subject, htmlContent }) => {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
     });
 
     const result = await transporter.sendMail({
@@ -58,29 +92,7 @@ const sendOtpEmail = async ({ toEmail, name, subject, htmlContent }) => {
     return result;
   }
 
-  const { apiKey, senderEmail } = getBrevoEmailConfig();
-  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
-    headers: {
-      accept: 'application/json',
-      'api-key': apiKey,
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      sender: { name: 'Pooja Telecom', email: senderEmail },
-      to: [{ email: toEmail, name }],
-      subject,
-      htmlContent,
-    }),
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || 'Failed to send email via Brevo.');
-  }
-
-  console.log('OTP email sent successfully via Brevo API.');
-  return data;
+  throw new Error('Configure BREVO_API_KEY or SMTP_HOST, SMTP_USER, and SMTP_PASS to send OTP emails.');
 };
 
 export const sendVerificationEmail = async (toEmail, name, code) => {

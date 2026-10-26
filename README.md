@@ -16,7 +16,7 @@ A production-ready, highly scalable MERN stack web application for Pooja Telecom
 
 ### 1. Environment Variables
 Create a `.env` file in the `/server` directory and populate it according to `/server/.env.example`.
-For verification and password-reset emails, configure either `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, and `SMTP_PASS`, or `BREVO_API_KEY` and `EMAIL_FROM` in the server environment. When all SMTP settings are present, the app uses SMTP; otherwise it uses the Brevo API. Verify the sender address with your email provider.
+For verification and password-reset emails, configure either `BREVO_API_KEY` and `EMAIL_FROM` or `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, and `SMTP_PASS` in the server environment. The Brevo API is preferred when `BREVO_API_KEY` is set; SMTP is used only when it is absent. Verify the sender address with your email provider.
 
 ### Demo Storefront Data
 After connecting the server to a development database and creating an admin account, run:
