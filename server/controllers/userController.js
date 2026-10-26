@@ -61,6 +61,9 @@ const registerUser = asyncHandler(async (req, res) => {
         await sendVerificationEmail(email, userExists.name, otp);
       } catch (emailError) {
         console.error('Email sending failed:', emailError.message);
+        return res.status(500).json({
+          message: 'Could not send the verification code. Please try registering again in a few minutes.',
+        });
       }
       return res.status(200).json({ 
         message: 'Verification code resent. Please check your email.', 
@@ -86,11 +89,13 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     if (user) {
-      // Try to send email but don't fail if it errors (for now)
       try {
         await sendVerificationEmail(email, name, otp);
       } catch (emailError) {
         console.error('Email sending failed:', emailError.message);
+        return res.status(500).json({
+          message: 'Your account was created, but the verification email could not be sent. Please register again to request a new code.',
+        });
       }
       
       return res.status(201).json({

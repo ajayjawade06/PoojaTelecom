@@ -225,7 +225,7 @@ const Header = () => {
 
  {/* Mobile Sidebar Redesign */}
  {isMobileMenuOpen && (
- <div className="md:hidden fixed inset-0 z-[120] bg-white dark:bg-slate-900 p-6">
+ <div className="lg:hidden fixed inset-0 z-[120] bg-white dark:bg-slate-900 p-6">
  <div className="flex justify-between items-center mb-10">
  <span className="font-black text-lg tracking-tighter text-slate-900 dark:text-white">POOJA<span className="text-blue-500">T</span></span>
  <button onClick={() => setIsMobileMenuOpen(false)} className="w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-full text-slate-900 dark:text-white"><FaTimes size={14} /></button>

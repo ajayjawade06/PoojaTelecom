@@ -1,6 +1,20 @@
-export const sendVerificationEmail = async (toEmail, name, code) => {
+const getBrevoEmailConfig = () => {
   const apiKey = process.env.BREVO_API_KEY;
-  const senderEmail = process.env.EMAIL_USER || 'lipashaikh005@gmail.com';
+  const senderEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+
+  if (!apiKey) {
+    throw new Error('BREVO_API_KEY is not configured.');
+  }
+
+  if (!senderEmail) {
+    throw new Error('EMAIL_FROM is not configured.');
+  }
+
+  return { apiKey, senderEmail };
+};
+
+export const sendVerificationEmail = async (toEmail, name, code) => {
+  const { apiKey, senderEmail } = getBrevoEmailConfig();
 
   const emailData = {
     sender: { name: 'Pooja Telecom', email: senderEmail },
@@ -56,8 +70,7 @@ export const sendVerificationEmail = async (toEmail, name, code) => {
 };
 
 export const sendResetPasswordEmail = async (toEmail, name, code) => {
-  const apiKey = process.env.BREVO_API_KEY;
-  const senderEmail = process.env.EMAIL_USER || 'lipashaikh005@gmail.com';
+  const { apiKey, senderEmail } = getBrevoEmailConfig();
 
   const emailData = {
     sender: { name: 'Pooja Telecom', email: senderEmail },
